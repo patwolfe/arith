@@ -22,3 +22,17 @@ class CheckUser(APIView):
             except User.DoesNotExist:
                 return Response("false")
         return Response("invalid query")
+
+class RetrieveUser(APIView):
+    """
+    View to get user by email
+    """
+    def getUser(self, request):
+        """
+        Retrieve User object.
+        """
+    email = request.query_params.get("email", None)
+    if email is not None:
+        return User.objects.get(email=email)
+    else:
+        return Response("invalid query")
