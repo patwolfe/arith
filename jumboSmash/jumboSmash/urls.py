@@ -20,4 +20,5 @@ import users.views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("users/", users.views.CheckUser.as_view()),
+    path("users/<email:email>", users.views.RetrieveUser.as_view()),
 ]
