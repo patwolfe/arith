@@ -6,6 +6,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ChatListScreen from '../screens/ChatListScreen/ChatListScreen'
+import ChatScreen from '../screens/ChatScreen/ChatScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -51,7 +52,15 @@ SettingsStack.navigationOptions = {
 
 const ChatStack = createStackNavigator(
   {
-    Chat: ChatListScreen,
+    ChatList: {
+      screen: ChatListScreen,
+    },
+    Chat: {
+      screen: ChatScreen,
+    },
+  },
+  {
+    initialRouteName: 'ChatList'
   },
   config
 );

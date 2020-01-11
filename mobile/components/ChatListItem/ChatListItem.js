@@ -1,11 +1,15 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 export default function ChatListItem(props) {
     return (
-        <View style={styles.listItem} className="chatListItem">
-            <Text>{props.matchName}</Text>
-        </View>
+        <TouchableOpacity 
+          onPress={() => 
+             props.navigation.navigate('Chat', {matchName: props.matchName})}  
+          style={styles.listItem} className="chatListItem"
+          >
+          <Text>{props.matchName}</Text>
+        </TouchableOpacity>
     )
 }
 

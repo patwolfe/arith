@@ -7,9 +7,12 @@ export default function ChatList(props) {
     return (
         <View style={styles.list}>{
             matches.map((name, i) => {
-                return <ChatListItem matchName={name} key={i}/> 
+                return <ChatListItem 
+                        navigation={props.navigation}
+                        matchName={name} key={i}/> 
             })
-        }</View>
+        }
+        </View>
     )
 }
 

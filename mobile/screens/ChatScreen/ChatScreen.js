@@ -5,20 +5,20 @@ import {
   Text,
   View,
 } from 'react-native';
-import ChatList from '../../components/ChatList/ChatList'
 
-export default function ChatListScreen(props) {
+export default function ChatScreen(props) {
+  const matchName = props.navigation.getParam('matchName', 'Undefined');
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
         <View>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Chats</Text>
-          </View>
-          <ChatList navigation={props.navigation}/>
-        
+            <View style={styles.headerContainer}>
+                <Text style={styles.headerText}>{matchName}</Text>
+            </View>
+            <Text>On the match screen!!</Text>
+
         </View>
 
       </ScrollView>
@@ -27,7 +27,7 @@ export default function ChatListScreen(props) {
   );
 }
 
-ChatListScreen.navigationOptions = {
+ChatScreen.navigationOptions = {
   header: null,
 };
 
