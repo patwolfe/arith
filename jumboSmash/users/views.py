@@ -2,7 +2,8 @@ from django.shortcuts import render
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from users.models import CustomUser as User
+from .models import CustomUser as User
+from .serializers import CustomUserSerializer
 
 
 class CheckUser(APIView):
@@ -27,12 +28,17 @@ class RetrieveUser(APIView):
     """
     View to get user by email
     """
-    def getUser(self, request):
+    def get(self, request, format=None):
         """
-        Retrieve User object.
+        Retrieve serialized User object.
         """
-    email = request.query_params.get("email", None)
-    if email is not None:
-        return User.objects.get(email=email)
-    else:
-        return Response("invalid query")
+        email = request.query_params.get("email", None)
+        if email is not None:
+            try:
+                user = User.objects.get(email=email)
+                serialized = CustomUserSerializer(user)
+                return Response(serialized.data)
+            except User.DoesNotExist:
+                return Response("User not found")
+        else:
+            return Response("invalid query")

@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-
 class UsersManagersTests(TestCase):
     def test_create_user(self):
         User = get_user_model()
@@ -38,3 +37,23 @@ class UsersManagersTests(TestCase):
         self.assertTrue(admin_user.is_active)
         self.assertTrue(admin_user.is_staff)
         self.assertTrue(admin_user.is_superuser)
+
+
+class UserRetrievalTests(TestCase):
+    fixtures = ['users/dummy_data.json']
+
+    def test_email_in_db(self):
+        User = get_user_model()
+        email = "js2020@tufts.edu"
+        user = User.objects.get(email=email)
+
+        self.assertEqual(email, user.email)
+        self.assertEqual("Jumbo", user.first_name)
+        self.assertEqual("Smash", user.last_name)
+
+    def test_email_not_in_db(self):
+        User = get_user_model()
+        email = "not_in_db@yahoo.com"
+
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(email=email)
