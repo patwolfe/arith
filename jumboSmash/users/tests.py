@@ -47,6 +47,7 @@ class UserRetrievalTests(TestCase):
         email = "js2020@tufts.edu"
         user = User.objects.get(email=email)
 
+        # check correct user retrieved
         self.assertEqual(email, user.email)
         self.assertEqual("Jumbo", user.first_name)
         self.assertEqual("Smash", user.last_name)
@@ -55,5 +56,6 @@ class UserRetrievalTests(TestCase):
         User = get_user_model()
         email = "not_in_db@yahoo.com"
 
+        # check user is not in db
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(email=email)
