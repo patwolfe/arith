@@ -5,11 +5,38 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
   default: {},
 });
+
+const ProfileStack = createStackNavigator(
+  {
+    Profile: ProfileScreen,
+    Edit: EditProfileScreen,
+  },
+  config
+);
+
+
+ProfileStack.navigationOptions = {
+  tabBarLabel: 'Profile',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios'
+          ? `ios-contact`
+          : 'md-contact'
+      }
+    />
+  ),
+};
+
+ProfileStack.path = '';
 
 const HomeStack = createStackNavigator(
   {
@@ -49,6 +76,7 @@ SettingsStack.navigationOptions = {
 };
 
 const tabNavigator = createBottomTabNavigator({
+  ProfileStack,
   HomeStack,
   SettingsStack,
 });
