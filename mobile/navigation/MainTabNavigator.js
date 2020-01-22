@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -5,7 +6,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 
 // Screens
-import ChatListScreen from '../screens/ChatListScreen/ChatListScreen'
+import ChatListScreen from '../screens/ChatListScreen/ChatListScreen';
 import ChatScreen from '../screens/ChatScreen/ChatScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import EntryScreen from '../screens/EntryScreen/EntryScreen';
@@ -36,7 +37,7 @@ ProfileStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-contact`
+          ? 'ios-contact'
           : 'md-contact'
       }
     />

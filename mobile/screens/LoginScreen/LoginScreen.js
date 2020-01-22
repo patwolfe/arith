@@ -10,12 +10,12 @@ import {
 import LoadingModal from '../../components/LoadingModal/LoadingModal';
 
 export default function LoginScreen(props) {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [rejected, setRejected] = useState(false);
   const [loading, setLoading] = useState(false);
   let rejectedDiv;
   if (rejected) {
-    rejectedDiv = (<Text style={styles.rejectedText}>Your email was rejected. Please make sure it is your valid Tufts email address</Text>)
+    rejectedDiv = (<Text style={styles.rejectedText}>Your email was rejected. Please make sure it is your valid Tufts email address</Text>);
   }
   return (
     <View style={styles.container}>
@@ -69,13 +69,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#a9c6de',
   },
-  contentContainer: {
-    paddingTop: 30,
-  },
   header: {
-    marginTop: "30%",
-    padding: "10%",
-    paddingBottom: "3%",
+    marginTop: '30%',
+    padding: '10%',
+    paddingBottom: '3%',
   },
   inputField: {
     backgroundColor: '#ffffff',
