@@ -18,6 +18,12 @@ class MatchManager(models.Manager):
         match.save()
         return match
 
+    def list_matches(self, user_id):
+        """ Returns a QuerySet of all matches a user is part of """
+        user_1_matches = self.filter(user_1=user_id)
+        user_2_matches = self.filter(user_2=user_id)
+        return user_1_matches.union(user_2_matches)
+
 
 class Match(models.Model):
     user_1 = models.ForeignKey(User, related_name="user_1", on_delete=models.CASCADE)

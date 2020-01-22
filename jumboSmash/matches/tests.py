@@ -40,6 +40,20 @@ class ModelManagerTests(TestCase):
         with self.assertRaises(Match.DoesNotExist):
             match = Match.objects.unmatch(1)
 
+    def test_list(self):
+        """ Confirms list_matches returns all matches for a user """
+        _ = Match.objects.create_match(1, 2)
+        _ = Match.objects.create_match(3, 1)
+        _ = Match.objects.create_match(3, 2)
+
+        matches = list(Match.objects.list_matches(1))
+
+        self.assertEqual(len(matches), 2)
+
+        self.assertEqual(matches[0].id, 1)
+
+        self.assertEqual(matches[1].id, 2)
+
 
 class ModelViewsTest(TestCase):
     fixtures = ["users/dummy_data.json"]
