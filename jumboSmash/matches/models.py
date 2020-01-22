@@ -22,7 +22,6 @@ class MatchManager(models.Manager):
         """ Returns a QuerySet of all matches a user is part of """
         return self.filter(models.Q(user_1=user_id) | models.Q(user_2=user_id))
 
-
 class Match(models.Model):
     user_1 = models.ForeignKey(User, related_name="user_1", on_delete=models.CASCADE)
     user_2 = models.ForeignKey(User, related_name="user_2", on_delete=models.CASCADE)

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "matches",
     "swipe",
     "messages",
+    "matches",
 ]
 
 MIDDLEWARE = [
