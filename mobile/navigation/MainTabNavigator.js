@@ -7,9 +7,11 @@ import TabBarIcon from '../components/TabBarIcon';
 // Screens
 import ChatListScreen from '../screens/ChatListScreen/ChatListScreen'
 import ChatScreen from '../screens/ChatScreen/ChatScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 import EntryScreen from '../screens/EntryScreen/EntryScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import VerifyScreen from '../screens/VerifyScreen/VerifyScreen';
 
@@ -17,6 +19,31 @@ const config = Platform.select({
   web: { headerMode: 'screen' },
   default: {},
 });
+
+const ProfileStack = createStackNavigator(
+  {
+    Profile: ProfileScreen,
+    Edit: EditProfileScreen,
+  },
+  config
+);
+
+
+ProfileStack.navigationOptions = {
+  tabBarLabel: 'Profile',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios'
+          ? `ios-contact`
+          : 'md-contact'
+      }
+    />
+  ),
+};
+
+ProfileStack.path = '';
 
 const HomeStack = createStackNavigator(
   {
@@ -121,6 +148,7 @@ EntryStack.navigationOptions = {
 ChatStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
+  ProfileStack,
   HomeStack,
   SettingsStack,
   ChatStack,
