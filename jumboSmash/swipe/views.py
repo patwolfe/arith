@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from users.serializer import UserIdSerializer
+from users.serializers import UserIdSerializer
 
 
 class Skip(APIView):
@@ -25,7 +25,7 @@ class Smash(APIView):
         serializer = UserIdSerializer(data=request.data)
         if serializer.is_valid():
             swipe_target = serializer.validated_data["user"]
-            Interaction.objects.skip(request.user, swipe_target)
+            Interaction.objects.smash(request.user, swipe_target)
             return Response("Smash!")
         else:
             return Response("Invalid smash request")
