@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import CustomUser as User
+from matches.models import Match
 
 
 class InteractionManager(models.Manager):
@@ -16,8 +17,18 @@ class InteractionManager(models.Manager):
     def smash(self, swiper, swipe_target):
         """ Records a right (positive) swipe on a profile """
         interaction, _ = self.get_or_create(swiper=swiper, swipe_target=swipe_target)
-        interaction.choice = Interaction.SwipeType.SMASH
-        interaction.save()
+        if interaction.choice != Interaction.SwipeType.SMASH:
+            # We shouldn't research for a match if the type is already swipe
+            # again, this shouldn't be happening so not sure what the best behavior is
+            interaction.choice = Interaction.SwipeType.SMASH
+            interaction.save()
+            try:
+                complement = self.get(swiper=swipe_target, swipe_target=swiper)
+                if complement.choice == Interaction.SwipeType.SMASH:
+                    Match.objects.create_match(swiper.id, swipe_target.id)
+            except:
+                pass
+
         return interaction
 
 
