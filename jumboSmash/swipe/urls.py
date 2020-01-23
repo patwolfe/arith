@@ -1,4 +1,5 @@
 from django.urls import include, path
+from swipe.views import List, Smash, Skip, Refresh
 
 urlpatterns = [
     path("list/", List.as_view()),
