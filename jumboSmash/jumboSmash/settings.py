@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # apps
     "users",
     "matches",
+    "swipe",
 ]
 
 MIDDLEWARE = [
