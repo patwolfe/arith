@@ -20,7 +20,7 @@ class Unmatch(APIView):
                 return Response("Unmatched")
             else:
                 return Response(
-                    "You are not in this match", status=status.HTTP_401_UNAUTHORIZED
+                    "You are not in this match", status=status.HTTP_403_FORBIDDEN
                 )
 
         return Response("Invalid request", status=status.HTTP_400_BAD_REQUEST)
