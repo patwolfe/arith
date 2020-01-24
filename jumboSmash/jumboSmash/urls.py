@@ -22,4 +22,5 @@ urlpatterns = [
     path("users/", users.views.CheckUser.as_view()),
     path("finduser/", users.views.RetrieveUser.as_view()),
     path("matches/", include("matches.urls")),
+    path("swipe/", include("swipe.urls")),
 ]
