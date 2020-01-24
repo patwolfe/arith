@@ -1,6 +1,6 @@
 from django.db import models
 from users.models import CustomUser as User
-from matches.models import Match
+from chat.models import Match
 
 
 class InteractionManager(models.Manager):
