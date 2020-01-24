@@ -50,10 +50,25 @@ class InteractionManagerTests(TestCase):
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
         _ = Interaction.objects.smash(swiper, swiped_on)
-        interaction = Interaction.objects.skip(swiper, swiped_on)
 
-        self.assertEqual(interaction.swiper.id, 1)
-        self.assertEqual(interaction.swiped_on.id, 2)
+        with self.assertRaises(Exception):
+            Interaction.objects.skip(swiper, swiped_on)
+
+        interaction = Interaction.objects.get(swiper=swiper, swiped_on=swiped_on)
+
+        self.assertEqual(interaction.skip_count, 0)
+        self.assertTrue(interaction.smash)
+
+    def test_smash_then_smash(self):
+        """ Double smashing should trigger assertion """
+        swiper = User.objects.get(pk=1)
+        swiped_on = User.objects.get(pk=2)
+        _ = Interaction.objects.smash(swiper, swiped_on)
+
+        with self.assertRaises(Exception):
+            Interaction.objects.smash(swiper, swiped_on)
+
+        interaction = Interaction.objects.get(swiper=swiper, swiped_on=swiped_on)
 
         self.assertEqual(interaction.skip_count, 0)
         self.assertTrue(interaction.smash)
