@@ -111,6 +111,7 @@ __generated__
 
 npm-debug.log
 yarn-error.log
+yarn.lock
 
 # For MacOS
 .DS_Store
