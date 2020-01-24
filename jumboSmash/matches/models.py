@@ -20,9 +20,7 @@ class MatchManager(models.Manager):
 
     def list_matches(self, user_id):
         """ Returns a QuerySet of all matches a user is part of """
-        user_1_matches = self.filter(user_1=user_id)
-        user_2_matches = self.filter(user_2=user_id)
-        return user_1_matches.union(user_2_matches)
+        return self.filter(models.Q(user_1=user_id) | models.Q(user_2=user_id))
 
 
 class Match(models.Model):
