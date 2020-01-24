@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Message
+from .models import Message, Match
 
 
 class MessageAdmin(admin.ModelAdmin):
@@ -7,3 +7,10 @@ class MessageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Message, MessageAdmin)
+
+
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ["id", "user_1", "user_2"]
+
+
+admin.site.register(Match, MatchAdmin)

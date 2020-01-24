@@ -2,11 +2,11 @@ from django.test import TestCase
 from swipe.models import Interaction
 from rest_framework.test import force_authenticate, APIRequestFactory
 from users.models import CustomUser as User
-from matches.models import Match
+from chat.models import Match
 
 
 class InteractionManagerTests(TestCase):
-    fixtures = ["users/dummy_data.json"]
+    fixtures = ["tests/dummy_users.json"]
 
     def test_smash(self):
         """ Smashing """
