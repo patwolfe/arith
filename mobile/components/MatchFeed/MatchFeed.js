@@ -30,9 +30,6 @@ export default function MatchFeed() {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button}>
-                <Button title="Swipe" onPress={changeState} />
-            </TouchableOpacity>
             <Swipeable
                 leftThreshold={20}
                 rightThreshold={20}
