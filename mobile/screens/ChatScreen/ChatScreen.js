@@ -14,10 +14,10 @@ export default function ChatScreen(props) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
         <View>
-            <View style={styles.headerContainer}>
-                <Text style={styles.headerText}>{matchName}</Text>
-            </View>
-            <Text>On the match screen!!</Text>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerText}>{matchName}</Text>
+          </View>
+          <Text>On the match screen!!</Text>
 
         </View>
 

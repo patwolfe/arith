@@ -31,12 +31,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#a9c6de',
   },
-  contentContainer: {
-    paddingTop: 30,
-  },
   header: {
-    marginTop: "30%",
-    padding: "10%",
+    marginTop: '30%',
+    padding: '10%',
     backgroundColor: '#ffc6de',
   },
 });

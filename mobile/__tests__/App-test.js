@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import NavigationTestUtils from 'react-navigation/NavigationTestUtils';
 import renderer from 'react-test-renderer';
@@ -17,12 +18,12 @@ describe('App', () => {
     NavigationTestUtils.resetInternalState();
   });
 
-  it(`renders the loading screen`, () => {
+  it('renders the loading screen', () => {
     const tree = renderer.create(<App />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
-  it(`renders the root without loading screen`, () => {
+  it('renders the root without loading screen', () => {
     const tree = renderer.create(<App skipLoadingScreen />).toJSON();
     expect(tree).toMatchSnapshot();
   });
