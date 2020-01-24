@@ -4,28 +4,29 @@ from matches.models import Match
 
 
 class InteractionManager(models.Manager):
-    def skip(self, swiper, swipe_target):
+    def skip(self, swiper, swiped_on):
         """ Records a left (negative) swipe on a profile """
-        interaction, _ = self.get_or_create(swiper=swiper, swipe_target=swipe_target)
-        if interaction.choice != Interaction.SwipeType.SMASH:
+        interaction, _ = self.get_or_create(swiper=swiper, swiped_on=swiped_on)
+        if not interaction.smash:
             # You shouldn't be able to skip when you've already smashed,
             # not sure what the error handling here should be
             interaction.skip_count += 1
+            interaction.smash = False
             interaction.save()
         return interaction
 
-    def smash(self, swiper, swipe_target):
+    def smash(self, swiper, swiped_on):
         """ Records a right (positive) swipe on a profile """
-        interaction, _ = self.get_or_create(swiper=swiper, swipe_target=swipe_target)
-        if interaction.choice != Interaction.SwipeType.SMASH:
+        interaction, _ = self.get_or_create(swiper=swiper, swiped_on=swiped_on)
+        if not interaction.smash:
             # We shouldn't research for a match if the type is already swipe
             # again, this shouldn't be happening so not sure what the best behavior is
-            interaction.choice = Interaction.SwipeType.SMASH
+            interaction.smash = True
             interaction.save()
             try:
-                complement = self.get(swiper=swipe_target, swipe_target=swiper)
-                if complement.choice == Interaction.SwipeType.SMASH:
-                    Match.objects.create_match(swiper.id, swipe_target.id)
+                complement = self.get(swiper=swiped_on, swiped_on=swiper)
+                if complement.smash:
+                    Match.objects.create_match(swiper.id, swiped_on.id)
             except:
                 pass
 
@@ -33,17 +34,11 @@ class InteractionManager(models.Manager):
 
 
 class Interaction(models.Model):
-    class SwipeType(models.TextChoices):
-        SKIP = "N"
-        SMASH = "Y"
-
     swiper = models.ForeignKey(User, related_name="swiper", on_delete=models.CASCADE)
-    swipe_target = models.ForeignKey(
-        User, related_name="swipe_target", on_delete=models.CASCADE
+    swiped_on = models.ForeignKey(
+        User, related_name="swiped_on", on_delete=models.CASCADE
     )
-    choice = models.CharField(
-        max_length=1, choices=SwipeType.choices, default=SwipeType.SKIP
-    )
+    smash = models.BooleanField(null=True)
     skip_count = models.PositiveIntegerField(default=0)
 
     objects = InteractionManager()
