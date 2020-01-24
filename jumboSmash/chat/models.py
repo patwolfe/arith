@@ -22,6 +22,6 @@ class Message(models.Model):
     content = models.TextField()
     sent = models.DateTimeField(null=True)
     delivered = models.DateTimeField(null=True)
-    read = models.BooleanField(default=False)
+    read = models.BooleanField(null=True)
 
     objects = MessageManager()
