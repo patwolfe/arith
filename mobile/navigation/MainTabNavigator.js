@@ -12,8 +12,9 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 import EntryScreen from '../screens/EntryScreen/EntryScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
+import MatchFeedScreen from '../screens/MatchFeedScreen/MatchFeedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/SettingsScreen'
 import VerifyScreen from '../screens/VerifyScreen/VerifyScreen';
 
 const config = Platform.select({
@@ -68,6 +69,27 @@ HomeStack.navigationOptions = {
 };
 
 HomeStack.path = '';
+
+const MatchStack = createStackNavigator(
+  {
+    Feed: MatchFeedScreen,
+  },
+  config
+);
+
+MatchStack.navigationOptions = {
+  tabBarLabel: 'Feed',
+  tabBarIcon: ({focused}) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios'
+        ? `ios-information-circle${focused ? '' : '-outline'}`
+        : 'md-information-circle'
+      }
+    />
+  ),
+};
 
 const SettingsStack = createStackNavigator(
   {
@@ -151,6 +173,7 @@ ChatStack.path = '';
 const tabNavigator = createBottomTabNavigator({
   ProfileStack,
   HomeStack,
+  MatchStack,
   SettingsStack,
   ChatStack,
   EntryStack,
