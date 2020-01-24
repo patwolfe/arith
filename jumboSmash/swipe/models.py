@@ -13,6 +13,8 @@ class InteractionManager(models.Manager):
             interaction.skip_count += 1
             interaction.smash = False
             interaction.save()
+        else:
+            assert 0, "Interaction already marked 'smash', cannot 'skip'"
         return interaction
 
     def smash(self, swiper, swiped_on):
@@ -29,6 +31,8 @@ class InteractionManager(models.Manager):
                     Match.objects.create_match(swiper.id, swiped_on.id)
             except:
                 pass
+        else:
+            assert 0, "Interaction already marked 'smash', cannot 'smash' again"
 
         return interaction
 
