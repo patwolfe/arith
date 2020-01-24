@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "rest_framework",
     # apps
     "users",
-    "messages",
+    "chat",
     "matches",
 ]
 
