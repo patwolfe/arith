@@ -31,7 +31,7 @@ class Smash(APIView):
             return Response("Invalid smash request")
 
 
-class List(APIView):
+class GetNext(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -39,6 +39,13 @@ class List(APIView):
 
 
 class Refresh(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        return Response("Not implemented")
+
+
+class Block(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
