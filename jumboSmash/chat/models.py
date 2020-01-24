@@ -34,7 +34,7 @@ class Match(models.Model):
 
     class Meta:
         verbose_name_plural = "Matches"
-
+        
 
 class MessageManager(models.Manager):
     def create_message(self, match_id, sender_id, content):
@@ -43,9 +43,7 @@ class MessageManager(models.Manager):
         sender = User.objects.get(pk=sender_id)
         # there should be an error if sender is not user_1 or user_2 of match
         # should be checked for at a higher level?
-        message = self.model(
-            match=match, sender=sender, content=content, sent=datetime.now()
-        )
+        message = self.model(match=match, sender=sender, content=content, sent=datetime.now())
         message.save()
         return message
 

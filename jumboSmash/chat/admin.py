@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import Message, Match
 
 
+
 class MessageAdmin(admin.ModelAdmin):
     list_display = ["id", "match", "content", "sent", "delivered", "read"]
 
@@ -14,3 +15,4 @@ class MatchAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Match, MatchAdmin)
+
