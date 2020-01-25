@@ -12,9 +12,8 @@ class MatchManager(models.Manager):
         match.save()
         return match
 
-    def unmatch(self, match_id):
+    def unmatch(self, match):
         """ Marks given match as 'unmatched' """
-        match = self.get(pk=match_id)
         match.unmatched = True
         match.save()
         return match
