@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from users.models import CustomUser as User
 
@@ -44,7 +44,7 @@ class MessageManager(models.Manager):
         # there should be an error if sender is not user_1 or user_2 of match
         # should be checked for at a higher level?
         message = self.model(
-            match=match, sender=sender, content=content, sent=datetime.now()
+            match=match, sender=sender, content=content, sent=timezone.now()
         )
         message.save()
         return message
