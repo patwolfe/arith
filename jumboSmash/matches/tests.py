@@ -39,6 +39,7 @@ class ModelManagerTests(TestCase):
         """ Attempts to unmatch non-existant match """
         with self.assertRaises(Match.DoesNotExist):
             match = Match.objects.unmatch(1)
+<<<<<<< HEAD
 
     def test_list(self):
         """ Confirms list_matches returns all matches for a user """
@@ -105,3 +106,5 @@ class ModelViewsTest(TestCase):
 
         match = Match.objects.get(pk=1)
         self.assertFalse(match.unmatched)
+=======
+>>>>>>> 59b037e4d00abd2345ebc4f71a83b9b662c62d41
