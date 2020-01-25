@@ -4,10 +4,8 @@ from users.models import CustomUser as User
 
 
 class MatchManager(models.Manager):
-    def create_match(self, user_id_1, user_id_2):
+    def create_match(self, user_1, user_2):
         """ Makes a match between the two given users """
-        user_1 = User.objects.get(pk=user_id_1)
-        user_2 = User.objects.get(pk=user_id_2)
         match = self.model(user_1=user_1, user_2=user_2)
         match.save()
         return match

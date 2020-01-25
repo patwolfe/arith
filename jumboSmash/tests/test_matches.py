@@ -10,7 +10,9 @@ class ModelManagerTests(TestCase):
 
     def test_make_match_valid(self):
         """ Matches valid users """
-        match = Match.objects.create_match(1, 2)
+        user_1 = User.objects.get(pk=1)
+        user_2 = User.objects.get(pk=2)
+        match = Match.objects.create_match(user_1, user_2)
 
         self.assertEqual(match.user_1.id, 1)
         self.assertEqual(match.user_2.id, 2)
@@ -18,15 +20,12 @@ class ModelManagerTests(TestCase):
         self.assertFalse(match.top5)
         self.assertFalse(match.unmatched)
 
-    def test_make_match_invalid_user(self):
-        """ Attempts to match non-existant user """
-        with self.assertRaises(Exception):
-            match = Match.objects.create_match(1, 5)
-
     def test_unmatch_valid(self):
         """ Unmatches valid match """
+        user_1 = User.objects.get(pk=1)
+        user_2 = User.objects.get(pk=2)
 
-        match = Match.objects.create_match(1, 2)
+        match = Match.objects.create_match(user_1, user_2)
         unmatch = Match.objects.unmatch(match)
 
         self.assertEqual(unmatch.user_1.id, 1)
@@ -37,9 +36,12 @@ class ModelManagerTests(TestCase):
 
     def test_list(self):
         """ Confirms list_matches returns all matches for a user """
-        _ = Match.objects.create_match(1, 2)
-        _ = Match.objects.create_match(3, 1)
-        _ = Match.objects.create_match(3, 2)
+        user_1 = User.objects.get(pk=1)
+        user_2 = User.objects.get(pk=2)
+        user_3 = User.objects.get(pk=3)
+        _ = Match.objects.create_match(user_1, user_2)
+        _ = Match.objects.create_match(user_3, user_1)
+        _ = Match.objects.create_match(user_3, user_2)
 
         matches = list(Match.objects.list_matches(1))
 
@@ -51,11 +53,10 @@ class ModelManagerTests(TestCase):
 
 
 class ModelViewsTest(TestCase):
-    fixtures = ["tests/dummy_users.json"]
+    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json"]
 
     def test_unmatch_valid_1(self):
         """ Confirms user_1 can unmatch match """
-        _ = Match.objects.create_match(1, 2)
         user = User.objects.get(pk=1)
 
         factory = APIRequestFactory()
@@ -71,7 +72,6 @@ class ModelViewsTest(TestCase):
 
     def test_unmatch_valid_2(self):
         """ Confirms user_2 can unmatch match """
-        _ = Match.objects.create_match(1, 2)
         user = User.objects.get(pk=2)
 
         factory = APIRequestFactory()
@@ -87,7 +87,6 @@ class ModelViewsTest(TestCase):
 
     def test_unmatch_invalid_user(self):
         """ User not in match cannot unmatch """
-        _ = Match.objects.create_match(1, 2)
         user = User.objects.get(pk=3)
 
         factory = APIRequestFactory()
