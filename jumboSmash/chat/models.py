@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from users.models import CustomUser as User
 
@@ -37,17 +37,17 @@ class Match(models.Model):
 
 
 class MessageManager(models.Manager):
-    def create_message(self, match_id, sender_id, content):
+    def create_message(self, match, sender, content):
         """creates a message object."""
-        match = Match.objects.get(pk=match_id)
-        sender = User.objects.get(pk=sender_id)
-        # there should be an error if sender is not user_1 or user_2 of match
-        # should be checked for at a higher level?
         message = self.model(
-            match=match, sender=sender, content=content, sent=datetime.now()
+            match=match, sender=sender, content=content, sent=timezone.now()
         )
         message.save()
         return message
+
+    def list_messages(self, match):
+        """Returns a QuerySet of all messages for a given match ordered by time sent."""
+        return self.filter(match=match).order_by('sent')
 
 
 class Message(models.Model):
