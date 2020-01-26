@@ -23,3 +23,7 @@ class MessageManagerTest(TestCase):
         self.assertEqual(list_m[0].match.id, 1)
         self.assertEqual(list_m[1].match.id, 1)
 
+        #assert delivered by order it is sent
+        self.assertEqual(list_m[0].id, 1)
+        self.assertEqual(list_m[1].id, 2)
+
