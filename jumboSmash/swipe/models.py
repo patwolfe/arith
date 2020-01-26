@@ -28,7 +28,7 @@ class InteractionManager(models.Manager):
             try:
                 complement = self.get(swiper=swiped_on, swiped_on=swiper)
                 if complement.smash:
-                    Match.objects.create_match(swiper.id, swiped_on.id)
+                    Match.objects.create_match(swiper, swiped_on)
             except:
                 pass
         else:
