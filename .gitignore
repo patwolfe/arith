@@ -103,5 +103,17 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# Misc
-*.DS_Store
+# Node stuff
+node_modules
+.expo
+__generated__
+*~
+
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# For MacOS
+.DS_Store
+
+

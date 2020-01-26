@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "users",
     "chat",
     "matches",
+    "swipe",
 ]
 
 MIDDLEWARE = [
