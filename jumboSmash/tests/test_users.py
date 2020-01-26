@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+
 class UsersManagersTests(TestCase):
     def test_create_user(self):
         User = get_user_model()
@@ -40,7 +41,7 @@ class UsersManagersTests(TestCase):
 
 
 class UserRetrievalTests(TestCase):
-    fixtures = ['users/dummy_data.json']
+    fixtures = ["tests/dummy_users.json"]
 
     def test_email_in_db(self):
         User = get_user_model()
