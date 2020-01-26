@@ -8,12 +8,14 @@ import TabBarIcon from '../components/TabBarIcon';
 // Screens
 import ChatListScreen from '../screens/ChatListScreen/ChatListScreen';
 import ChatScreen from '../screens/ChatScreen/ChatScreen';
+import CreateProfileScreen from '../screens/CreateProfileScreen/CreateProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import EntryScreen from '../screens/EntryScreen/EntryScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import MatchFeedScreen from '../screens/MatchFeedScreen/MatchFeedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen'
+import RegisterScreen from '../screens/RegisterScreen/RegisterScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 import VerifyScreen from '../screens/VerifyScreen/VerifyScreen';
 
 const config = Platform.select({
@@ -114,15 +116,11 @@ ChatStack.path = '';
 
 const EntryStack = createStackNavigator(
   {
-    Entry: {
-      screen: EntryScreen,
-    },
-    SignIn: {
-      screen: LoginScreen,
-    },
-    Verify: {
-      screen: VerifyScreen,
-    },
+    Entry: EntryScreen,
+    Login: LoginScreen,
+    Verify: VerifyScreen,
+    Register: RegisterScreen,
+    CreateProfile: CreateProfileScreen
   },
   {
     initialRouteName: 'Entry',
