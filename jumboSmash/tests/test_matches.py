@@ -43,13 +43,30 @@ class ModelManagerTests(TestCase):
         _ = Match.objects.create_match(user_3, user_1)
         _ = Match.objects.create_match(user_3, user_2)
 
-        matches = list(Match.objects.list_matches(1))
+        matches = Match.objects.list_matches(1)
 
         self.assertEqual(len(matches), 2)
 
-        self.assertEqual(matches[0].id, 1)
+        # Confirm matches are the ones we expect
+        matches.get(user_2=2)
+        matches.get(user_1=3)
 
-        self.assertEqual(matches[1].id, 2)
+    def test_list_unmatch(self):
+        """ Confirms list_matches does not return unmatched matches"""
+        user_1 = User.objects.get(pk=1)
+        user_2 = User.objects.get(pk=2)
+        user_3 = User.objects.get(pk=3)
+        _ = Match.objects.create_match(user_1, user_2)
+        to_unmatch = Match.objects.create_match(user_3, user_1)
+        _ = Match.objects.create_match(user_3, user_2)
+        unmatched = Match.objects.unmatch(to_unmatch)
+
+        matches = Match.objects.list_matches(1)
+
+        self.assertEqual(len(matches), 1)
+
+        # Confirm matches are the ones we expect
+        matches.get(user_2=2)
 
 
 class ModelViewsTest(TestCase):
