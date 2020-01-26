@@ -117,3 +117,5 @@ yarn.lock
 .DS_Store
 
 
+# Misc
+*.DS_Store
