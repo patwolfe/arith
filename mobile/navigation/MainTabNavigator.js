@@ -10,12 +10,35 @@ import ChatListScreen from '../screens/ChatListScreen/ChatListScreen';
 import ChatScreen from '../screens/ChatScreen/ChatScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import EntryScreen from '../screens/EntryScreen/EntryScreen';
-import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import MatchFeedScreen from '../screens/MatchFeedScreen/MatchFeedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen'
 import VerifyScreen from '../screens/VerifyScreen/VerifyScreen';
+
+// Code preserved so that it may be copied.
+// const HomeStack = createStackNavigator(
+//   {
+//     Home: HomeScreen,
+//   },
+//   config
+// );
+
+// HomeStack.navigationOptions = {
+//   tabBarLabel: 'Home',
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={
+//         Platform.OS === 'ios'
+//           ? `ios-information-circle${focused ? '' : '-outline'}`
+//           : 'md-information-circle'
+//       }
+//     />
+//   ),
+// };
+
+// HomeStack.path = '';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -46,29 +69,6 @@ ProfileStack.navigationOptions = {
 };
 
 ProfileStack.path = '';
-
-const HomeStack = createStackNavigator(
-  {
-    Home: HomeScreen,
-  },
-  config
-);
-
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
-    />
-  ),
-};
-
-HomeStack.path = '';
 
 const MatchStack = createStackNavigator(
   {
@@ -171,12 +171,11 @@ EntryStack.navigationOptions = {
 ChatStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
+  EntryStack,
   ProfileStack,
-  HomeStack,
   MatchStack,
   SettingsStack,
   ChatStack,
-  EntryStack,
 });
 
 tabNavigator.path = '';
