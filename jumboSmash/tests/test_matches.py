@@ -20,6 +20,15 @@ class ModelManagerTests(TestCase):
         self.assertFalse(match.top5)
         self.assertFalse(match.unmatched)
 
+    def test_make_match_invalid(self):
+        """ Matches valid users """
+        user_1 = User.objects.get(pk=1)
+        user_2 = User.objects.get(pk=2)
+        match = Match.objects.create_match(user_1, user_2)
+
+        with self.assertRaises(Exception):
+            match = Match.objects.create_match(user_2, user_1)
+
     def test_unmatch_valid(self):
         """ Unmatches valid match """
         user_1 = User.objects.get(pk=1)
@@ -49,7 +58,7 @@ class ModelManagerTests(TestCase):
 
         # Confirm matches are the ones we expect
         matches.get(user_2=2)
-        matches.get(user_1=3)
+        matches.get(user_2=3)
 
     def test_list_unmatch(self):
         """ Confirms list_matches does not return unmatched matches"""

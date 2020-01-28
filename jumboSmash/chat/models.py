@@ -6,7 +6,9 @@ from users.models import CustomUser as User
 class MatchManager(models.Manager):
     def create_match(self, user_1, user_2):
         """ Makes a match between the two given users """
-        match = self.model(user_1=user_1, user_2=user_2)
+        users = [user_1, user_2]
+        users.sort(key=lambda x: x.id)
+        match = self.model(user_1=users[0], user_2=users[1])
         match.save()
         return match
 
@@ -34,6 +36,7 @@ class Match(models.Model):
 
     class Meta:
         verbose_name_plural = "Matches"
+        unique_together = [["user_1", "user_2"]]
 
 
 class MessageManager(models.Manager):
@@ -47,7 +50,7 @@ class MessageManager(models.Manager):
 
     def list_messages(self, match):
         """Returns a QuerySet of all messages for a given match ordered by time sent."""
-        return self.filter(match=match).order_by('sent')
+        return self.filter(match=match).order_by("sent")
 
 
 class Message(models.Model):

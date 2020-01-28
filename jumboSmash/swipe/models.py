@@ -46,3 +46,6 @@ class Interaction(models.Model):
     skip_count = models.PositiveIntegerField(default=0)
 
     objects = InteractionManager()
+
+    class Meta:
+        unique_together = [["swiper", "swiped_on"]]
