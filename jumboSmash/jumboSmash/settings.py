@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     "rest_framework",
     # apps
     "users",
-    "matches",
     "swipe",
+    "chat",
 ]
 
 MIDDLEWARE = [
