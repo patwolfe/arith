@@ -22,5 +22,6 @@ urlpatterns = [
     path("users/", users.views.CheckUser.as_view()),
     path("finduser/", users.views.RetrieveUser.as_view()),
     path("swipe/", include("swipe.urls")),
-    path("chat/", include("chat.urls"))
+    path("chat/", include("chat.urls")),
+    path("", include("drfpasswordless.urls")),
 ]
