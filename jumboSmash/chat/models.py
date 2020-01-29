@@ -8,7 +8,13 @@ class MatchManager(models.Manager):
         """ Makes a match between the two given users """
         users = [user_1, user_2]
         users.sort(key=lambda x: x.id)
-        match = self.model(user_1=users[0], user_2=users[1])
+        match = self.create(user_1=users[0], user_2=users[1])
+        return match
+
+    def create_top5_match(self, user_1, user_2):
+        """ Makes a top5 match between the two given users """
+        match = self.create_match(user_1, user_2)
+        match.top5 = True
         match.save()
         return match
 
@@ -18,11 +24,10 @@ class MatchManager(models.Manager):
         match.save()
         return match
 
-    def list_matches(self, user_id):
+    def list_matches(self, user):
         """ Returns a QuerySet of all matches a user is part of """
         return self.filter(
-            (models.Q(user_1=user_id) | models.Q(user_2=user_id))
-            & models.Q(unmatched=False)
+            (models.Q(user_1=user) | models.Q(user_2=user)) & models.Q(unmatched=False)
         )
 
 
