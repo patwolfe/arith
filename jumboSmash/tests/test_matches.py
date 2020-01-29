@@ -21,7 +21,7 @@ class ModelManagerTests(TestCase):
         self.assertFalse(match.unmatched)
 
     def test_make_match_invalid(self):
-        """ Matches valid users """
+        """ Attempt to double-create a match """
         user_1 = User.objects.get(pk=1)
         user_2 = User.objects.get(pk=2)
         match = Match.objects.create_match(user_1, user_2)
@@ -52,7 +52,7 @@ class ModelManagerTests(TestCase):
         _ = Match.objects.create_match(user_3, user_1)
         _ = Match.objects.create_match(user_3, user_2)
 
-        matches = Match.objects.list_matches(1)
+        matches = Match.objects.list_matches(user_1)
 
         self.assertEqual(len(matches), 2)
 
@@ -70,12 +70,19 @@ class ModelManagerTests(TestCase):
         _ = Match.objects.create_match(user_3, user_2)
         unmatched = Match.objects.unmatch(to_unmatch)
 
-        matches = Match.objects.list_matches(1)
+        matches = Match.objects.list_matches(user_1)
 
         self.assertEqual(len(matches), 1)
 
         # Confirm matches are the ones we expect
         matches.get(user_2=2)
+
+    def test_top5(self):
+        """ Confirms create_top5_match makes a top5 match """
+        user_1 = User.objects.get(pk=1)
+        user_2 = User.objects.get(pk=2)
+        match = Match.objects.create_top5_match(user_1, user_2)
+        self.assertTrue(match.top5)
 
 
 class ModelViewsTest(TestCase):
