@@ -46,3 +46,24 @@ class Interaction(models.Model):
     skip_count = models.PositiveIntegerField(default=0)
 
     objects = InteractionManager()
+
+
+class BlockManager(models.Manager):
+    def block(self, blocker, blocked):
+        "Creates block"
+        block = self.create(blocker=blocker, blocked=blocked)
+        block.save()
+        return block
+
+    def exists_block(self, user_1, user_2):
+        "Returns true if there exists a block in either direction between given users"
+        return self.filter(
+            models.Q(blocker=user_1, blocked=user_2)
+            | models.Q(blocker=user_2, blocked=user_1)
+        ).exists()
+
+
+class Block(models.Model):
+    blocker = models.ForeignKey(User, related_name="blocker", on_delete=models.CASCADE)
+    blocked = models.ForeignKey(User, related_name="blocked", on_delete=models.CASCADE)
+    objects = BlockManager()
