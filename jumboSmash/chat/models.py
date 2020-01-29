@@ -4,24 +4,31 @@ from users.models import CustomUser as User
 
 
 class MatchManager(models.Manager):
-    def create_match(self, user_id_1, user_id_2):
+    def create_match(self, user_1, user_2):
         """ Makes a match between the two given users """
-        user_1 = User.objects.get(pk=user_id_1)
-        user_2 = User.objects.get(pk=user_id_2)
-        match = self.model(user_1=user_1, user_2=user_2)
+        users = [user_1, user_2]
+        users.sort(key=lambda x: x.id)
+        match = self.create(user_1=users[0], user_2=users[1])
+        return match
+
+    def create_top5_match(self, user_1, user_2):
+        """ Makes a top5 match between the two given users """
+        match = self.create_match(user_1, user_2)
+        match.top5 = True
         match.save()
         return match
 
-    def unmatch(self, match_id):
+    def unmatch(self, match):
         """ Marks given match as 'unmatched' """
-        match = self.get(pk=match_id)
         match.unmatched = True
         match.save()
         return match
 
-    def list_matches(self, user_id):
+    def list_matches(self, user):
         """ Returns a QuerySet of all matches a user is part of """
-        return self.filter(models.Q(user_1=user_id) | models.Q(user_2=user_id))
+        return self.filter(
+            (models.Q(user_1=user) | models.Q(user_2=user)) & models.Q(unmatched=False)
+        )
 
 
 class Match(models.Model):
@@ -34,6 +41,7 @@ class Match(models.Model):
 
     class Meta:
         verbose_name_plural = "Matches"
+        unique_together = [["user_1", "user_2"]]
 
 
 class MessageManager(models.Manager):
@@ -47,7 +55,7 @@ class MessageManager(models.Manager):
 
     def list_messages(self, match):
         """Returns a QuerySet of all messages for a given match ordered by time sent."""
-        return self.filter(match=match).order_by('sent')
+        return self.filter(match=match).order_by("sent")
 
 
 class Message(models.Model):
