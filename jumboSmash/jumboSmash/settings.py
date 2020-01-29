@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # installed
     "rest_framework",
+    "rest_framework.authtoken",
+    "drfpasswordless",
     # apps
     "users",
     "swipe",
@@ -76,6 +78,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "jumboSmash.wsgi.application"
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    )
+}
+
+PASSWORDLESS_AUTH = {
+    "PASSWORDLESS_AUTH_TYPES": ["EMAIL"],
+    "PASSWORDLESS_EMAIL_NOREPLY_ADDRESS": "noreply@example.com",
+    "PASSWORDLESS_REGISTER_NEW_USERS": False,
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -108,3 +121,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# Mailhog
+EMAIL_HOST = "127.0.0.1"
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_TLS = False
+
+# Uncomment this line to send emails to the console not mailhog
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
