@@ -8,9 +8,9 @@ export default function AddPhoto(props) {
   const [pic, setPic] = useState('none');
   let picDiv = null;
   if (pic === 'none') {
-    picDiv = (<Text>#{props.i}</Text>);
+    picDiv = (<Text style={styles.content}>#{props.i}</Text>);
   } else {
-    picDiv = (<Image style={{height: '100%', width: '100%'}} source={{uri: pic}} />);
+    picDiv = (<Image style={styles.content} source={{uri: pic}} />);
   }
   return (
     <TouchableOpacity style={styles.photoBox}
@@ -36,11 +36,15 @@ async function selectPhoto(setPic) {
 
 const styles = StyleSheet.create({
   photoBox: {
-    width: '30%',
-    height: '40%',
+    width: '35%',
     marginTop: '3%',
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: 'black'
+    borderColor: 'black',
+    aspectRatio: 1
+  },
+  content: {
+    height: '100%',
+    width: '100%'
   }
 });
