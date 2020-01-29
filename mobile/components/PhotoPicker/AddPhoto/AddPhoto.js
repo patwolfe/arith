@@ -5,11 +5,33 @@ import {
   TouchableOpacity } from 'react-native';
 
 export default function AddPhoto(props) {
+  const [pic, setPic] = useState('none');
+  let picDiv = null;
+  if (pic === 'none') {
+    picDiv = (<Text>#{props.i}</Text>);
+  } else {
+    picDiv = (<Image style={{height: '100%', width: '100%'}} source={{uri: pic}} />);
+  }
   return (
-    <TouchableOpacity style={styles.photoBox}>
-      <Text>#{props.i}</Text>
+    <TouchableOpacity style={styles.photoBox}
+      onPress={() => selectPhoto(setPic)}>
+      {picDiv}
     </TouchableOpacity>
   );
+}
+
+async function selectPhoto(setPic) {
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [1,1],
+  });
+
+  if (result.cancelled === true) {
+    // leave state unchanged
+    return;    
+  }
+  setPic(result.uri);
 }
 
 const styles = StyleSheet.create({
