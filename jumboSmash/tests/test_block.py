@@ -42,6 +42,7 @@ class BlockManagerTests(TestCase):
 
         self.assertFalse(Block.objects.exists_block(user_1, user_2))
 
+
 class BlockViewsTest(TestCase):
     fixtures = ["tests/dummy_users.json"]
 
@@ -55,7 +56,6 @@ class BlockViewsTest(TestCase):
         view = BlockView.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
-        self.assertTrue( Block.objects.exists_block(user, User.objects.get(pk=2)))
-
+        self.assertTrue(Block.objects.exists_block(user, User.objects.get(pk=2)))

@@ -16,7 +16,7 @@ class Unmatch(APIView):
             match = serializer.validated_data["match"]
             if match.user_1.pk == current_user_id or match.user_2.pk == current_user_id:
                 Match.objects.unmatch(match)
-                return Response("Unmatched")
+                return Response("Unmatched", status=status.HTTP_201_CREATED)
             else:
                 return Response(
                     "You are not in this match", status=status.HTTP_403_FORBIDDEN
