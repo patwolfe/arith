@@ -45,7 +45,7 @@ class SendMessageViewsTest(TestCase):
         view = SendMessage.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["match"], 1)
         self.assertEqual(response.data["sender"], 1)
         self.assertIsNotNone(response.data["sent"])
