@@ -35,7 +35,7 @@ class SendMessage(APIView):
             if not match.unmatched and (match.user_1 == request.user or match.user_2 == request.user):
                 message = Message.objects.create_message(match, request.user, content)
                 serializer = MessageSerializer(message)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response("User does not have access to this match.", status=status.HTTP_403_FORBIDDEN)
         except Match.DoesNotExist:
