@@ -8,7 +8,7 @@ from users.models import CustomUser as User
 
 
 class Skip(APIView):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = UserIdSerializer(data=request.data)
