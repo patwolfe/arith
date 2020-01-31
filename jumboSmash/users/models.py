@@ -15,14 +15,14 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_staffuser(self, email, password):
-        user = self.create_user(email, password)
+        user = self.create_user(email)
         user.set_password(password)
         user.is_staff = True
         user.save()
         return user
 
     def create_superuser(self, email, password):
-        user = self.create_user(email, password)
+        user = self.create_user(email)
         user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
