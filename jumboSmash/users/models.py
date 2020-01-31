@@ -31,9 +31,21 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    INACTIVE = "I"
+    ACTIVE   = "A"
+    BANNED   = "B"
+    STATUS_CHOICES = (
+        (INACTIVE, "Inactive"),
+        (ACTIVE, "Active"),
+        (BANNED, "Bannned")
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = None
     email = models.EmailField(("email address"), unique=True)
+    preferred_name = models.CharField(max_length=30)
+    discoverable = models.BooleanField(default=False)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
@@ -42,6 +54,30 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email + " " + str(self.id)
+
+
+class ProfileManager(models.Manager):
+    pass
+
+
+class Profile(models.Model):
+    user = models.ForeignKey(User, related_name="profile", on_delete=models.CASCADE)
+    bio = models.TextField()
+
+    objects = ProfileManager()
+
+
+class PhotoManager(models.Manager):
+    pass
+
+
+class Photo(models.Model):
+    user = models.ForeignKey(User, related_name="photo", on_delete=models.CASCADE)
+    path = models.TextField()
+    approved = models.BooleanField(default=False)
+
+    objects = PhotoManager()
+
 
 """
 A user initially has no profile and creates a profile for approval
@@ -61,50 +97,57 @@ Users upload photos using presigned URLs
 
 """
 
-class ProfileManager(models.Manager):
-    def edit(self, user_id, profile_data):
-        print(profile_data)
-        if user_id != str(profile_data["user"].id):
-            print("User %s tried editing profile of user %s." % (user_id, profile_data["user"].id))
-            return
 
-        defaults = {
-            "user": profile_data["user"],
-            "display_name": profile_data["display_name"],
-            "bio": profile_data["bio"],
-            "approved": False,
-            "photo_urls": profile_data["photo_urls"]
-        }
-        profile, created = self.update_or_create(defaults=defaults, user=user_id, approved=False)
-        return profile
+# class ProfileManager(models.Manager):
+#     def edit(self, user_id, profile_data):
+#         print(profile_data)
+#         if user_id != str(profile_data["user"].id):
+#             print("User %s tried editing profile of user %s." % (user_id, profile_data["user"].id))
+#             return
 
-class Profile(models.Model):
-    user = models.ForeignKey(User, related_name="profile", on_delete=models.CASCADE)
-    display_name = models.CharField(max_length=100)
-    bio = models.TextField()
-    approved = models.BooleanField(default=False, null=True)
-    photo_urls = models.TextField()
+#         defaults = {
+#             "user": profile_data["user"],
+#             "display_name": profile_data["display_name"],
+#             "bio": profile_data["bio"],
+#             "approved": False,
+#             "photo_urls": profile_data["photo_urls"]
+#         }
+#         profile, created = self.update_or_create(defaults=defaults, user=user_id, approved=False)
+#         return profile
 
-    objects = ProfileManager()
+# class Profile(models.Model):
+#     user = models.ForeignKey(User, related_name="profile", on_delete=models.CASCADE)
+#     display_name = models.CharField(max_length=100)
+#     bio = models.TextField()
+#     approved = models.BooleanField(default=False, null=True)
+#     photo_urls = models.TextField()
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["user", "approved"], name="")
-        ]
+#     objects = ProfileManager()
 
-    def validate_unique(self, exclude=None):
-        if self.approved:
-            try:
-                old_profile = Profile.objects.get(user=self.user.id, approved=self.approved)
-                old_profile.approved = None
-                old_profile.save()
-            except ObjectDoesNotExist:
-                pass
-            except MultipleObjectsReturned:
-                raise ValidationError("Multiple approved profiles found!")
-        else:
-            super(Profile, self).validate_unique(exclude)
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(fields=["user", "approved"], name="")
+#         ]
 
-    def __str__(self):
-        return "display_name: %s\nbio: %s\napproved: %s\nphoto_urls: %s\n" % (self.display_name, self.bio, self.approved, self.photo_urls)
+#     def validate_unique(self, exclude=None):
+#         if self.approved:
+#             try:
+#                 old_profile = Profile.objects.get(user=self.user.id, approved=self.approved)
+#                 old_profile.approved = None
+#                 old_profile.save()
+#             except ObjectDoesNotExist:
+#                 pass
+#             except MultipleObjectsReturned:
+#                 raise ValidationError("Multiple approved profiles found!")
+#         else:
+#             super(Profile, self).validate_unique(exclude)
+
+#     def save(self, *args, **kwargs):
+#         print("here")
+#         print(args)
+#         print(kwargs)
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return "display_name: %s\nbio: %s\napproved: %s\nphoto_urls: %s\n" % (self.display_name, self.bio, self.approved, self.photo_urls)
 

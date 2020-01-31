@@ -1,15 +1,20 @@
 from rest_framework import serializers
-from users.models import User, Profile
+from users.models import User, Profile, Photo
 
-class SimpleUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "first_name", "last_name"]
+        fields = ["id", "email", "first_name", "last_name", "preferred_name", "discoverable", "status"]
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ["user", "display_name", "bio", "approved", "photo_urls"]
+        fields = ["user", "bio"]
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = ["user", "path", "approved"]
 
 class UserIdSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
