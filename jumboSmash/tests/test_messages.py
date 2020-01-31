@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.utils.dateparse import parse_date
 from users.models import CustomUser as User
 from rest_framework.test import force_authenticate, APIRequestFactory
 from chat.models import Message, Match
