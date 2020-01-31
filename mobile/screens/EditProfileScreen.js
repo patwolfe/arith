@@ -7,13 +7,14 @@ import {
   View,
   Image,
 } from 'react-native';
-import user_profile from '../test_data/UserProfile';
+import profiles from '../test_data/UserProfiles';
 
 export default function ProfileScreen() {
   /**
    * Go ahead and delete ExpoConfigView and replace it with your content;
    * we just wanted to give you a quick view of your config.
    */
+  let user_profile = profiles['patrick'];
   let fields = [];
   for (const field in user_profile.questions) {
     fields.push(
