@@ -1,28 +1,39 @@
 from django.db import models, transaction
 from django.db.models import F
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, ValidationError
+from django.core.exceptions import (
+    ObjectDoesNotExist,
+    MultipleObjectsReturned,
+    ValidationError,
+)
 
 import datetime
 import uuid
 
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def create_user(self, email, password, first_name, last_name):
-        user = self.model(email=self.normalize_email(email), first_name=first_name, last_name=last_name)
-        user.set_password(password)
+    def create_user(self, email, first_name, last_name):
+        user = self.model(
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name,
+        )
+        user.set_unusable_password()
         user.save()
         return user
 
     def create_staffuser(self, email, password, first_name, last_name):
-        user = self.create_user(email, password, first_name, last_name)
+        user = self.create_user(email, first_name, last_name)
+        user.set_password(password)
         user.is_staff = True
         user.save()
         return user
 
     def create_superuser(self, email, password, first_name, last_name):
-        user = self.create_user(email, password, first_name, last_name)
+        user = self.create_user(email, first_name, last_name)
+        user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
         user.save()
@@ -55,7 +66,7 @@ class UserManager(BaseUserManager):
             user.discoverable = True
 
         Photo.objects.approve(user_id)
-        
+
         user.needs_review = False
         user.save()
 
@@ -68,7 +79,7 @@ class UserManager(BaseUserManager):
             Photo.objects.reject(user_id)
         elif user.status == User.ACTIVE:
             Photo.objects.reject(user_id)
-        
+
         user.needs_review = False
         user.save()
 
@@ -83,15 +94,12 @@ class UserManager(BaseUserManager):
         user.status = user.last_status
         user.save()
 
+
 class User(AbstractUser):
     INACTIVE = "I"
-    ACTIVE   = "A"
-    BANNED   = "B"
-    STATUS_CHOICES = (
-        (INACTIVE, "Inactive"),
-        (ACTIVE, "Active"),
-        (BANNED, "Bannned")
-    )
+    ACTIVE = "A"
+    BANNED = "B"
+    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (BANNED, "Bannned"))
 
     username = None
     email = models.EmailField(("email address"), unique=True)
@@ -101,7 +109,9 @@ class User(AbstractUser):
     discoverable = models.BooleanField(default=False)
     needs_review = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
-    last_status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
+    last_status = models.CharField(
+        max_length=1, choices=STATUS_CHOICES, default=INACTIVE
+    )
     id_photo = models.URLField(blank=True, null=True)
 
     USERNAME_FIELD = "email"
@@ -112,15 +122,16 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-class ProfileManager(models.Manager):
 
+class ProfileManager(models.Manager):
     def edit(self, user_id, data):
         profile, _ = self.get_or_create(user_id=user_id)
         profile.bio = data["bio"]
         profile.save()
-    
+
     def reject(self, user_id):
         self.filter(user_id=user_id).delete()
+
 
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name="profile", on_delete=models.CASCADE)
@@ -132,13 +143,10 @@ class Profile(models.Model):
         constraints = [models.UniqueConstraint(fields=["user"], name="unique_profile")]
 
     def get_profile(self):
-        return {
-            'user': self.user,
-            'bio': self.bio
-        }
+        return {"user": self.user, "bio": self.bio}
+
 
 class PhotoManager(models.Manager):
-
     def get_photos(self, user_id):
         photos = Photo.objects.filter(user_id=user_id)
         approved_photo = None
@@ -177,11 +185,16 @@ class PhotoManager(models.Manager):
             unapproved_photo.full_clean()
             unapproved_photo.save()
         else:
-            print("Tried approving photos for user but no unapproved photos existed".format(user_id))
+            print(
+                "Tried approving photos for user but no unapproved photos existed".format(
+                    user_id
+                )
+            )
 
     def reject(self, user_id):
         # TODO trigger email/push notification
         self.filter(user_id=user_id, approved=False).delete()
+
 
 class Photo(models.Model):
     user = models.ForeignKey(User, related_name="photo", on_delete=models.CASCADE)
@@ -196,14 +209,24 @@ class Photo(models.Model):
     objects = PhotoManager()
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["user", "approved"], name="unique_photo")]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "approved"], name="unique_photo")
+        ]
 
     def __str__(self):
-        return "User {} Photos ({})".format(self.user, "Approved" if self.approved else "Pending")
+        return "User {} Photos ({})".format(
+            self.user, "Approved" if self.approved else "Pending"
+        )
 
     def get_photos(self):
         return {
-            "photos": [self.photo0, self.photo1, self.photo2, self.photo3, self.photo4, self.photo5],
-            "approved": self.approved
+            "photos": [
+                self.photo0,
+                self.photo1,
+                self.photo2,
+                self.photo3,
+                self.photo4,
+                self.photo5,
+            ],
+            "approved": self.approved,
         }
-
