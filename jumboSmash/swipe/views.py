@@ -2,11 +2,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from users.serializers import UserIdSerializer
+from users.serializers import UserIdSerializer, UserSerializer
+from .models import Interaction, Deck, Swipable
+from users.models import CustomUser as User
 
 
 class Skip(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = UserIdSerializer(data=request.data)
@@ -34,15 +36,18 @@ class Smash(APIView):
 class GetNext(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-        return Response("Not implemented")
+    def get(self, request):
+        deck = Swipable.objects.get_next(request.user)
+        message = UserSerializer(deck, many=True)
+        return Response(message.data)
 
 
 class Refresh(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        return Response("Not implemented")
+        Swipable.objects.build(request.user)
+        return Response("Refreshed the deck, swipe away!")
 
 
 class Block(APIView):
