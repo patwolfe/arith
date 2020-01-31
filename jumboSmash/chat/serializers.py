@@ -9,4 +9,4 @@ class MatchIdSerializer(serializers.Serializer):
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = "__all__"

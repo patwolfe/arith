@@ -39,7 +39,7 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_user_in_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.post("/send/", {"match": 1, "content": "hello"}, format="json")
+        request = factory.post("chat/send/", {"match": 1, "content": "hello"}, format="json")
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -52,7 +52,7 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_user_not_in_match(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.post("/send/", {"match": 1, "content": "hello"}, format="json")
+        request = factory.post("chat/send/", {"match": 1, "content": "hello"}, format="json")
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -62,7 +62,7 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_unmatched(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.post("/send/", {"match": 2, "content": "hello"}, format="json")
+        request = factory.post("chat/send/", {"match": 2, "content": "hello"}, format="json")
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -72,7 +72,7 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_nonexistent_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.post("/send/", {"match": 4, "content": "hello"}, format="json")
+        request = factory.post("chat/send/", {"match": 4, "content": "hello"}, format="json")
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -82,7 +82,7 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_match_key_missing(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.post("/send/", {}, format="json")
+        request = factory.post("chat/send/", {}, format="json")
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -96,7 +96,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_user_in_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.get("/convo/", {"match": 1}, format="json")
+        request = factory.get("chat/convo/", {"match": 1}, format="json")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -111,7 +111,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_user_not_in_match(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.get("/convo/", {"match": 1}, format="json")
+        request = factory.get("chat/convo/", {"match": 1}, format="json")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -121,7 +121,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_unmatched(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.get("/convo/", {"match": 2}, format="json")
+        request = factory.get("chat/convo/", {"match": 2}, format="json")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -131,7 +131,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_nonexistent_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.get("/convo/", {"match": 6}, format="json")
+        request = factory.get("chat/convo/", {"match": 6}, format="json")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -141,7 +141,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_keyword_missing(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.get("/convo/", {}, format="json")
+        request = factory.get("chat/convo/", {}, format="json")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)

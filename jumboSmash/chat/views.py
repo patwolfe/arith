@@ -30,14 +30,19 @@ class SendMessage(APIView):
 
     def post(self, request):
         try:
-            match = Match.objects.get(pk=request.data['match'])
-            content = request.data['content']
-            if not match.unmatched and (match.user_1 == request.user or match.user_2 == request.user):
+            match = Match.objects.get(pk=request.data["match"])
+            content = request.data["content"]
+            if not match.unmatched and (
+                match.user_1 == request.user or match.user_2 == request.user
+            ):
                 message = Message.objects.create_message(match, request.user, content)
                 serializer = MessageSerializer(message)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                return Response("User does not have access to this match.", status=status.HTTP_403_FORBIDDEN)
+                return Response(
+                    "User does not have access to this match.",
+                    status=status.HTTP_403_FORBIDDEN,
+                )
         except Match.DoesNotExist:
             return Response("Invalid request", status=status.HTTP_404_NOT_FOUND)
         except KeyError:
@@ -53,12 +58,17 @@ class GetConversation(APIView):
         if match_id:
             try:
                 match = Match.objects.get(pk=match_id)
-                if not match.unmatched and (match.user_1 == request.user or match.user_2 == request.user):
+                if not match.unmatched and (
+                    match.user_1 == request.user or match.user_2 == request.user
+                ):
                     conversation = Message.objects.list_messages(match)
                     serialized = MessageSerializer(conversation, many=True)
                     return Response(serialized.data, status=status.HTTP_200_OK)
                 else:
-                    return Response("User does not have access to this conversation.", status=status.HTTP_403_FORBIDDEN)
+                    return Response(
+                        "User does not have access to this conversation.",
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
             except Match.DoesNotExist:
                 return Response("Invalid match.", status=status.HTTP_404_NOT_FOUND)
         else:
