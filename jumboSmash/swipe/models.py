@@ -46,3 +46,50 @@ class Interaction(models.Model):
     skip_count = models.PositiveIntegerField(default=0)
 
     objects = InteractionManager()
+
+
+class Deck(models.Manager):
+    def build(self, curr_user):
+        "(re)Builds the deck for the active user"
+        # TODO: exclude inactive users here
+        all_users = User.objects.exclude(id__exact=curr_user.id).values("id")
+        already_smashed = Interaction.objects.filter(
+            swiper__exact=curr_user, smash__exact=True
+        ).values("swiped_on")
+
+        deck = all_users.difference(already_smashed)
+        for swipable in deck:
+            deck_entry, _ = self.get_or_create(
+                active_user=curr_user, should_see=User.objects.get(id=swipable["id"])
+            )
+            deck_entry.seen = False
+            deck_entry.save()
+
+    def get_next(self, curr_user):
+        "Returns a list of the next 10 users curr_user hasn't seen"
+        next_cards = []
+        swipable = self.all().filter(active_user=curr_user, seen=False)
+        index = 0
+        while len(next_cards) < 10 and index < len(swipable):
+            if swipable[index].swipe_allowed():
+                next_cards.append(swipable[index].should_see)
+                swipable[index].seen = True
+                swipable[index].save()
+            index += 1
+        return next_cards
+
+
+class Swipable(models.Model):
+    active_user = models.ForeignKey(
+        User, related_name="active_user", on_delete=models.CASCADE
+    )
+    should_see = models.ForeignKey(
+        User, related_name="should_see", on_delete=models.CASCADE
+    )
+    seen = models.BooleanField(default=False)
+
+    objects = Deck()
+
+    # TODO: check blocked/banned tables
+    def swipe_allowed(self):
+        return True
