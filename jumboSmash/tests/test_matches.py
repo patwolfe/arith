@@ -1,7 +1,7 @@
 from django.test import TestCase
 from chat.models import Match
 from rest_framework.test import force_authenticate, APIRequestFactory
-from users.models import CustomUser as User
+from users.models import User
 from chat.views import Unmatch
 
 
