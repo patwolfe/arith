@@ -37,7 +37,6 @@ async function selectPhoto(setPic) {
 const styles = StyleSheet.create({
   photoBox: {
     width: '35%',
-    marginTop: '3%',
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: 'black',
