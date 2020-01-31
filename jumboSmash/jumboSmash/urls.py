@@ -21,5 +21,5 @@ urlpatterns = [
     path("user/", include("users.urls")),
     path("swipe/", include("swipe.urls")),
     path("chat/", include("chat.urls")),
-    path("", include("drfpasswordless.urls")),
+    path("auth/", include("auth.urls")),
 ]
