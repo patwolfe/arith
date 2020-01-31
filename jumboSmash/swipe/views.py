@@ -38,17 +38,19 @@ class Top5(APIView):
     def post(self, request):
         serializer = UserIdSerializer(data=request.data, many=True)
         if serializer.is_valid():
-            top5_users = serializer.validated_data
+            top5_users_raw = serializer.validated_data
             if Interaction.objects.filter(swiper=request.user, top5=True).exists():
                 return Response(
                     "User already has top5 requests", status=status.HTTP_400_BAD_REQUEST
                 )
-            elif len(top5_users) > 5:
+            elif len(top5_users_raw) > 5:
                 return Response(
                     "Cannot submit more than 5 top5 requests",
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             else:
+                top5_users = []
+                [top5_users.append(x) for x in top5_users_raw if x not in top5_users]
                 for user in top5_users:
                     Interaction.objects.top5(request.user, user["user"])
                 return Response("Top5 submitted!", status=status.HTTP_201_CREATED)

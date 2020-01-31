@@ -184,16 +184,14 @@ class InteractionsViewsTest(TestCase):
         factory = APIRequestFactory()
         request = factory.post(
             "swipe/top5/",
-            {
-                "user": [
-                    {"user": 2},
-                    {"user": 3},
-                    {"user": 3},
-                    {"user": 3},
-                    {"user": 3},
-                    {"user": 3},
-                ]
-            },
+            [
+                {"user": 2},
+                {"user": 3},
+                {"user": 3},
+                {"user": 3},
+                {"user": 3},
+                {"user": 3},
+            ],
             format="json",
         )
         force_authenticate(request, user=user)
@@ -201,6 +199,21 @@ class InteractionsViewsTest(TestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 400)
+
+    def test_top5_repeats(self):
+        """ Top5 endpoint ignores repeats"""
+        user = User.objects.get(pk=1)
+
+        factory = APIRequestFactory()
+        request = factory.post(
+            "swipe/top5/", [{"user": 2}, {"user": 2}], format="json",
+        )
+        force_authenticate(request, user=user)
+        view = Top5.as_view()
+        response = view(request)
+        self.assertEqual(response.status_code, 201)
+
+        Interaction.objects.get(swiper=user, swiped_on=2, top5=True)
 
     def test_top5_multiple_requests(self):
         """ Users can only submit one set of top5 requests """
