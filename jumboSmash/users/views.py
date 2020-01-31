@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from users.models import User, Profile
-from users.serializers import SimpleUserSerializer, ProfileSerializer
+from users.serializers import UserSerializer, ProfileSerializer
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 class ListUsers(APIView):
@@ -11,12 +11,12 @@ class ListUsers(APIView):
     """
     def get(self, request):
         queryset = User.objects.all()
-        serializer = SimpleUserSerializer(queryset, many=True)
+        serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
 class GetProfile(APIView):
     """
-    Get a profile for user
+    Get a profile and photos for user
     """
     def get(self, request):
         curr_user_id = str(request.user.id)

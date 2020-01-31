@@ -7,8 +7,8 @@ from django.urls import path
 
 
 class UserAdmin(UserAdmin):
-    add_form = UserCreationForm
-    form = UserChangeForm
+    # add_form = UserCreationForm
+    # form = UserChangeForm
     model = User
     list_display = (
         "email",
@@ -42,7 +42,10 @@ class UserAdmin(UserAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ["user", "display_name", "bio", "approved"]
+    list_display = ["user", "bio"]
+
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ["user", "path", "approved"]
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
