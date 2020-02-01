@@ -35,10 +35,11 @@ class PhotoField(serializers.Field):
         return ret
 
     def to_internal_value(self, data):
+        pass
         # TO DO
-        data = data.strip('rgb(').rstrip(')')
-        red, green, blue = [int(col) for col in data.split(',')]
-        return Color(red, green, blue)
+        # data = data.strip('rgb(').rstrip(')')
+        # red, green, blue = [int(col) for col in data.split(',')]
+        # return Color(red, green, blue)
 
 class ProfileSerializer(serializers.ModelSerializer):
     photos = PhotoField(source="*")
