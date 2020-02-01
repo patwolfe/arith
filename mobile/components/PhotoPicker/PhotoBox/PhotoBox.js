@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StyleSheet,
   Text,
   TouchableOpacity } from 'react-native';
 
-export default function AddPhoto(props) {
+import * as ImagePicker from 'expo-image-picker';
+
+import { getPermissionAsync } from '../../../utils/permissions'
+
+export default function PhotoBox(props) {
   const [pic, setPic] = useState('none');
   let picDiv = null;
   if (pic === 'none') {
@@ -21,6 +25,11 @@ export default function AddPhoto(props) {
 }
 
 async function selectPhoto(setPic) {
+  let status = await getPermissionAsync('Uploading pictures requires camera role access');
+  if (status !== 'granted') {
+    return;
+  }
+
   let result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,

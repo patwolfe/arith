@@ -1,36 +1,40 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { 
   StyleSheet,
   Text, 
   View } from 'react-native';
-import AddPhoto from './AddPhoto/AddPhoto'
 
+import { getPermissionAsync } from '../../utils/permissions'
+import PhotoBox from './PhotoBox/PhotoBox';
 
 export default function PhotoPicker() {
+  useEffect(() => {
+    getPermissionAsync('Uploading pictures requires camera role access');
+  });
   return (
     <View style={styles.photoPickerContainer}>
       <View style={styles.titleContainer}>
         <Text style={styles.titleText}>Add Photos</Text>
       </View>
       <View style={styles.photoBoxesContainer}>
-        {/* {[...Array(2).keys()].map((_, key) => {return <AddPhoto key={key} i={key}/>;})} */}
-        {createAddPhotoRows()}
+        {createPhotoBoxRows()}
       </View>
     </View>
     );
 }
 
-function createAddPhotoRows() {
+function createPhotoBoxRows() {
   let id  = 0;
   return [...Array(3).keys()].map((_, i) => {
     return (
       <View key={i} style={styles.photoBoxRow}> 
         {[...Array(2).keys()].map((_, j) => {
-          return <AddPhoto key={id} i={id++}/>;
+          return <PhotoBox key={id} i={id++}/>;
         })}
       </View>
     );});
 }
+
 
 const styles = StyleSheet.create({
   photoPickerContainer: {
