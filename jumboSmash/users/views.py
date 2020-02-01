@@ -19,6 +19,40 @@ class GetProfile(APIView):
     Get a profile and photos for user
     """
     def get(self, request):
+        user_id = request.query_params.get("id")
+        profile = Profile.objects.get(user=user_id)
+        serializer = ProfileSerializer(profile, context={"request": request})
+        return Response(serializer.data)
+
+class EditProfile(APIView):
+    """
+    Edit profile for currently logged in user
+    """
+    def post(self, request):
+        return Response()
+    #     serializer = ProfileSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         curr_user_id = str(request.user.id)
+    #         user_id = str(serializer.validated_data["user"].id)
+    #         if curr_user_id != user_id:
+    #             print("User %s tried editing profile of user %s." % (curr_user_id, user_id))
+    #             return Response(status=status.HTTP_403_FORBIDDEN)
+
+    #         profile = Profile.objects.edit(curr_user_id, serializer.validated_data)
+    #         return Response(ProfileSerializer(profile).data)
+    #     else:
+    #         print("Bad profile edit request with following errors:")
+    #         print(serializer.errors)
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+"""
+    def get(self, request):
         curr_user_id = str(request.user.id)
         user_id = request.query_params.get("id")
         same_user = curr_user_id == user_id
@@ -60,24 +94,4 @@ class GetProfile(APIView):
 
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
-
-class EditProfile(APIView):
-    """
-    Edit profile for currently logged in user
-    """
-    def post(self, request):
-        serializer = ProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            curr_user_id = str(request.user.id)
-            user_id = str(serializer.validated_data["user"].id)
-            if curr_user_id != user_id:
-                print("User %s tried editing profile of user %s." % (curr_user_id, user_id))
-                return Response(status=status.HTTP_403_FORBIDDEN)
-
-            profile = Profile.objects.edit(curr_user_id, serializer.validated_data)
-            return Response(ProfileSerializer(profile).data)
-        else:
-            print("Bad profile edit request with following errors:")
-            print(serializer.errors)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
+"""

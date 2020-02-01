@@ -1,51 +1,31 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
-from users.forms import UserCreationForm, UserChangeForm
-from users.models import User, Profile
-from django.urls import path
-
+from users.models import User, Profile, Photo
 
 class UserAdmin(UserAdmin):
-    # add_form = UserCreationForm
-    # form = UserChangeForm
-    model = User
-    list_display = (
-        "email",
-        "first_name",
-        "last_name",
-        "is_staff",
-        "is_active",
-    )
-    list_filter = (
-        "email",
-        "first_name",
-        "last_name",
-        "is_staff",
-        "is_active",
-    )
+    list_display = ("email", "first_name", "last_name", "preferred_name", "discoverable", "status", "is_staff")
+    ordering = ("email",)
+
+    list_filter = ("status", "is_staff")
+    search_fields = ("email", "first_name", "last_name", "preferred_name")
+    
     fieldsets = (
-        (None, {"fields": ("email", "password", "first_name", "last_name")}),
-        ("Permissions", {"fields": ("is_staff", "is_active")}),
+        ("About", {"fields": ("email", "password", "first_name", "last_name", "preferred_name", "discoverable")}),
+        ("Permissions", {"fields": ("status", "is_staff")})
     )
     add_fieldsets = (
-        (
-            None,
-            {
-                "classes": ("wide",),
-                "fields": ("email", "password1", "password2", "first_name", "last_name", "is_staff", "is_active"),
-            },
-        ),
+        ("About", {"fields": ("email", "password1", "password2", "first_name", "last_name", "preferred_name", "discoverable")}),
+        ("Permissions", {"fields": ("status", "is_staff")})
     )
-    search_fields = ("email",)
-    ordering = ("email",)
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ["user", "bio"]
+    list_display = ("user", "bio")
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ["user", "path", "approved"]
+    list_display = ("user", "path", "approved", "order")
+    ordering = ("user", "order", "-approved")
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Photo, PhotoAdmin)

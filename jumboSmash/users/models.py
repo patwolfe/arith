@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import models, transaction
+from django.db.models import F
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned, ValidationError
 
@@ -43,7 +44,9 @@ class User(AbstractUser):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = None
     email = models.EmailField(("email address"), unique=True)
-    preferred_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=100)
+    preferred_name = models.CharField(max_length=30, blank=True, null=True)
     discoverable = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
 
@@ -53,7 +56,7 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return self.email + " " + str(self.id)
+        return self.email
 
 
 class ProfileManager(models.Manager):
@@ -68,13 +71,56 @@ class Profile(models.Model):
 
 
 class PhotoManager(models.Manager):
-    pass
+    def reorder(self, obj, new_order):
+        qs = self.get_queryset()
+
+        with transaction.atomic():
+            if obj.order > int(new_order):
+                qs.filter(
+                    task=obj.task,
+                    order__lt=obj.order,
+                    order__gte=new_order
+                ).exclude(
+                    pk=obj.pk
+                ).update(
+                    order=F("order") + 1
+                )
+            else:
+                qs.filter(
+                    task=obj.task,
+                    order__lte=new_order,
+                    order__gt=obj.order
+                ).exclude(
+                    pk=obj.pk
+                ).update(
+                    order=F("order") - 1
+                )
+
+            obj.order = new_order
+            obj.save()
 
 
 class Photo(models.Model):
     user = models.ForeignKey(User, related_name="photo", on_delete=models.CASCADE)
     path = models.TextField()
     approved = models.BooleanField(default=False)
+    order = models.PositiveSmallIntegerField()
+
+    # def validate_unique(self, exclude=None):
+    #     if self.approved:
+    #         try:
+    #             old_profile = Profile.objects.get(user=self.user.id, approved=self.approved)
+    #             old_profile.approved = None
+    #             old_profile.save()
+    #         except ObjectDoesNotExist:
+    #             pass
+    #         except MultipleObjectsReturned:
+    #             raise ValidationError("Multiple approved profiles found!")
+    #     else:
+    #         super(Profile, self).validate_unique(exclude)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "approved", "order"], name="unique_user_photos")]
 
     objects = PhotoManager()
 
