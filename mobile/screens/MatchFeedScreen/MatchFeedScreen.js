@@ -9,8 +9,7 @@ export default function MatchFeedScreen() {
         <Text style={styles.headerText}>Feed</Text>
       </View>
       <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
+        style={styles.container}>
         <MatchFeed />
       </ScrollView>
     </View>
@@ -26,9 +25,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
     margin: 0,
-  },
-  contentContainer: {
-    // paddingTop: 30,
   },
   header: {
     marginBottom: 10,

@@ -7,29 +7,26 @@ import {
   Image,
   Button,
 } from 'react-native';
-// import user_profile from '../../test_data/UserProfiles';
 
 export default function ProfileView(props) {
   let fields = [];
-  for (const field in props.user_profile.questions) {
+  for (const field in props.userProfile.questions) {
     fields.push(
-      <Text key={field} style={styles.question_grouping}> 
+      <View key={field} style={styles.question_grouping}> 
         <Text style={styles.question}> {field} </Text>
-        <Text> {props.user_profile.questions[field]} </Text>
-      </Text>
+        <Text> {props.userProfile.questions[field]} </Text>
+      </View>
     );
   }
-
-  console.log(props.user_profile);
 
   return (
     <ScrollView style={styles.scroll}>
       <View style={styles.profileimg}>
-        <Image source={props.user_profile.profile_image} style={styles.image}/>
+        <Image source={props.userProfile.profile_image} style={styles.image}/>
       </View>
       <View style={styles.textcontent}>
-        <Text style={styles.title}> {props.user_profile.name} </Text>
-        <Text> {props.user_profile.pronouns} </Text>
+        <Text style={styles.title}> {props.userProfile.name} </Text>
+        <Text> {props.userProfile.pronouns} </Text>
         { fields }
       </View>
     </ScrollView>
@@ -41,7 +38,7 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 30,
   },
-  profileimg: {
+  profileImg: {
     justifyContent: 'center',
     alignItems: 'center',
     aspectRatio: 1,
@@ -51,7 +48,7 @@ const styles = StyleSheet.create({
     width: '90%',
     resizeMode: 'contain',
   },
-  textcontent: {
+  textContent: {
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -61,7 +58,7 @@ const styles = StyleSheet.create({
   question: {
     fontWeight: 'bold',
   },
-  question_grouping: {
+  questionGrouping: {
     paddingTop: 10,
   }
 });

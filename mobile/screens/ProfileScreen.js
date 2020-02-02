@@ -3,12 +3,12 @@ import {
   Button,
 } from 'react-native';
 import ProfileView from '../components/ProfileView/ProfileView';
-import profiles from '../test_data/UserProfiles';
+import profiles from '../test_data/mockProfiles';
 
 export default function ProfileScreen() {
     
   return (
-    <ProfileView user_profile={profiles.patrick}/>
+    <ProfileView userProfile={profiles.patrick}/>
   );
 }
 

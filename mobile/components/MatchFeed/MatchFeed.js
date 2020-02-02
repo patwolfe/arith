@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import ProfileView from '../ProfileView/ProfileView';
 import { View, Text, StyleSheet } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import profiles from '../../test_data/UserProfiles';
+import profiles from '../../test_data/mockProfiles';
 
 export default function MatchFeed() {
-  const names = ['Will', 'Patrick', 'Lexi', 'Steven'];
+  const names = ['will', 'patrick', 'lexi', 'steven'];
   const [state, setState] = useState(
     {profiles: names.slice(0),
     profile: null,});
@@ -52,7 +52,7 @@ export default function MatchFeed() {
           );
         }}
       >
-        <ProfileView user_profile={profiles[state.profile]} />
+        <ProfileView userProfile={profiles[state.profile]} />
       </Swipeable>
     </View>
   );

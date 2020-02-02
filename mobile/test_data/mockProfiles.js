@@ -36,6 +36,6 @@ export default {
     questions: {
       'This year, I want to...': 'Run a marathon',
       'Favorite Meal': 'New Jersey Pizza',
-    }
-  }
+    },
+  },
 };
