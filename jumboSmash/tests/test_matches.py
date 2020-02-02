@@ -98,7 +98,7 @@ class ModelViewsTest(TestCase):
         view = Unmatch.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         match = Match.objects.get(pk=1)
         self.assertTrue(match.unmatched)
@@ -113,7 +113,7 @@ class ModelViewsTest(TestCase):
         view = Unmatch.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         match = Match.objects.get(pk=1)
         self.assertTrue(match.unmatched)

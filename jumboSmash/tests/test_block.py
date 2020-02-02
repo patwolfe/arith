@@ -55,7 +55,7 @@ class BlockViewsTest(TestCase):
         view = BlockView.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
 
         self.assertTrue( Block.objects.exists_block(user, User.objects.get(pk=2)))
 
