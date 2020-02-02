@@ -16,30 +16,6 @@ import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen'
 import VerifyScreen from '../screens/VerifyScreen/VerifyScreen';
 
-// Code preserved so that it may be copied.
-// const HomeStack = createStackNavigator(
-//   {
-//     Home: HomeScreen,
-//   },
-//   config
-// );
-
-// HomeStack.navigationOptions = {
-//   tabBarLabel: 'Home',
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={
-//         Platform.OS === 'ios'
-//           ? `ios-information-circle${focused ? '' : '-outline'}`
-//           : 'md-information-circle'
-//       }
-//     />
-//   ),
-// };
-
-// HomeStack.path = '';
-
 const config = Platform.select({
   web: { headerMode: 'screen' },
   default: {},
