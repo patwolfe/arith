@@ -6,6 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 import AppNavigator from './navigation/AppNavigator';
 
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
@@ -43,6 +46,28 @@ function handleLoadingError(error) {
 }
 
 function handleFinishLoading(setLoadingComplete) {
+  // When app finishes loading we can get notification key and send it to the server
+  async function registerForPushNotificationsAsync() {
+    const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    // only asks if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+    // On Android, permissions are granted on app installation, so
+    // `askAsync` will never prompt the user
+  
+    // Stop here if the user did not grant permissions
+    if (status !== 'granted') {
+      console.log('No notification permissions!');
+      return;
+    }
+  
+    // Get the token that identifies this device
+    let token = await Notifications.getExpoPushTokenAsync();
+  
+    console.log('Token is:');
+    console.log(token);
+  }
+
+  registerForPushNotificationsAsync();
   setLoadingComplete(true);
 }
 
