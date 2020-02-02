@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, Button, View, Text, StyleSheet } from 'react-native';
 import ProfileView from '../ProfileView/ProfileView';
-import {PanGestureHandler} from 'react-native-gesture-handler';
+import { View, Text, StyleSheet } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import profiles from '../../test_data/UserProfiles';
 
 export default function MatchFeed() {
+  const names = ['Will', 'Patrick', 'Lexi', 'Steven'];
   const [state, setState] = useState(
-    {profiles: [<ProfileView user_profile={profiles.will}/>, 
-      <ProfileView user_profile={profiles.lexi} />, 
-      <ProfileView user_profile={profiles.steven} />,
-      <ProfileView user_profile={profiles.patrick} />], 
+    {profiles: names.slice(0),
     profile: null,});
   if (!state.profile) {
     setState({profiles: state.profiles.slice(1), profile: state.profiles[0]});
@@ -18,10 +15,7 @@ export default function MatchFeed() {
 
   function changeState(){
     if (state.profiles.length == 0) {
-      setState({profiles: [<ProfileView user_profile={profiles.will}/>, 
-        <ProfileView user_profile={profiles.lexi} />, 
-        <ProfileView user_profile={profiles.patrick} />],
-      profile: <ProfileView user_profile={profiles.steven} />});
+      setState({profiles: names.slice(0)});
     } else {
       setState({profiles: state.profiles.slice(1), 
         profile: state.profiles[0]});
@@ -58,7 +52,7 @@ export default function MatchFeed() {
           );
         }}
       >
-        {state.profile}
+        <ProfileView user_profile={profiles[state.profile]} />
       </Swipeable>
     </View>
   );
@@ -71,15 +65,6 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     margin: '5%',
-  },
-  button: {
-    borderStyle: 'solid',
-    borderWidth: 1,
-    marginLeft: 50,
-    marginRight: 50
-  },
-  text: {
-    textAlign: 'center',
   },
   leftPanel: {
     backgroundColor: '#33cc33',
