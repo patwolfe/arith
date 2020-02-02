@@ -4,11 +4,9 @@ import FeedProfileView from '../FeedProfileView/FeedProfileView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 export default function MatchFeed() {
+  const names = ['Will', 'Patrick', 'Lexi', 'Steven'];
   const [state, setState] = useState(
-    {profiles: [<FeedProfileView text="Will" key={1}/>, 
-      <FeedProfileView text="Patrick" key={2}/>, 
-      <FeedProfileView text="Lexi" key={3}/>, 
-      <FeedProfileView text="Steven" key={4}/>],
+    {profiles: names.slice(0),
     profile: null,});
   if (!state.profile) {
     setState({profiles: state.profiles.slice(1), profile: state.profiles[0]});
@@ -16,10 +14,7 @@ export default function MatchFeed() {
 
   function changeState(){
     if (state.profiles.length == 0) {
-      setState({profiles: [<FeedProfileView text="Will" key={1}/>, 
-        <FeedProfileView text="Patrick" key={2}/>, 
-        <FeedProfileView text="Lexi" key={3}/>],
-      profile: <FeedProfileView text="Steven" key={4}/>});
+      setState({profiles: names.slice(0)});
     } else {
       setState({profiles: state.profiles.slice(1), 
         profile: state.profiles[0]});
@@ -56,7 +51,7 @@ export default function MatchFeed() {
           );
         }}
       >
-        {state.profile}
+        <FeedProfileView text={state.profile} />
       </Swipeable>
     </View>
   );
