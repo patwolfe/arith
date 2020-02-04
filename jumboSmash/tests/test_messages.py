@@ -4,7 +4,11 @@ from chat.models import Message, Match
 
 
 class MessageManagerTest(TestCase):
-    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
 
     def test_create_message(self):
         match = Match.objects.get(pk=1)
@@ -23,7 +27,6 @@ class MessageManagerTest(TestCase):
         self.assertEqual(list_m[0].match.id, 1)
         self.assertEqual(list_m[1].match.id, 1)
 
-        #assert delivered by order it is sent
+        # assert delivered by order it is sent
         self.assertEqual(list_m[0].id, 1)
         self.assertEqual(list_m[1].id, 2)
-
