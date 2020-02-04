@@ -44,9 +44,9 @@ class SendMessage(APIView):
                     status=status.HTTP_403_FORBIDDEN,
                 )
         except Match.DoesNotExist:
-            return Response("Invalid request", status=status.HTTP_404_NOT_FOUND)
+            return Response("Match does not exist", status=status.HTTP_404_NOT_FOUND)
         except KeyError:
-            return Response("Invalid request", status=status.HTTP_404_NOT_FOUND)
+            return Response("No object with key found", status=status.HTTP_404_NOT_FOUND)
 
 
 class GetConversation(APIView):
@@ -70,6 +70,6 @@ class GetConversation(APIView):
                         status=status.HTTP_403_FORBIDDEN,
                     )
             except Match.DoesNotExist:
-                return Response("Invalid match.", status=status.HTTP_404_NOT_FOUND)
+                return Response("Match does not exist", status=status.HTTP_404_NOT_FOUND)
         else:
             return Response("Invalid query.", status=status.HTTP_404_NOT_FOUND)
