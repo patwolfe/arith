@@ -7,7 +7,7 @@ import {
   TextInput,
 } from 'react-native';
 
-import LoadingModal from '../../components/LoadingModal/LoadingModal';
+import LoadingModal from 'jumbosmash/components/LoadingModal/LoadingModal';
 
 export default function LoginScreen(props) {
   const [email, setEmail] = useState('');

@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import ChatList from '../../components/ChatList/ChatList';
+import ChatList from 'jumbosmash/components/ChatList/ChatList';
 
 export default function ChatListScreen(props) {
   return (

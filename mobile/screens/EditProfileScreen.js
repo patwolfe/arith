@@ -7,7 +7,7 @@ import {
   View,
   Image,
 } from 'react-native';
-import user_profile from '../test_data/UserProfile';
+import user_profile from 'jumbosmash/test_data/UserProfile';
 
 export default function ProfileScreen() {
   /**

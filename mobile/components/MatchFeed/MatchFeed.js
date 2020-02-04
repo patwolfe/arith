@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import FeedProfileView from '../FeedProfileView/FeedProfileView';
+import FeedProfileView from 'jumbosmash/components/FeedProfileView/FeedProfileView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 export default function MatchFeed() {
