@@ -14,8 +14,10 @@ export default function EntryScreen(props) {
       </View>
       <Button title="Login"
         onPress={() => 
-          props.navigation.navigate('SignIn')} />
-      <Button title="Register" />
+          props.navigation.navigate('Login')} />
+      <Button title="Register" 
+        onPress={() => 
+          props.navigation.navigate('Register')} />
 
     </View>
   );
