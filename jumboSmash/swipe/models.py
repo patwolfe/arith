@@ -59,6 +59,33 @@ class InteractionManager(models.Manager):
 
         return interaction
 
+    def build_deck(self, active_user):
+        "Create all interactions for current user and mark smash=NULL"
+        # TODO: retrieve only active users
+        all_users = User.objects.exclude(id__exact=active_user.id).values("id")
+        already_smashed = self.filter(
+            swiper__exact=active_user, smash__exact=True
+        ).values("swiped_on")
+        deck = all_users.difference(already_smashed)
+
+        for other in deck:
+            interaction, _ = self.get_or_create(
+                swiper=active_user, swiped_on=User.objects.get(id=other["id"])
+            )
+            interaction.smash = None
+            interaction.save()
+
+    def get_next(self, active_user):
+        "Retrieve 10 users to swipe on"
+        deck = self.filter(swiper__exact=active_user, smash__exact=None)
+        next = []
+        deck_index = 0
+        while len(next) < 10 and deck_index < len(deck):
+            # TODO: check if user has been banned
+            if deck[deck_index].swipable():
+                next.append(deck[deck_index])
+        return next
+
 
 class Interaction(models.Model):
     swiper = models.ForeignKey(User, related_name="swiper", on_delete=models.CASCADE)
@@ -71,10 +98,13 @@ class Interaction(models.Model):
 
     objects = InteractionManager()
 
+    def swipable(self):
+        return not Block.objects.exists_block(self.swiper, self.swiped_on)
+
     class Meta:
         unique_together = [["swiper", "swiped_on"]]
 
-        
+
 class BlockManager(models.Manager):
     def block(self, blocker, blocked):
         "Creates block"
@@ -94,4 +124,3 @@ class Block(models.Model):
     blocker = models.ForeignKey(User, related_name="blocker", on_delete=models.CASCADE)
     blocked = models.ForeignKey(User, related_name="blocked", on_delete=models.CASCADE)
     objects = BlockManager()
-
