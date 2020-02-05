@@ -12,14 +12,6 @@ export default function FeedProfileView(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    margin: 30,
-    paddingTop: 30,
-    paddingBottom: 30,
-  },
   text: {
     textAlign: 'center'
   }
