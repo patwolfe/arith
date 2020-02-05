@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   StyleSheet,
   Text,
@@ -6,13 +6,13 @@ import {
 
 import * as ImagePicker from 'expo-image-picker';
 
-import { getPermissionAsync } from '../../../utils/permissions'
+import { getPermissionAsync } from 'jumbosmash/utils/permissions'
 
 export default function PhotoBox(props) {
   const [pic, setPic] = useState('none');
   let picDiv = null;
   if (pic === 'none') {
-    picDiv = (<Text style={styles.content}>#{props.i}</Text>);
+    picDiv = (<Text style={styles.content}>#{props.id}</Text>);
   } else {
     picDiv = (<Image style={styles.content} source={{uri: pic}} />);
   }

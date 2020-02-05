@@ -4,7 +4,7 @@ import {
   Text, 
   View } from 'react-native';
 
-import { getPermissionAsync } from '../../utils/permissions'
+import { getPermissionAsync } from 'jumbosmash/utils/permissions'
 import PhotoBox from './PhotoBox/PhotoBox';
 
 export default function PhotoPicker() {
@@ -24,12 +24,12 @@ export default function PhotoPicker() {
 }
 
 function createPhotoBoxRows() {
-  let id  = 0;
-  return [...Array(3).keys()].map((_, i) => {
+  return [...Array(3).keys()].map((i) => {
     return (
       <View key={i} style={styles.photoBoxRow}> 
-        {[...Array(2).keys()].map((_, j) => {
-          return <PhotoBox key={id} i={id++}/>;
+        {[...Array(2).keys()].map((j) => {
+          let id = (2 * i) + j;
+          return <PhotoBox key={id} id={id}/>;
         })}
       </View>
     );});
