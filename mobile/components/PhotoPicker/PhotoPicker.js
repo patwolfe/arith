@@ -17,18 +17,18 @@ export default function PhotoPicker(props) {
         <Text style={styles.titleText}>Add Photos</Text>
       </View>
       <View style={styles.photoBoxesContainer}>
-        {createPhotoBoxRows(props.picsHook)}
+        {createPhotoBoxRows(props.dispatch)}
       </View>
     </View>);
 }
 
-function createPhotoBoxRows(picsHook) {
+function createPhotoBoxRows(dispatch) {
   return [...Array(3).keys()].map((i) => {
     return (
       <View key={i} style={styles.photoBoxRow}> 
         {[...Array(2).keys()].map((j) => {
           let id = (2 * i) + j;
-          return <PhotoBox key={id} id={id} picsHook={picsHook}/>;
+          return <PhotoBox key={id} id={id} dispatch={dispatch}/>;
         })}
       </View>
     );});

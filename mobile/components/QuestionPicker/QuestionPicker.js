@@ -10,8 +10,7 @@ export default function QuestionPicker(props) {
   return (
     <ScrollView style={styles.questionContainer}>
       {mockQuestions.questions.map((question, i) => { 
-        return (<Question question={question} key={i}/>);}
-      )}
+        return (<Question question={question} key={i} id={i} dispatch={props.dispatch}/>);})}
     </ScrollView>
   );
 }

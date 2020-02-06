@@ -19,13 +19,13 @@ export default function PhotoBox(props) {
   }
   return (
     <TouchableOpacity style={styles.photoBox}
-      onPress={() => selectPhoto(setPic, props.picsHook)}>
+      onPress={() => selectPhoto(props.id, setPic, props.dispatch)}>
       {picDiv}
     </TouchableOpacity>
   );
 }
 
-async function selectPhoto(setPic, picsHook) {
+async function selectPhoto(id, setPic, dispatch) {
   let status = await getPermissionAsync('Uploading pictures requires camera role access');
   if (status !== 'granted') {
     return;
@@ -41,7 +41,7 @@ async function selectPhoto(setPic, picsHook) {
     // leave state unchanged
     return;    
   }
-  picsHook(pictures => [...pictures, result.uri]);
+  dispatch({type: 'picture', id: id, payload: result.uri})
   setPic(result.uri);
 }
 

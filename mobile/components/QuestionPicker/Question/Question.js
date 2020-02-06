@@ -12,7 +12,14 @@ export default function Question(props) {
       <Text>{props.question}</Text>
       <TextInput style={styles.inputField}
         editable
-        autoCapitalize='none'/>
+        autoCapitalize='none'
+        onChangeText={(answer) => 
+          {
+            props.dispatch(
+              {
+                type: 'question', 
+                id: props.id, 
+                payload: {question: props.question, answer: answer}});}}/>
     </View>
   );
 }

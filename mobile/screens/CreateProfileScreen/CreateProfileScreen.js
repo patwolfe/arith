@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 import {
-  Button,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
 
-import PhotoPicker from 'jumbosmash/components/PhotoPicker/PhotoPicker';
-import QuestionPicker from '../../components/QuestionPicker/QuestionPicker';
+import CreateProfileWizard from 'jumbosmash/components/CreateProfileWizard/CreateProfileWizard';
 
 export default function CreateProfileScreen(props) {
-  const { pictures, setPictures} = useState([]);
   return (
     <View style={styles.content}>
-      {/* <PhotoPicker picsHook={setPictures}/> */}
-      <QuestionPicker />
-      <Button title='test'/>
+      <CreateProfileWizard 
+        userName='Pat Wolfe'
+        userPronouns='he/his'
+      />
     </View>
   );
 }
