@@ -19,9 +19,10 @@
         "sourceType": "module"
     },
     "plugins": [
+        "import",
         "react",
-        "react-native",
-        "import"
+        "react-hooks",
+        "react-native"
     ],
     "rules": {
         "indent": [
@@ -46,6 +47,8 @@
         "react-native/no-raw-text": 2,
         "react-native/no-single-element-style-arrays": 2,
         "react/prop-types": "off",
+        "react-hooks/rules-of-hooks": 2, // Checks rules of Hooks
+        "react-hooks/exhaustive-deps": 1, // Checks effect dependencies  
         "import/no-relative-parent-imports": 2
     }
 }
