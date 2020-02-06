@@ -7,41 +7,36 @@ import {
   View,
   Image,
 } from 'react-native';
-import user_profile from 'jumbosmash/test_data/UserProfile';
+
+import profiles from '../test_data/mockProfiles';
+
 
 export default function ProfileScreen() {
-  /**
-   * Go ahead and delete ExpoConfigView and replace it with your content;
-   * we just wanted to give you a quick view of your config.
-   */
+  let userProfile = profiles['patrick'];
   let fields = [];
-  for (const field in user_profile.questions) {
+  for (const field in userProfile.questions) {
     fields.push(
       <View key={field} style={styles.question_grouping}> 
         <Text style={styles.question}> {field} </Text>
         <TextInput
           style={styles.textbox}
-          value={user_profile.questions[field]}
+          value={userProfile.questions[field]}
         />
       </View>
     );
   }
     
   return (
-    <View>
-      <ScrollView>
+      <ScrollView style={styles.scroll}>
         <View style={styles.profileimg}>
-          {/* <Image source={require('../assets/images/icon.png')}/> */}
-          <Image source={{uri: `data:image/jpeg;base64,${user_profile.prof_image}`}} 
-            style={styles.image}/>
+          <Image source={userProfile.profile_image} style={styles.image}/>
         </View>
         <View style={styles.textcontent}>
-          <Text style={styles.title}> {user_profile.name} </Text>
-          <Text> {user_profile.pronouns} </Text>
+          <Text style={styles.title}> {userProfile.name} </Text>
+          <Text> {userProfile.pronouns} </Text>
           { fields }
         </View>
       </ScrollView>
-    </View>
   );
 }
 
@@ -50,19 +45,24 @@ ProfileScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  profileimg: {
+  scroll: {
+    flex: 1,
+    margin: 30,
+  },
+  profileImg: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 15,
+    aspectRatio: 1,
   },
   image: {
-    height: 200,
-    width: 200
+    height: '90%',
+    width: '90%',
+    resizeMode: 'contain',
   },
-  textcontent: {
+  textContent: {
     paddingLeft: 25,
   },
-  textbox: {
+  textBox: {
     borderColor: 'black',
     borderBottomWidth: 1,
     width: 200,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   question: {
     fontWeight: 'bold',
   },
-  question_grouping: {
+  questionGrouping: {
     paddingTop: 10,
   }
 });

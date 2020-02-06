@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import ProfileView from '../ProfileView/ProfileView';
 import { View, Text, StyleSheet } from 'react-native';
-import FeedProfileView from 'jumbosmash/components/FeedProfileView/FeedProfileView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import profiles from '../../test_data/mockProfiles';
 
 export default function MatchFeed() {
-  const names = ['Will', 'Patrick', 'Lexi', 'Steven'];
+  const names = ['will', 'patrick', 'lexi', 'steven'];
   const [state, setState] = useState(
     {profiles: names.slice(0),
     profile: null,});
@@ -51,7 +52,7 @@ export default function MatchFeed() {
           );
         }}
       >
-        <FeedProfileView text={state.profile} />
+        <ProfileView userProfile={profiles[state.profile]} />
       </Swipeable>
     </View>
   );
@@ -61,6 +62,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    margin: '5%',
   },
   leftPanel: {
     backgroundColor: '#33cc33',

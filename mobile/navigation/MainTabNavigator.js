@@ -114,15 +114,11 @@ ChatStack.path = '';
 
 const EntryStack = createStackNavigator(
   {
-    Entry: {
-      screen: EntryScreen,
-    },
-    SignIn: {
-      screen: LoginScreen,
-    },
-    Verify: {
-      screen: VerifyScreen,
-    },
+    Entry: EntryScreen,
+    Login: LoginScreen,
+    Verify: VerifyScreen,
+    Register: RegisterScreen,
+    CreateProfile: CreateProfileScreen
   },
   {
     initialRouteName: 'Entry',
