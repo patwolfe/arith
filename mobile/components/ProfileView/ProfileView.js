@@ -12,7 +12,7 @@ export default function ProfileView(props) {
   let fields = [];
   for (const field in props.userProfile.questions) {
     fields.push(
-      <View key={field} style={styles.question_grouping}> 
+      <View key={field} style={styles.questionGrouping}> 
         <Text style={styles.question}> {field} </Text>
         <Text> {props.userProfile.questions[field]} </Text>
       </View>
@@ -21,10 +21,10 @@ export default function ProfileView(props) {
 
   return (
     <ScrollView style={styles.scroll}>
-      <View style={styles.profileimg}>
+      <View style={styles.profileImg}>
         <Image source={props.userProfile.profile_image} style={styles.image}/>
       </View>
-      <View style={styles.textcontent}>
+      <View style={styles.textContent}>
         <Text style={styles.title}> {props.userProfile.name} </Text>
         <Text> {props.userProfile.pronouns} </Text>
         { fields }
