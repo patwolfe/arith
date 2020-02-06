@@ -25,6 +25,9 @@ const styles =  StyleSheet.create({
   inputField: {
     backgroundColor: '#ffffff',
     marginHorizontal: '15%',
-    paddingVertical: '2%'
+    paddingVertical: '2%',
+    borderStyle: 'solid',
+    borderColor: 'black',
+    borderWidth: 1
   },
 });

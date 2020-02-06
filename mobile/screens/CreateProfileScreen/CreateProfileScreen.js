@@ -13,11 +13,10 @@ import QuestionPicker from '../../components/QuestionPicker/QuestionPicker';
 export default function CreateProfileScreen(props) {
   const { pictures, setPictures} = useState([]);
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        {/* <PhotoPicker picsHook={setPictures}/> */}
-        <QuestionPicker />
-      </View>
+    <View style={styles.content}>
+      {/* <PhotoPicker picsHook={setPictures}/> */}
+      <QuestionPicker />
+      <Button title='test'/>
     </View>
   );
 }
