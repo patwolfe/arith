@@ -7,13 +7,16 @@ import {
   View,
 } from 'react-native';
 
-import PhotoPicker from '../../components/PhotoPicker/PhotoPicker'
+import PhotoPicker from 'jumbosmash/components/PhotoPicker/PhotoPicker';
+import QuestionPicker from '../../components/QuestionPicker/QuestionPicker';
 
 export default function CreateProfileScreen(props) {
+  const { pictures, setPictures} = useState([]);
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <PhotoPicker />
+        {/* <PhotoPicker picsHook={setPictures}/> */}
+        <QuestionPicker />
       </View>
     </View>
   );

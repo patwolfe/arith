@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { 
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity } from 'react-native';
@@ -18,13 +19,13 @@ export default function PhotoBox(props) {
   }
   return (
     <TouchableOpacity style={styles.photoBox}
-      onPress={() => selectPhoto(setPic)}>
+      onPress={() => selectPhoto(setPic, props.picsHook)}>
       {picDiv}
     </TouchableOpacity>
   );
 }
 
-async function selectPhoto(setPic) {
+async function selectPhoto(setPic, picsHook) {
   let status = await getPermissionAsync('Uploading pictures requires camera role access');
   if (status !== 'granted') {
     return;
@@ -40,6 +41,7 @@ async function selectPhoto(setPic) {
     // leave state unchanged
     return;    
   }
+  picsHook(pictures => [...pictures, result.uri]);
   setPic(result.uri);
 }
 
