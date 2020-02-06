@@ -1,5 +1,5 @@
 import React from 'react';
-import ChatListItem from '../ChatListItem/ChatListItem';
+import ChatListItem from 'jumbosmash/components/ChatListItem/ChatListItem';
 import { StyleSheet, View } from 'react-native';
 
 export default function ChatList(props) {

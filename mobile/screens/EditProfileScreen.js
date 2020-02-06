@@ -7,7 +7,9 @@ import {
   View,
   Image,
 } from 'react-native';
+
 import profiles from '../test_data/mockProfiles';
+
 
 export default function ProfileScreen() {
   let userProfile = profiles['patrick'];
