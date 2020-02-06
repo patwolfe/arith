@@ -8,12 +8,14 @@ import TabBarIcon from 'jumbosmash/components/TabBarIcon';
 // Screens
 import ChatListScreen from 'jumbosmash/screens/ChatListScreen/ChatListScreen';
 import ChatScreen from 'jumbosmash/screens/ChatScreen/ChatScreen';
+import CreateProfileScreen from 'jumbosmash/screens/CreateProfileScreen/CreateProfileScreen';
 import EditProfileScreen from 'jumbosmash/screens/EditProfileScreen';
 import EntryScreen from 'jumbosmash/screens/EntryScreen/EntryScreen';
 import LoginScreen from 'jumbosmash/screens/LoginScreen/LoginScreen';
 import MatchFeedScreen from 'jumbosmash/screens/MatchFeedScreen/MatchFeedScreen';
 import ProfileScreen from 'jumbosmash/screens/ProfileScreen';
-import SettingsScreen from 'jumbosmash/screens/SettingsScreen'
+import RegisterScreen from 'jumbosmash/screens/RegisterScreen/RegisterScreen';
+import SettingsScreen from 'jumbosmash/screens/SettingsScreen';
 import VerifyScreen from 'jumbosmash/screens/VerifyScreen/VerifyScreen';
 
 const config = Platform.select({
