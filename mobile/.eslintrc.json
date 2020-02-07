@@ -20,7 +20,8 @@
     },
     "plugins": [
         "react",
-        "react-native"
+        "react-native",
+        "import"
     ],
     "rules": {
         "indent": [
@@ -44,6 +45,7 @@
         "react-native/no-inline-styles": 2,
         "react-native/no-raw-text": 2,
         "react-native/no-single-element-style-arrays": 2,
-        "react/prop-types": "off"
+        "react/prop-types": "off",
+        "import/no-relative-parent-imports": 2
     }
 }
