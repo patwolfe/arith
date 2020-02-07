@@ -2,7 +2,7 @@ from django.test import TestCase
 from swipe.models import Block
 from swipe.views import BlockView
 from rest_framework.test import force_authenticate, APIRequestFactory
-from users.models import CustomUser as User
+from users.models import User
 
 
 class BlockManagerTests(TestCase):
@@ -42,7 +42,6 @@ class BlockManagerTests(TestCase):
 
         self.assertFalse(Block.objects.exists_block(user_1, user_2))
 
-
 class BlockViewsTest(TestCase):
     fixtures = ["tests/dummy_users.json"]
 
@@ -58,4 +57,5 @@ class BlockViewsTest(TestCase):
 
         self.assertEqual(response.status_code, 201)
 
-        self.assertTrue(Block.objects.exists_block(user, User.objects.get(pk=2)))
+        self.assertTrue( Block.objects.exists_block(user, User.objects.get(pk=2)))
+

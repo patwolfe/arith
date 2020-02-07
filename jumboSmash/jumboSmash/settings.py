@@ -61,7 +61,7 @@ ROOT_URLCONF = "jumboSmash.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -88,7 +88,7 @@ DATABASES = {
 }
 
 # Overides default user model
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
