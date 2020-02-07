@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from 'react';
+import React, { useReducer } from 'react';
 import {
   Button,
   StyleSheet,
@@ -16,24 +16,24 @@ export default function CreateProfileWizard(props) {
     pictures: {},
     questions: {},
     stage: 'questions'
-  }
+  };
   const [state, dispatch] = useReducer(reducer, initState); 
-  let questionPicker = <QuestionPicker dispatch={dispatch}/>
-  let photoPicker = <PhotoPicker dispatch={dispatch}/>
+  let questionPicker = <QuestionPicker dispatch={dispatch}/>;
+  let photoPicker = <PhotoPicker dispatch={dispatch}/>;
   return (
     <View style={styles.wizard}>
       {state.stage === 'questions' ? questionPicker : photoPicker}
       <Button 
         title={state.stage === 'questions' ? 'Next' : 'Submit'}
         onPress={() => 
-          {
-            if (state.stage === 'questions')
-              dispatch({type: 'button', payload: 'photos'});
-            else {
-              Alert.alert('Submitted!');
-              console.log(state);
-            }
+        {
+          if (state.stage === 'questions')
+            dispatch({type: 'button', payload: 'photos'});
+          else {
+            Alert.alert('Submitted!');
+            console.log(state);
           }
+        }
         }/>
     </View>
   );
@@ -42,14 +42,14 @@ export default function CreateProfileWizard(props) {
 
 function reducer(state, action) {
   switch(action.type) {
-    case 'picture':
-      return {...state, pictures: {...state.pictures, [action.id]: action.payload}};
-    case 'question':      
-      return {...state, questions: {...state.questions, [action.id]: action.payload}};
-    case 'button':
-      return {...state, stage: action.payload};
-    default:
-      throw new Error();
+  case 'picture':
+    return {...state, pictures: {...state.pictures, [action.id]: action.payload}};
+  case 'question':      
+    return {...state, questions: {...state.questions, [action.id]: action.payload}};
+  case 'button':
+    return {...state, stage: action.payload};
+  default:
+    throw new Error();
   }
 }
 

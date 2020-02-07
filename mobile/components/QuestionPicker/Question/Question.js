@@ -6,7 +6,6 @@ import {
   View } from 'react-native';
 
 export default function Question(props) {
-  console.log(props.question);
   return (
     <View style={styles.container}>
       <Text>{props.question}</Text>
@@ -14,12 +13,12 @@ export default function Question(props) {
         editable
         autoCapitalize='none'
         onChangeText={(answer) => 
-          {
-            props.dispatch(
-              {
-                type: 'question', 
-                id: props.id, 
-                payload: {question: props.question, answer: answer}});}}/>
+        {
+          props.dispatch(
+            {
+              type: 'question', 
+              id: props.id, 
+              payload: {question: props.question, answer: answer}});}}/>
     </View>
   );
 }

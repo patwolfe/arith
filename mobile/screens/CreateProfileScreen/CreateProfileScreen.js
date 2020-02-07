@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -6,7 +6,7 @@ import {
 
 import CreateProfileWizard from 'jumbosmash/components/CreateProfileWizard/CreateProfileWizard';
 
-export default function CreateProfileScreen(props) {
+export default function CreateProfileScreen() {
   return (
     <View style={styles.content}>
       <CreateProfileWizard 
@@ -22,10 +22,6 @@ CreateProfileScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#a9c6de',
-  },
   content: {
     paddingHorizontal: '5%',
     flex: 1

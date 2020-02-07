@@ -8,7 +8,7 @@ export default function MatchFeed() {
   const names = ['will', 'patrick', 'lexi', 'steven'];
   const [state, setState] = useState(
     {profiles: names.slice(0),
-    profile: null,});
+      profile: null,});
   if (!state.profile) {
     setState({profiles: state.profiles.slice(1), profile: state.profiles[0]});
   }

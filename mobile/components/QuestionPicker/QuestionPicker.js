@@ -4,7 +4,7 @@ import {
   StyleSheet, 
 } from 'react-native';
 import Question from './Question/Question';
-import mockQuestions from 'jumbosmash/test_data/mockQuestions'
+import mockQuestions from 'jumbosmash/test_data/mockQuestions';
 
 export default function QuestionPicker(props) {
   return (

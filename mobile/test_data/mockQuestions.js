@@ -6,4 +6,4 @@ export default {
     'Favorite Building on Campus',
     'Spirit Animal'
   ]
-}
+};

@@ -4,7 +4,7 @@ import {
   Text, 
   View } from 'react-native';
 
-import { getPermissionAsync } from 'jumbosmash/utils/permissions'
+import { getPermissionAsync } from 'jumbosmash/utils/permissions';
 import PhotoBox from './PhotoBox/PhotoBox';
 
 export default function PhotoPicker(props) {

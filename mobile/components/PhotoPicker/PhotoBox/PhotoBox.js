@@ -7,7 +7,7 @@ import {
 
 import * as ImagePicker from 'expo-image-picker';
 
-import { getPermissionAsync } from 'jumbosmash/utils/permissions'
+import { getPermissionAsync } from 'jumbosmash/utils/permissions';
 
 export default function PhotoBox(props) {
   const [pic, setPic] = useState('none');
@@ -41,7 +41,7 @@ async function selectPhoto(id, setPic, dispatch) {
     // leave state unchanged
     return;    
   }
-  dispatch({type: 'picture', id: id, payload: result.uri})
+  dispatch({type: 'picture', id: id, payload: result.uri});
   setPic(result.uri);
 }
 
