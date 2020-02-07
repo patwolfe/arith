@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import CustomUser as User
+from users.models import User
 from chat.models import Match
 
 

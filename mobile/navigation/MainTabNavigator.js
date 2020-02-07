@@ -3,18 +3,20 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import TabBarIcon from '../components/TabBarIcon';
+import TabBarIcon from 'jumbosmash/components/TabBarIcon';
 
 // Screens
-import ChatListScreen from '../screens/ChatListScreen/ChatListScreen';
-import ChatScreen from '../screens/ChatScreen/ChatScreen';
-import EditProfileScreen from '../screens/EditProfileScreen';
-import EntryScreen from '../screens/EntryScreen/EntryScreen';
-import LoginScreen from '../screens/LoginScreen/LoginScreen';
-import MatchFeedScreen from '../screens/MatchFeedScreen/MatchFeedScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen'
-import VerifyScreen from '../screens/VerifyScreen/VerifyScreen';
+import ChatListScreen from 'jumbosmash/screens/ChatListScreen/ChatListScreen';
+import ChatScreen from 'jumbosmash/screens/ChatScreen/ChatScreen';
+import CreateProfileScreen from 'jumbosmash/screens/CreateProfileScreen/CreateProfileScreen';
+import EditProfileScreen from 'jumbosmash/screens/EditProfileScreen';
+import EntryScreen from 'jumbosmash/screens/EntryScreen/EntryScreen';
+import LoginScreen from 'jumbosmash/screens/LoginScreen/LoginScreen';
+import MatchFeedScreen from 'jumbosmash/screens/MatchFeedScreen/MatchFeedScreen';
+import ProfileScreen from 'jumbosmash/screens/ProfileScreen';
+import RegisterScreen from 'jumbosmash/screens/RegisterScreen/RegisterScreen';
+import SettingsScreen from 'jumbosmash/screens/SettingsScreen';
+import VerifyScreen from 'jumbosmash/screens/VerifyScreen/VerifyScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -114,15 +116,11 @@ ChatStack.path = '';
 
 const EntryStack = createStackNavigator(
   {
-    Entry: {
-      screen: EntryScreen,
-    },
-    SignIn: {
-      screen: LoginScreen,
-    },
-    Verify: {
-      screen: VerifyScreen,
-    },
+    Entry: EntryScreen,
+    Login: LoginScreen,
+    Verify: VerifyScreen,
+    Register: RegisterScreen,
+    CreateProfile: CreateProfileScreen
   },
   {
     initialRouteName: 'Entry',

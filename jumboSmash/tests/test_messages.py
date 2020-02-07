@@ -1,5 +1,5 @@
 from django.test import TestCase
-from users.models import CustomUser as User
+from users.models import User
 from rest_framework.test import force_authenticate, APIRequestFactory
 from chat.models import Message, Match
 from chat.views import SendMessage, GetConversation

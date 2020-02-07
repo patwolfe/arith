@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django.db import models
-from users.models import CustomUser as User
+from users.models import User
 
 
 class MatchManager(models.Manager):
