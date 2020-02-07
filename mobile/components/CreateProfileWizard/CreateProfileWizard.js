@@ -3,6 +3,7 @@ import {
   Button,
   StyleSheet,
   View,
+  Alert,
 } from 'react-native';
 
 import PhotoPicker from 'jumbosmash/components/PhotoPicker/PhotoPicker';
@@ -28,8 +29,10 @@ export default function CreateProfileWizard(props) {
           {
             if (state.stage === 'questions')
               dispatch({type: 'button', payload: 'photos'});
-            else
+            else {
+              Alert.alert('Submitted!');
               console.log(state);
+            }
           }
         }/>
     </View>
