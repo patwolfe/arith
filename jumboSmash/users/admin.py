@@ -6,10 +6,10 @@ from django.urls import re_path, reverse
 from django.http import HttpResponseRedirect
 
 class UserAdmin(UserAdmin):
-    list_display = ("email", "first_name", "last_name", "preferred_name", "discoverable", "status", "is_staff")
-    ordering = ("email",)
+    list_display = ("email", "first_name", "last_name", "preferred_name", "discoverable", "status", "needs_review")
+    ordering = ("needs_review", "email")
 
-    list_filter = ("status", "status", "is_staff")
+    list_filter = ("needs_review", "status")
     search_fields = ("email", "first_name", "last_name", "preferred_name")
     
     fieldsets = ()
@@ -23,6 +23,7 @@ class UserAdmin(UserAdmin):
         extra_context = extra_context or {}
         user = User.objects.get(id=object_id)
         extra_context['user_status'] = user.status
+        extra_context['needs_review'] = user.needs_review
         extra_context['id_photo'] = user.id_photo
         extra_context['profiles'] = map(lambda profile: profile.get_profile(), Profile.objects.filter(user=object_id))
         extra_context['photo_sets'] = map(lambda photo_set: photo_set.get_photos(), Photo.objects.filter(user=object_id))

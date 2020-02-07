@@ -34,12 +34,11 @@ class UserManager(BaseUserManager):
         photos = data.pop("photos")
 
         if user.status == User.INACTIVE:
-            user.status = User.PENDING
             user.preferred_name = data["preferred_name"]
             user.id_photo = data["id_photo"]
-        elif user.status == User.ACTIVE:
-            # TODO separate out an edit we actually need to approve - i.e. the point of "WAITING"
-            user.status = User.WAITING
+
+        # TODO only set this if we need to reapprove photos or they are inactive
+        user.needs_review = True
 
         user.discoverable = data["discoverable"]
         Profile.objects.edit(user_id, profile)
@@ -51,26 +50,26 @@ class UserManager(BaseUserManager):
     def approve(self, user_id):
         user = self.get(id=user_id)
 
-        if user.status == User.PENDING or user.status == User.WAITING:
+        if user.status == User.INACTIVE:
             user.status = User.ACTIVE
-            if user.status == User.PENDING:
-                user.discoverable = True
-            Photo.objects.approve(user_id)
+            user.discoverable = True
+
+        Photo.objects.approve(user_id)
         
+        user.needs_review = False
         user.save()
 
     def reject(self, user_id):
         # TODO trigger email/push notification
         user = self.get(id=user_id)
 
-        if user.status == User.PENDING:
-            user.status = User.INACTIVE
+        if user.status == User.INACTIVE:
             Profile.objects.reject(user_id)
             Photo.objects.reject(user_id)
-        elif user.status == User.WAITING:
-            user.status = User.ACTIVE
+        elif user.status == User.ACTIVE:
             Photo.objects.reject(user_id)
         
+        user.needs_review = False
         user.save()
 
     def ban(self, user_id):
@@ -86,25 +85,21 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser):
     INACTIVE = "I"
-    PENDING  = "P"
     ACTIVE   = "A"
-    WAITING  = "W"
     BANNED   = "B"
     STATUS_CHOICES = (
         (INACTIVE, "Inactive"),
-        (PENDING, "Pending"),
         (ACTIVE, "Active"),
-        (WAITING, "Waiting"),
         (BANNED, "Bannned")
     )
 
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = None
     email = models.EmailField(("email address"), unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=100)
     preferred_name = models.CharField(max_length=30, blank=True, null=True)
     discoverable = models.BooleanField(default=False)
+    needs_review = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
     last_status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
     id_photo = models.URLField(blank=True, null=True)
@@ -207,5 +202,8 @@ class Photo(models.Model):
         return "User {} Photos ({})".format(self.user, "Approved" if self.approved else "Pending")
 
     def get_photos(self):
-        return [self.photo0, self.photo1, self.photo2, self.photo3, self.photo4, self.photo5]
+        return {
+            "photos": [self.photo0, self.photo1, self.photo2, self.photo3, self.photo4, self.photo5],
+            "approved": self.approved
+        }
 
