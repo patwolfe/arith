@@ -52,9 +52,11 @@ class CheckUserExists(APIView):
         if not email:
             return render(request, "user_check.html", {})
 
-        # try:
-        user = User.objects.get(email=email)
-        print(UserSerializer(user).data)
-        return render(request, "successful_check.html", {"email": email, "user": user},)
-        # except:
-        #    return render(request, "failed_check.html", {"email": email})
+        try:
+            user = User.objects.get(email=email)
+            print(UserSerializer(user).data)
+            return render(
+                request, "successful_check.html", {"email": email, "user": user},
+            )
+        except:
+            return render(request, "failed_check.html", {"email": email})
