@@ -7,13 +7,14 @@ import {
   View,
 } from 'react-native';
 
-import PhotoPicker from '../../components/PhotoPicker/PhotoPicker'
+import PhotoPicker from 'jumbosmash/components/PhotoPicker/PhotoPicker'
+import OTPInput from '../../components/OTPInput/OTPInput';
 
 export default function CreateProfileScreen(props) {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <PhotoPicker />
+        <OTPInput />
       </View>
     </View>
   );
@@ -25,8 +26,7 @@ CreateProfileScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#a9c6de',
+    flex: 1
   },
   content: {
     paddingHorizontal: '5%',
