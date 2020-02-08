@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from users.models import User, Profile
-from users.serializers import SimpleUserSerializer, ProfileSerializer
+from users.serializers import SimpleUserSerializer, FullUserSerializer
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.shortcuts import render
 
@@ -24,10 +24,12 @@ class GetProfile(APIView):
     Get a profile and photos for user
     """
 
+    # TODO don't show if banned
+
     def get(self, request):
         user_id = request.query_params.get("id")
-        profile = Profile.objects.get(user=user_id)
-        serializer = ProfileSerializer(profile, context={"request": request})
+        user = User.objects.get(id=user_id)
+        serializer = FullUserSerializer(user, context={"request": request})
         return Response(serializer.data)
 
 
@@ -37,7 +39,15 @@ class EditProfile(APIView):
     """
 
     def post(self, request):
-        return Response()
+        user_id = request.user.id
+        serializer = FullUserSerializer(data=request.data, context={"request": request})
+        serializer.is_valid()
+        print("-----------------------------------")
+        print(serializer.validated_data)
+        print("-----------------------------------")
+        user = User.objects.edit(user_id, serializer.validated_data)
+        ret_serializer = FullUserSerializer(user, context={"request": request})
+        return Response(ret_serializer.data)
 
 
 class CheckUserExists(APIView):
