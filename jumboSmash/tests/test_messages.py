@@ -1,8 +1,11 @@
+from mock import patch
 from django.test import TestCase
 from users.models import User
 from rest_framework.test import force_authenticate, APIRequestFactory
 from chat.models import Message, Match
 from chat.views import SendMessage, GetConversation
+from chat.tasks import message_task
+from chat.serializers import MessageSerializer
 
 
 class MessageManagerTest(TestCase):
@@ -16,6 +19,11 @@ class MessageManagerTest(TestCase):
         self.assertEqual(message.match.id, 1)
         self.assertEqual(message.sender.id, 1)
         self.assertEqual(message.content, "u up?")
+
+    def test_updated_delivered(self):
+        message = Message.objects.get(pk=1)
+        self.assertIsNone(message.delivered)
+        self.assertIsNotNone(Message.objects.update_delivered(1))
 
     def test_list_messages(self):
         match = Match.objects.get(pk=1)
@@ -33,10 +41,23 @@ class MessageManagerTest(TestCase):
         self.assertNotIn(3, [m.id for m in list_m])
 
 
+class MessageTaskTest(TestCase):
+    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+
+    def test_message_task(self):
+        message = Message.objects.get(pk=1)
+        self.assertIsNone(message.delivered)
+        m_serializer = MessageSerializer(message)
+
+        updated_m = message_task(m_serializer.data)
+        self.assertIsNotNone(updated_m.delivered)
+
+
 class SendMessageViewsTest(TestCase):
     fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
 
-    def test_send_message_user_in_match(self):
+    @patch('chat.views.message_task.delay')
+    def test_send_message_user_in_match(self, message_task):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
         request = factory.post("chat/send/", {"match": 1, "content": "hello"}, format="json")
@@ -48,6 +69,7 @@ class SendMessageViewsTest(TestCase):
         self.assertEqual(response.data["match"], 1)
         self.assertEqual(response.data["sender"], 1)
         self.assertIsNotNone(response.data["sent"])
+        message_task.assert_called_once_with(response.data)
 
     def test_send_message_user_not_in_match(self):
         user = User.objects.get(pk=3)

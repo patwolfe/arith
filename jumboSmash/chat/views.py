@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Message, Match
-from .serializers import MatchIdSerializer, MessageSerializer
+from .serializers import MatchIdSerializer, MessageSerializer, SendMessageSerializer
+from .tasks import message_task
 
 
 class Unmatch(APIView):
@@ -26,27 +27,27 @@ class Unmatch(APIView):
 
 
 class SendMessage(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        try:
-            match = Match.objects.get(pk=request.data["match"])
-            content = request.data["content"]
+        serializer = SendMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            match = serializer.validated_data["match"]
+            content = serializer.validated_data["content"]
             if not match.unmatched and (
                 match.user_1 == request.user or match.user_2 == request.user
             ):
                 message = Message.objects.create_message(match, request.user, content)
-                serializer = MessageSerializer(message)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                m_serializer = MessageSerializer(message)
+                message_task.delay(m_serializer.data)
+                return Response(m_serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(
                     "User does not have access to this match.",
                     status=status.HTTP_403_FORBIDDEN,
                 )
-        except Match.DoesNotExist:
+        else:
             return Response("Match does not exist", status=status.HTTP_404_NOT_FOUND)
-        except KeyError:
-            return Response("No object with key found", status=status.HTTP_404_NOT_FOUND)
 
 
 class GetConversation(APIView):

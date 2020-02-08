@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "users",
     "swipe",
     "chat",
+
 ]
 
 MIDDLEWARE = [
@@ -76,6 +77,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "jumboSmash.wsgi.application"
 
+# Message brokering
+CELERY_BROKER_URL = 'amqp://localhost'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
