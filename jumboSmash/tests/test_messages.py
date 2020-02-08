@@ -9,7 +9,11 @@ from chat.serializers import MessageSerializer
 
 
 class MessageManagerTest(TestCase):
-    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
 
     def test_create_message(self):
         match = Match.objects.get(pk=1)
@@ -33,16 +37,20 @@ class MessageManagerTest(TestCase):
         self.assertEqual(list_m[0].match.id, 1)
         self.assertEqual(list_m[1].match.id, 1)
 
-        #assert delivered by order it is sent
+        # assert delivered by order it is sent
         self.assertEqual(list_m[0].id, 1)
         self.assertEqual(list_m[1].id, 2)
 
-        #assert does not have messages not associated with match
+        # assert does not have messages not associated with match
         self.assertNotIn(3, [m.id for m in list_m])
 
 
 class MessageTaskTest(TestCase):
-    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
 
     def test_message_task(self):
         message = Message.objects.get(pk=1)
@@ -54,13 +62,19 @@ class MessageTaskTest(TestCase):
 
 
 class SendMessageViewsTest(TestCase):
-    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
 
-    @patch('chat.views.message_task.delay')
+    @patch("chat.views.message_task.delay")
     def test_send_message_user_in_match(self, message_task):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 1, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 1, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -74,7 +88,9 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_user_not_in_match(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 1, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 1, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -84,7 +100,9 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_unmatched(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 2, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 2, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -94,7 +112,9 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_nonexistent_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 4, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 4, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -113,7 +133,11 @@ class SendMessageViewsTest(TestCase):
 
 
 class GetConversationViewsTest(TestCase):
-    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
 
     def test_get_conversation_user_in_match(self):
         user = User.objects.get(pk=1)
@@ -126,9 +150,9 @@ class GetConversationViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
 
-        self.assertEqual(response.data[0]['match'], 1)
-        self.assertEqual(response.data[1]['match'], 1)
-        self.assertNotIn(2, [m['match'] for m in response.data])
+        self.assertEqual(response.data[0]["match"], 1)
+        self.assertEqual(response.data[1]["match"], 1)
+        self.assertNotIn(2, [m["match"] for m in response.data])
 
     def test_get_conversation_user_not_in_match(self):
         user = User.objects.get(pk=3)

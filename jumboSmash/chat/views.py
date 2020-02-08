@@ -71,6 +71,8 @@ class GetConversation(APIView):
                         status=status.HTTP_403_FORBIDDEN,
                     )
             except Match.DoesNotExist:
-                return Response("Match does not exist", status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    "Match does not exist", status=status.HTTP_404_NOT_FOUND
+                )
         else:
             return Response("Invalid query.", status=status.HTTP_404_NOT_FOUND)
