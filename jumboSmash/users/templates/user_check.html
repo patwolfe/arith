@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Senior Check</title>
+</head>
+<body>
+    <h1>Senior Check</h1>
+    <p>
+        Enter your email.
+    </p>
+    <form>
+        Email: <input type="text" name="email" default="{{email }}"><br>
+        <input type="submit" value="Check" >
+    </form>
+    {% block results %}
+    {% endblock %}
+</body>
+</html>
