@@ -7,8 +7,6 @@ from .serializers import MatchIdSerializer, MessageSerializer
 
 
 class Unmatch(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         current_user_id = request.user.id
         serializer = MatchIdSerializer(data=request.data)
@@ -26,8 +24,6 @@ class Unmatch(APIView):
 
 
 class SendMessage(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         try:
             match = Match.objects.get(pk=request.data["match"])
@@ -50,8 +46,6 @@ class SendMessage(APIView):
 
 
 class GetConversation(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def get(self, request):
         """get all messages for match_id."""
         match_id = request.query_params.get("match", None)
