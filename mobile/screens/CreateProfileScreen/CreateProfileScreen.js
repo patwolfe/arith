@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Button,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
 
-import PhotoPicker from '../../components/PhotoPicker/PhotoPicker'
+import CreateProfileWizard from 'jumbosmash/components/CreateProfileWizard/CreateProfileWizard';
 
-export default function CreateProfileScreen(props) {
+export default function CreateProfileScreen() {
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <PhotoPicker />
-      </View>
+    <View style={styles.content}>
+      <CreateProfileWizard 
+        userName='Pat Wolfe'
+        userPronouns='he/his'
+      />
     </View>
   );
 }
@@ -24,10 +22,6 @@ CreateProfileScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#a9c6de',
-  },
   content: {
     paddingHorizontal: '5%',
     flex: 1

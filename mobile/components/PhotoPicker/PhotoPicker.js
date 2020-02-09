@@ -4,10 +4,10 @@ import {
   Text, 
   View } from 'react-native';
 
-import { getPermissionAsync } from 'jumbosmash/utils/permissions'
+import { getPermissionAsync } from 'jumbosmash/utils/permissions';
 import PhotoBox from './PhotoBox/PhotoBox';
 
-export default function PhotoPicker() {
+export default function PhotoPicker(props) {
   useEffect(() => {
     getPermissionAsync('Uploading pictures requires camera role access');
   });
@@ -17,19 +17,18 @@ export default function PhotoPicker() {
         <Text style={styles.titleText}>Add Photos</Text>
       </View>
       <View style={styles.photoBoxesContainer}>
-        {createPhotoBoxRows()}
+        {createPhotoBoxRows(props.dispatch)}
       </View>
-    </View>
-    );
+    </View>);
 }
 
-function createPhotoBoxRows() {
+function createPhotoBoxRows(dispatch) {
   return [...Array(3).keys()].map((i) => {
     return (
       <View key={i} style={styles.photoBoxRow}> 
         {[...Array(2).keys()].map((j) => {
           let id = (2 * i) + j;
-          return <PhotoBox key={id} id={id}/>;
+          return <PhotoBox key={id} id={id} dispatch={dispatch}/>;
         })}
       </View>
     );});
