@@ -4,15 +4,16 @@ import {
   View,
 } from 'react-native';
 
-import PhotoPicker from 'jumbosmash/components/PhotoPicker/PhotoPicker'
-import OTPInput from 'jumbosmash/components/OTPInput/OTPInput';
+import CreateProfileWizard from 'jumbosmash/components/CreateProfileWizard/CreateProfileWizard';
 
-export default function CreateProfileScreen(props) {
+
+export default function CreateProfileScreen() {
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <OTPInput />
-      </View>
+    <View style={styles.content}>
+      <CreateProfileWizard 
+        userName='Pat Wolfe'
+        userPronouns='he/his'
+      />
     </View>
   );
 }

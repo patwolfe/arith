@@ -27,16 +27,16 @@ export default function ProfileScreen() {
   }
     
   return (
-      <ScrollView style={styles.scroll}>
-        <View style={styles.profileimg}>
-          <Image source={userProfile.profile_image} style={styles.image}/>
-        </View>
-        <View style={styles.textcontent}>
-          <Text style={styles.title}> {userProfile.name} </Text>
-          <Text> {userProfile.pronouns} </Text>
-          { fields }
-        </View>
-      </ScrollView>
+    <ScrollView style={styles.scroll}>
+      <View style={styles.profileimg}>
+        <Image source={userProfile.profile_image} style={styles.image}/>
+      </View>
+      <View style={styles.textcontent}>
+        <Text style={styles.title}> {userProfile.name} </Text>
+        <Text> {userProfile.pronouns} </Text>
+        { fields }
+      </View>
+    </ScrollView>
   );
 }
 

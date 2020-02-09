@@ -42,7 +42,7 @@ RegisterScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: "30%",
+    paddingTop: '30%',
     flex: 1,
     backgroundColor: '#a9c6de',
   },
@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
     paddingVertical: '2%'
   },
   fieldWithTitle: {
-    paddingVertical: "5%"
+    paddingVertical: '5%'
   }
 });
