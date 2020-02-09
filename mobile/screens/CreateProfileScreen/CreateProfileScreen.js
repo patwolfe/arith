@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Button,
   StyleSheet,
-  Text,
-  TextInput,
   View,
 } from 'react-native';
 
 import PhotoPicker from 'jumbosmash/components/PhotoPicker/PhotoPicker'
-import OTPInput from '../../components/OTPInput/OTPInput';
+import OTPInput from 'jumbosmash/components/OTPInput/OTPInput';
 
 export default function CreateProfileScreen(props) {
   return (
