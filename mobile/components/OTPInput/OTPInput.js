@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import urls from 'jumbosmash/constants/Urls';
+import APICall from 'jumbosmash/utils/APICall';
 
 export default function OTPInput(props) {
   const initialState = {otp: ''};
@@ -17,7 +18,7 @@ export default function OTPInput(props) {
   useEffect(() => {
     if (state.otp.length === 6) {
       props.loadingHook(true);
-      sendCode(props.email, state.otp);
+      sendOTP(props.email, state.otp);
     }});
 
   return (
@@ -59,27 +60,13 @@ function createDigitBoxes(state) {
   });
 }
 
-async function sendCode(email, otp) {
+async function sendOTP(email, otp) {
   let url = `${urls.backendURL}auth/token/`;
-  try {
-    const response = await fetch(url, {
-      method: 'POST', 
-      cache: 'no-cache', 
-      redirect: 'folloW', 
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `email=${email}&token=${otp}`
-    });
-    let res = await response.json();
-    console.log(res);
-    alert(res.token);
-    return true;
-  }
-  catch (e) {
-    console.log(e);
-    return true;
-  }
+  let result = await APICall.PostNoAuth(url, 
+    {'Content-Type': 'application/x-www-form-urlencoded'},
+    `email=${email}&token=${otp}`
+  );
+  return !result.error;
 }
 
 function reducer(state, action) {

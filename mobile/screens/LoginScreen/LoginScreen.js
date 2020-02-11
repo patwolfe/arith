@@ -7,6 +7,7 @@ import {
   TextInput,
 } from 'react-native';
 
+import APICall from 'jumbosmash/utils/APICall';
 import LoadingModal from 'jumbosmash/components/LoadingModal/LoadingModal';
 import urls from 'jumbosmash/constants/Urls';
 
@@ -50,29 +51,11 @@ export default function LoginScreen(props) {
 }
 
 async function requestEmail(email) {
-  console.log(urls.backendURL);
   let url = `${urls.backendURL}auth/email/`;
-  console.log(url);
-  console.log('here');
-  console.log('there'); 
-  try {
-    const response = await fetch(url, {
-      method: 'POST', 
-      cache: 'no-cache', 
-      redirect: 'folloW', 
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `email=${email}`
-    });
-    let res = await response.json(); // parses JSON response into native JavaScript objects  await fetch 
-    console.log(res);
-    return true;
-  }
-  catch (e) {
-    console.log(e);
-    return false;
-  }
+  let result = await APICall.PostNoAuth(url,
+    {'Content-Type': 'application/x-www-form-urlencoded'},
+    `email=${email}`);
+  return !result.error;
 }
 
 LoginScreen.navigationOptions = {
