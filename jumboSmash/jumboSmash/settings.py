@@ -133,3 +133,6 @@ EMAIL_USE_TLS = False
 
 # Uncomment this line to send emails to the console not mailhog
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
+AWS_STORAGE_BUCKET = "jumbosmash2020-test"

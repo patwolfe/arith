@@ -38,17 +38,17 @@
     {% for photo_set in photo_sets %}
     <tr class="photo_set"><td>
     <div>
-      <label class="required">{% if photo_set.approved %}Approved{% else %}Pending{% endif %} Photos</label>
+      <label class="required">{% if pending_photos %}Approved{% else %}Pending{% endif %} Photos</label>
       <table>
         <tr>
-          <td><img src="{{ photo_set.photos.0 }}" /></td>
-          <td><img src="{{ photo_set.photos.1 }}" /></td>
-          <td><img src="{{ photo_set.photos.2 }}" /></td>
+            {% for img in pending_photos %}
+                <td><img src="{{img}}" /></td>
+            {% endfor %}
         </tr>
         <tr>
-          <td><img src="{{ photo_set.photos.3 }}" /></td>
-          <td><img src="{{ photo_set.photos.4 }}" /></td>
-          <td><img src="{{ photo_set.photos.5 }}" /></td>
+            {% for img in approved_photos %}
+                <td><img src="{{img}}" /></td>
+            {% endfor %}
         </tr>
       </table>
     </div>
