@@ -3,7 +3,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from users.models import User, ProfileBody, PhotoSet
-from users.serializers import UserIdSerializer, SimpleUserSerializer, ProfileSerializer
+from users.serializers import (
+    UserIdSerializer,
+    SimpleUserSerializer,
+    ProfileSerializer,
+    PhotoSetSerializer,
+)
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.shortcuts import render
 import logging
@@ -49,17 +54,11 @@ class EditProfile(APIView):
 
     def post(self, request):
         user_id = request.user.id
-        print(request.data)
         serializer = ProfileSerializer(
             data=request.data, context={"user": request.user}
         )
-        print(serializer.is_valid())
-        print(serializer.errors)
-        print("-----------------------------------")
-        print(serializer.validated_data)
-        print("-----------------------------------")
+        serializer.is_valid()  # Should do some handling here
         serializer.save()
-        # ret_serializer = ProfileSerializer(user, context={"request": request})
         return Response("what should this respond?")
 
 

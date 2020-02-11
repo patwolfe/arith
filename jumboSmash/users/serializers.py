@@ -2,6 +2,7 @@ from rest_framework import serializers
 from users.models import User, ProfileBody, PhotoSet
 from django.core.exceptions import ObjectDoesNotExist
 from types import SimpleNamespace
+import logging
 
 
 class UserIdSerializer(serializers.Serializer):
@@ -37,8 +38,21 @@ class PhotoSetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PhotoSet
-        fields = "__all__"
-        read_only_fields = ["approved", "user"]
+        fields = [
+            "photo0",
+            "photo1",
+            "photo2",
+            "photo3",
+            "photo4",
+            "photo5",
+            "approved",
+            "display_urls",
+            "user",
+        ]
+        read_only_fields = [
+            "user",
+            "approved",
+        ]
 
     def validate(self, data):
         empty_photo = False
@@ -66,17 +80,18 @@ class PhotoSetSerializer(serializers.ModelSerializer):
         "Creates and saves a new pending PhotoSet or updates existing pending set"
         user = self.context["user"]
         validated_data["user"] = user
-        new_set = PhotoSet(**validated_data)
         sets = PhotoSet.objects.filter(user=user)
         approved_set = sets.filter(approved=True)
         pending_set = sets.filter(approved=False)
-        if approved_set and approved_set.first().is_reorder(new_set):
+
+        if approved_set and approved_set.first().is_reorder(PhotoSet(**validated_data)):
             approved_set.update(**validated_data)
             return approved_set.first()
         elif pending_set:
             pending_set.update(**validated_data)
             return pending_set.first()
         else:
+            new_set = PhotoSet(**validated_data)
             new_set.save()
             return new_set
 
@@ -90,10 +105,14 @@ class ProfileSerializer(serializers.Serializer):
         data = {}
         data["user"] = SimpleUserSerializer(user_instance).data
 
-        get_approved = user_instance == self.context["user"]
-        data["photos"] = PhotoSetSerializer(
-            PhotoSet.objects.filter(user=user_instance, approved=get_approved).first()
-        ).data
+        photo_set = PhotoSet.objects.filter(user=user_instance, approved=True).first()
+
+        if user_instance == self.context["user"]:
+            unapproved = PhotoSet.objects.filter(
+                user=user_instance, approved=False
+            ).first()
+            photo_set = unapproved or photo_set
+        data["photos"] = PhotoSetSerializer(photo_set).data
         data["profile_body"] = ProfileBodySerializer(
             ProfileBody.objects.filter(user=user_instance).first()
         ).data
