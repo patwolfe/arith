@@ -1,5 +1,5 @@
 import React, { 
-  useReducer, useEffect, 
+  useReducer, useState, useEffect, 
 } from 'react';
 
 import { 
@@ -18,6 +18,7 @@ export default function OTPInput(props) {
   useEffect(() => {
     if (state.otp.length === 6) {
       props.loadingHook(true);
+      dispatch({type: 'clear'});
       sendOTP(props.email, state.otp);
     }});
 
@@ -66,13 +67,18 @@ async function sendOTP(email, otp) {
     {'Content-Type': 'application/x-www-form-urlencoded'},
     `email=${email}&token=${otp}`
   );
-  return !result.error;
+  if (result.error) 
+    return false;
+  let storageResult = await APICall.storeToken(result.res.token);
+  return storageResult;
 }
 
 function reducer(state, action) {
   switch(action.type) {
   case 'input':
     return {...state, otp: action.val};
+  case 'clear':
+    return {...state, otp: ''};
   }
 }
 
