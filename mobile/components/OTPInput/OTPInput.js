@@ -9,21 +9,47 @@ import {
   View 
 } from 'react-native';
 
+import LoadingModal from 'jumbosmash/components/LoadingModal/LoadingModal';
 import urls from 'jumbosmash/constants/Urls';
 import APICall from 'jumbosmash/utils/APICall';
 
 export default function OTPInput(props) {
-  const initialState = {otp: ''};
+  const initialState = {input: '', otp: ''};
+  const [rejected, setRejected] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [loading, setLoading] = useState(false);
+
+  let email = props.email;
   useEffect(() => {
+    const sendOTP = async () => {
+      setLoading(true);
+      let url = `${urls.backendURL}auth/token/`;
+      let result = await APICall.PostNoAuth(url, 
+        {'Content-Type': 'application/x-www-form-urlencoded'},
+        `email=${email}&token=${state.otp}`
+      );
+
+      if (result.error || !result.ok) {
+        setLoading(false);
+        setRejected(true);
+        console.log('rejected');
+        return false;
+      }
+
+      let storageResult = await APICall.storeToken(result.res.token);
+      setLoading(false);
+      return storageResult;
+    };
+    
     if (state.otp.length === 6) {
-      props.loadingHook(true);
-      dispatch({type: 'clear'});
-      sendOTP(props.email, state.otp);
-    }});
+      sendOTP();
+    }
+  }, [state.otp, email]);
 
   return (
     <View style={styles.boxesContainer}>
+      {loading && <LoadingModal />}
+      {rejected && <Text>Code rejected.</Text>}
       <Text>Enter the code sent to {props.email}</Text>
       <View style={styles.wrap}>
         {createDigitBoxes(state)}
@@ -54,31 +80,25 @@ function createDigitBoxes(state) {
     return (<DigitBox 
       key={i} 
       i={i}
-      selected={state.otp.length === i}
-      val={state.otp[i]}
+      selected={state.input.length === i}
+      val={state.input[i]}
       maxLength={6}
     />);
   });
 }
 
-async function sendOTP(email, otp) {
-  let url = `${urls.backendURL}auth/token/`;
-  let result = await APICall.PostNoAuth(url, 
-    {'Content-Type': 'application/x-www-form-urlencoded'},
-    `email=${email}&token=${otp}`
-  );
-  if (result.error) 
-    return false;
-  let storageResult = await APICall.storeToken(result.res.token);
-  return storageResult;
-}
-
 function reducer(state, action) {
   switch(action.type) {
   case 'input':
-    return {...state, otp: action.val};
+    if (action.val.length === 6) {
+      // Only update otp when a full code is input
+      return {...state, input: action.val, otp: action.val};
+    }
+    return {...state, input: action.val};
   case 'clear':
-    return {...state, otp: ''};
+    return {...state, input: ''};
+  case 'rejected':
+    return {...state, rejected: action.val};
   }
 }
 

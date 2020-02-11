@@ -4,18 +4,13 @@ import {
   View,
 } from 'react-native';
 
-import LoadingModal from 'jumbosmash/components/LoadingModal/LoadingModal';
 import OTPInput from 'jumbosmash/components/OTPInput/OTPInput';
 
 export default function OTPScreen(props) {
-  const [loading, setLoading] = useState(false);
   const email = props.navigation.getParam('email', 'Undefined');
   return (
     <View style={styles.container}>
-      {loading ? 
-        <LoadingModal /> :
-        <OTPInput email={email} loadingHook={setLoading}/>
-      }
+      <OTPInput email={email}/>
     </View>
   );
 }

@@ -30,6 +30,7 @@ export default function LoginScreen(props) {
         onChangeText={(newText) => setEmail(newText.toLowerCase())}/>     
       <Button title='Login'
         onPress={() => {
+          setEmail('patrick.wolfe@tufts.edu')
           setLoading(true);
           requestEmail(email).then(valid =>
           { 
@@ -55,7 +56,7 @@ async function requestEmail(email) {
   let result = await APICall.PostNoAuth(url,
     {'Content-Type': 'application/x-www-form-urlencoded'},
     `email=${email}`);
-  return !result.error;
+  return !result.error && result.ok;
 }
 
 LoginScreen.navigationOptions = {

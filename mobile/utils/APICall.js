@@ -10,7 +10,7 @@ export default {
       });
       let res = await response.json();
       console.log(res);
-      return {error: false, res: res};
+      return {error: false, ok: response.ok, res: res};
     }
     catch (e) {
       console.log(e);
@@ -19,10 +19,7 @@ export default {
   },
 
   async storeToken(token) {
-    console.log('in storeToken');
     try {
-      console.log('token v');
-      console.log(token);
       await AsyncStorage.setItem('token', token);
       return true;
     }
