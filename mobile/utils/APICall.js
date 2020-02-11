@@ -9,7 +9,6 @@ export default {
         body: body,
       });
       let res = await response.json();
-      console.log(res);
       return {error: false, ok: response.ok, res: res};
     }
     catch (e) {

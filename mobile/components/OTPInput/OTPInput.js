@@ -9,30 +9,29 @@ import {
   View 
 } from 'react-native';
 
+import APICall from 'jumbosmash/utils/APICall';
 import LoadingModal from 'jumbosmash/components/LoadingModal/LoadingModal';
 import urls from 'jumbosmash/constants/Urls';
-import APICall from 'jumbosmash/utils/APICall';
 
 export default function OTPInput(props) {
   const initialState = {input: '', otp: ''};
-  const [rejected, setRejected] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
+  
   const [loading, setLoading] = useState(false);
+  const [rejected, setRejected] = useState(false);
 
-  let email = props.email;
   useEffect(() => {
     const sendOTP = async () => {
       setLoading(true);
       let url = `${urls.backendURL}auth/token/`;
       let result = await APICall.PostNoAuth(url, 
         {'Content-Type': 'application/x-www-form-urlencoded'},
-        `email=${email}&token=${state.otp}`
+        `email=${props.email}&token=${state.otp}`
       );
 
       if (result.error || !result.ok) {
         setLoading(false);
         setRejected(true);
-        console.log('rejected');
         return false;
       }
 
@@ -41,10 +40,11 @@ export default function OTPInput(props) {
       return storageResult;
     };
     
+    // Don't send OTP when component is first rendered
     if (state.otp.length === 6) {
       sendOTP();
     }
-  }, [state.otp, email]);
+  }, [state.otp, props.email]);
 
   return (
     <View style={styles.boxesContainer}>
@@ -97,8 +97,6 @@ function reducer(state, action) {
     return {...state, input: action.val};
   case 'clear':
     return {...state, input: ''};
-  case 'rejected':
-    return {...state, rejected: action.val};
   }
 }
 
