@@ -49,6 +49,22 @@ class UserAdmin(UserAdmin):
     )
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
+        approved_set = PhotoSet.objects.filter(user=object_id, approved=True).first()
+        if approved_set:
+            order = approved_set.as_list()
+            urls = approved_set.get_display_urls()
+            approved_photos = [urls[x] for x in order if x is not None]
+        else:
+            approved_photos = []
+
+        pending_set = PhotoSet.objects.filter(user=object_id, approved=False).first()
+        if pending_set:
+            order = pending_set.as_list()
+            urls = pending_set.get_display_urls()
+            pending_photos = [urls[x] for x in order if x is not None]
+        else:
+            pending_photos = []
+
         extra_context = extra_context or {}
         user = User.objects.get(id=object_id)
         extra_context["user_status"] = user.status
@@ -57,14 +73,8 @@ class UserAdmin(UserAdmin):
         extra_context["profiles"] = (
             ProfileBody.objects.filter(user=object_id).first(),
         )
-        extra_context["approved_photos"] = map(
-            lambda photo_set: photo_set.get_photos(),
-            PhotoSet.objects.filter(user=object_id, approved=True),
-        )
-        extra_context["pending_photos"] = map(
-            lambda photo_set: photo_set.get_photos(),
-            PhotoSet.objects.filter(user=object_id, approved=False),
-        )
+        extra_context["approved_photos"] = approved_photos
+        extra_context["pending_photos"] = pending_photos
         return super(UserAdmin, self).change_view(
             request, object_id, form_url, extra_context=extra_context
         )
@@ -116,3 +126,19 @@ class UserAdmin(UserAdmin):
 
 
 admin.site.register(User, UserAdmin)
+
+
+class PhotoSetAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "photo0",
+        "photo1",
+        "photo2",
+        "photo3",
+        "photo4",
+        "photo5",
+        "approved",
+    ]
+
+
+admin.site.register(PhotoSet, PhotoSetAdmin)

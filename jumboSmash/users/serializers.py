@@ -113,7 +113,3 @@ class ProfileSerializer(serializers.Serializer):
         )
         profile_serializer.is_valid()
         profile_serializer.save()
-
-    # def to_internal_value(self, data):
-    #     print(data)
-    #     return data  # SimpleNamespace(photos=photos, profile=profile, user=user)

@@ -1,6 +1,7 @@
 from botocore.exceptions import ClientError
 from django.conf import settings
 import boto3
+import logging
 
 def create_presigned_url(object_name, expiration=3600):
     """Generate a presigned URL to share an S3 object
@@ -12,12 +13,13 @@ def create_presigned_url(object_name, expiration=3600):
     """
 
     # Generate a presigned URL for the S3 object
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client("s3")
     try:
-        response = s3_client.generate_presigned_url('get_object',
-                                                    Params={'Bucket': settings.AWS_STORAGE_BUCKET,
-                                                            'Key': object_name},
-                                                    ExpiresIn=expiration)
+        response = s3_client.generate_presigned_url(
+            "get_object",
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET, "Key": object_name},
+            ExpiresIn=expiration,
+        )
     except ClientError as e:
         logging.error(e)
         return None
@@ -26,8 +28,7 @@ def create_presigned_url(object_name, expiration=3600):
     return response
 
 
-def create_presigned_post(object_name,
-                          fields=None, conditions=None, expiration=3600):
+def create_presigned_post(object_name, fields=None, conditions=None, expiration=3600):
     """Generate a presigned URL S3 POST request to upload a file
 
     :param bucket_name: string
@@ -42,14 +43,13 @@ def create_presigned_post(object_name,
     """
 
     # Generate a presigned S3 POST URL
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client("s3")
     try:
-        response = s3_client.generate_presigned_post(settings.AWS_STORAGE_BUCKET,
-                                                     object_name,
-                                                     ExpiresIn=expiration)
+        response = s3_client.generate_presigned_post(
+            settings.AWS_STORAGE_BUCKET, object_name, ExpiresIn=expiration
+        )
     except ClientError as e:
-        #logging.error(e)
+        logging.error(e)
         return None
 
-    print(response)
     return response

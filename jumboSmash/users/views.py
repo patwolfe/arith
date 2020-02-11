@@ -32,7 +32,7 @@ class GetProfile(APIView):
         if serializer.is_valid():
             requested_user = serializer.validated_data["user"]
             serializer = ProfileSerializer(
-                requested_user, context={"user_id": request.user.id}
+                requested_user, context={"user": request.user}
             )
             return Response(serializer.data)
         else:

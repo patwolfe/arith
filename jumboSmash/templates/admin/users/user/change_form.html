@@ -21,39 +21,36 @@
 {% endblock %}
 {% block field_sets %}
   <div class="container">
-    <div class="user-info">
+    <div id="user_info">
       {{ block.super }}
     </div>
-    <div class="profile">
+    <div id="profile">
       {% if id_photo %}
-      <label class="required">Tufts ID</label>
+      <h2 >Tufts ID</h2>
       <img src="{{ id_photo }}" />
       {% endif %}
       {% for profile in profiles %}
-        <label class="required">Profile</label>
+        <h2>Profile</h2>
         <p>{{ profile.bio }}</p>
       {% endfor %}
     </div>
-    <table>
-    {% for photo_set in photo_sets %}
-    <tr class="photo_set"><td>
-    <div>
-      <label class="required">{% if pending_photos %}Approved{% else %}Pending{% endif %} Photos</label>
-      <table>
-        <tr>
-            {% for img in pending_photos %}
-                <td><img src="{{img}}" /></td>
-            {% endfor %}
-        </tr>
-        <tr>
-            {% for img in approved_photos %}
-                <td><img src="{{img}}" /></td>
-            {% endfor %}
-        </tr>
-      </table>
+    <div id="photo_sets">
+        {% if pending_photos %}
+            <h2> Pending Photos </h2>
+            <div id="pending" class="photo_container">
+                {% for img in pending_photos %}
+                    <img src="{{img}}" class = "profile_photo"/>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if approved_photos %}
+            <h2> Approved Photos </h2>
+            <div id="approved" class="photo_container">
+                {% for img in approved_photos %}
+                    <img src="{{img}}" class = "profile_photo"/>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
-    </td></tr>
-    {% endfor %}
-    </table>
   </div>
 {% endblock %}

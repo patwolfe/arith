@@ -140,7 +140,7 @@ class PhotoSetManager(models.Manager):
     def get_upload_urls(self, user_id):
         urls = []
         for i in range(6, 12):
-            urls.append([i, create_presigned_url(self.to_aws_key(id, i))])
+            urls.append([i, create_presigned_post(self.to_aws_key(user_id, i))])
         return urls
 
     def approve(self, user_id):
@@ -201,7 +201,7 @@ class PhotoSet(models.Model):
         for photo in self.as_list():
             if photo:
                 urls[photo] = create_presigned_url(
-                    self.objects.to_aws_key(self.user.id, photo)
+                    PhotoSet.objects.to_aws_key(self.user.id, photo)
                 )
         return urls
 
