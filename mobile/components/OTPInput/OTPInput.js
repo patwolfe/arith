@@ -1,5 +1,5 @@
 import React, { 
-  useReducer, 
+  useReducer, useEffect, 
 } from 'react';
 
 import { 
@@ -9,14 +9,20 @@ import {
   View 
 } from 'react-native';
 
-export default function OTPInput() {
-  const initialState = {
-    otp: '',
-    currIndex: 0
-  };
+import urls from 'jumbosmash/constants/Urls';
+
+export default function OTPInput(props) {
+  const initialState = {otp: ''};
   const [state, dispatch] = useReducer(reducer, initialState);
+  useEffect(() => {
+    if (state.otp.length === 6) {
+      props.loadingHook(true);
+      sendCode(props.email, state.otp);
+    }});
+
   return (
     <View style={styles.boxesContainer}>
+      <Text>Enter the code sent to {props.email}</Text>
       <View style={styles.wrap}>
         {createDigitBoxes(state)}
       </View>
@@ -53,10 +59,33 @@ function createDigitBoxes(state) {
   });
 }
 
+async function sendCode(email, otp) {
+  let url = `${urls.backendURL}auth/token/`;
+  try {
+    const response = await fetch(url, {
+      method: 'POST', 
+      cache: 'no-cache', 
+      redirect: 'folloW', 
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `email=${email}&token=${otp}`
+    });
+    let res = await response.json();
+    console.log(res);
+    alert(res.token);
+    return true;
+  }
+  catch (e) {
+    console.log(e);
+    return true;
+  }
+}
+
 function reducer(state, action) {
   switch(action.type) {
   case 'input':
-    return {...state, otp: action.val}
+    return {...state, otp: action.val};
   }
 }
 
