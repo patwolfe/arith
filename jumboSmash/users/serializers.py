@@ -64,6 +64,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         if approved_set and approved_set.is_photo_reorder(Profile(**validated_data)):
             new_set = approved_set.update(**validated_data)
+            if pending_set:
+                pending_set.delete()
         elif pending_set:
             new_set = pending_set.update(**validated_data)
         else:

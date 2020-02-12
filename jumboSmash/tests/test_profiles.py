@@ -99,3 +99,8 @@ class ProfileSerializerTests(TestCase):
         approved, pending = Profile.objects.get_profiles(user=user)
         self.assertEqual(pending.photo_list(), order)
         self.assertEqual(old_approved, approved)
+
+# TODO:
+# - test for deleted pending
+# - test endpoints
+# - test same photo id multiple times
