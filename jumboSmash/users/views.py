@@ -2,12 +2,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from users.models import User, ProfileBody, PhotoSet
+from users.models import User, Profile
 from users.serializers import (
     UserIdSerializer,
     SimpleUserSerializer,
     ProfileSerializer,
-    PhotoSetSerializer,
 )
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.shortcuts import render
@@ -27,21 +26,21 @@ class ListUsers(APIView):
 
 class GetProfile(APIView):
     """
-    Get a profile and photos for user
+    Get a profile for given user
     """
 
-    # TODO don't show if banned
+    # TODO don't show if banned <- or should this be blocked elsewhere
 
     def get(self, request):
-        serializer = UserIdSerializer(data=request.query_params)
-        if serializer.is_valid():
-            requested_user = serializer.validated_data["user"]
-            serializer = ProfileSerializer(
-                requested_user, context={"user": request.user}
-            )
-            return Response(serializer.data)
+        user_serializer = UserIdSerializer(data=request.query_params)
+        user_serializer.is_valid(raise_exception=True)
+        requested_user = user_serializer.validated_data["user"]
+        approved, pending = Profile.objects.get_profiles(requested_user)
+        if requested_user == request.user:
+            serializer = ProfileSerializer(pending)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = ProfileSerializer(approved)
+        return Response(serializer.data)
 
 
 class EditProfile(APIView):
@@ -50,16 +49,16 @@ class EditProfile(APIView):
     """
 
     def get(self, request):
-        return Response(PhotoSet.objects.get_upload_urls(request.user.id))
+        return Response(Profile.objects.get_upload_urls(request.user.id))
 
     def post(self, request):
         user_id = request.user.id
         serializer = ProfileSerializer(
             data=request.data, context={"user": request.user}
         )
-        serializer.is_valid()  # Should do some handling here
-        serializer.save()
-        return Response("what should this respond?")
+        serializer.is_valid(raise_exception=True)
+        profile = serializer.save()
+        return Response("what should this respond")
 
 
 class CheckUserExists(APIView):

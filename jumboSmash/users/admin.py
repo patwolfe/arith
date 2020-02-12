@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import User, ProfileBody, PhotoSet
+from users.models import User, Profile
 from django.utils.html import format_html
 from django.urls import re_path, reverse
 from django.http import HttpResponseRedirect
@@ -49,17 +49,17 @@ class UserAdmin(UserAdmin):
     )
 
     def change_view(self, request, object_id, form_url="", extra_context=None):
-        approved_set = PhotoSet.objects.filter(user=object_id, approved=True).first()
+        approved_set, pending_set = Profile.objects.get_profiles(user=object_id)
+
         if approved_set:
-            order = approved_set.as_list()
+            order = approved_set.photo_list()
             urls = approved_set.get_display_urls()
             approved_photos = [urls[x] for x in order if x is not None]
         else:
             approved_photos = []
 
-        pending_set = PhotoSet.objects.filter(user=object_id, approved=False).first()
         if pending_set:
-            order = pending_set.as_list()
+            order = pending_set.photo_list()
             urls = pending_set.get_display_urls()
             pending_photos = [urls[x] for x in order if x is not None]
         else:
@@ -70,9 +70,7 @@ class UserAdmin(UserAdmin):
         extra_context["user_status"] = user.status
         extra_context["needs_review"] = user.needs_review
         extra_context["id_photo"] = user.id_photo
-        extra_context["profiles"] = (
-            ProfileBody.objects.filter(user=object_id).first(),
-        )
+        extra_context["profiles"] = (Profile.objects.filter(user=object_id).first(),)
         extra_context["approved_photos"] = approved_photos
         extra_context["pending_photos"] = pending_photos
         return super(UserAdmin, self).change_view(
@@ -128,7 +126,7 @@ class UserAdmin(UserAdmin):
 admin.site.register(User, UserAdmin)
 
 
-class PhotoSetAdmin(admin.ModelAdmin):
+class ProfileAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "photo0",
@@ -137,8 +135,9 @@ class PhotoSetAdmin(admin.ModelAdmin):
         "photo3",
         "photo4",
         "photo5",
+        "bio",
         "approved",
     ]
 
 
-admin.site.register(PhotoSet, PhotoSetAdmin)
+admin.site.register(Profile, ProfileAdmin)

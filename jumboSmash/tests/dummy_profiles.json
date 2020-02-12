@@ -1,4 +1,4 @@
-[{"model": "users.PhotoSet",
+[{"model": "users.Profile",
  "pk": 1,
  "fields":{ "photo0":  1,
             "photo1": 2,
@@ -7,9 +7,10 @@
             "photo4": null,
             "photo5": null,
             "approved": true,
+            "bio": "hello",
             "user": 1}
 },
-{"model": "users.PhotoSet",
+{"model": "users.Profile",
  "pk": 2,
  "fields":{ "photo0":  1,
             "photo1": 2,
@@ -18,9 +19,10 @@
             "photo4": null,
             "photo5": null,
             "approved": true,
+            "bio": "hello",
             "user": 2}
 },
-{"model": "users.PhotoSet",
+{"model": "users.Profile",
  "pk": 3,
  "fields":{ "photo0":  1,
             "photo1": 4,
@@ -29,10 +31,6 @@
             "photo4": null,
             "photo5": null,
             "approved": false,
+            "bio": "hello",
             "user": 2}
-},
-{"model": "users.ProfileBody",
- "pk": 1,
- "fields":{ "bio":  "sup",
-            "user": 1}
 }]
