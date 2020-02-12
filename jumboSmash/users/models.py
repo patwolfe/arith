@@ -221,3 +221,8 @@ class Profile(models.Model):
             setattr(self, fname, fval)
         super(Profile, self).save()
         return self
+
+
+class ReviewProfile(Profile):
+    class Meta:
+        proxy = True

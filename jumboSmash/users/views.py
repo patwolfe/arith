@@ -49,7 +49,7 @@ class EditProfile(APIView):
     """
 
     def get(self, request):
-        return Response(Profile.objects.get_upload_urls(request.user.id))
+        return Response({"d": Profile.objects.get_upload_urls(request.user.id)})
 
     def post(self, request):
         user_id = request.user.id

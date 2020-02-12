@@ -1,9 +1,21 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import User, Profile
+from users.models import User, Profile, ReviewProfile
 from django.utils.html import format_html
 from django.urls import re_path, reverse
 from django.http import HttpResponseRedirect
+from difflib import HtmlDiff
+
+
+def list_photo_urls(profile):
+    """ Lists display URLs for a profile, [] if None"""
+    if profile:
+        order = profile.photo_list()
+        urls = profile.get_display_urls()
+        photos = [urls[x] for x in order if x is not None]
+    else:
+        photos = []
+    return photos
 
 
 class UserAdmin(UserAdmin):
@@ -141,3 +153,78 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Profile, ProfileAdmin)
+
+
+class ReviewProfileAdmin(admin.ModelAdmin):
+    list_display = ["user", "user_status"]
+
+    def user_status(self, obj):
+        return obj.user.get_status_display()
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(approved=False)
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        print("change view", object_id)
+        profile = Profile.objects.get(id=object_id)
+        user = profile.user
+
+        approved_profile, pending_profile = Profile.objects.get_profiles(user=user)
+
+        approved_photos = list_photo_urls(approved_profile)
+        pending_photos = list_photo_urls(pending_profile)
+
+        # diff_table = HtmlDiff().make_file(
+        #     approved_profile.bio if approved_profile else "", pending_profile.bio
+        # )
+        extra_context = extra_context or {}
+
+        extra_context["user_status"] = user.status
+        # extra_context["id_photo"] = user.id_photo this breaks everything, will fix later
+        extra_context["approved_photos"] = approved_photos
+        extra_context["pending_photos"] = pending_photos
+        extra_context["approved_profile"] = approved_profile
+        extra_context["pending_profile"] = pending_profile
+        # extra_context["text_diff"] = diff_table
+        return super(ReviewProfileAdmin, self).change_view(
+            request, object_id, form_url, extra_context=extra_context
+        )
+
+    class Media:
+        css = {"all": ("users/admin/admin.css",)}
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            re_path(
+                r"^(?P<user_id>.+)/approve/$",
+                self.admin_site.admin_view(self.approve),
+                name="pending-profile-approve",
+            ),
+            re_path(
+                r"^(?P<user_id>.+)/reject/$",
+                self.admin_site.admin_view(self.reject),
+                name="pending-profile-reject",
+            ),
+        ]
+        return custom_urls + urls
+
+    def approve(self, request, user_id, *args, **kwargs):
+        User.objects.approve(user_id)
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    def reject(self, request, user_id, *args, **kwargs):
+        User.objects.reject(user_id)
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    def ban(self, request, user_id, *args, **kwargs):
+        User.objects.ban(user_id)
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    def unban(self, request, user_id, *args, **kwargs):
+        User.objects.unban(user_id)
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+admin.site.register(ReviewProfile, ReviewProfileAdmin)
