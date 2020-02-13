@@ -10,8 +10,8 @@ import {
   Platform,
   SafeAreaView,
 } from 'react-native';
-import ChatView from '../../components/ChatView/ChatView';
-import ChatScreenHeader from '../../components/ChatScreenHeader/ChatScreenHeader';
+import ChatView from 'jumbosmash/components/ChatView/ChatView';
+import ChatScreenHeader from 'jumbosmash/components/ChatScreenHeader/ChatScreenHeader';
 
 export default function ChatScreen(props) {
   const initialState = {
