@@ -1,62 +1,48 @@
 import React from 'react';
 import {
-  ScrollView,
   StyleSheet,
   Text,
   View,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  StatusBar,
   Keyboard,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import ChatView from '../../components/ChatView/ChatView';
+import ChatScreenHeader from '../../components/ChatScreenHeader/ChatScreenHeader';
 
 export default function ChatScreen(props) {
   const initialState = {
     keyboardavoidingviewkey: 0,
     textInput: '',
+    // TODO: Get actual messages from backend
     messages: [{content: 'Hi how\'re you doing?', author: 'me'}, 
-      {content: 'Good good, you?', author: 'them'}, //{content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, {content: 'Good good, you?', author: 'them'}, 
+      {content: 'Good good, you?', author: 'them'},
     ],
   };
-  const matchName = props.navigation.getParam('matchName', 'Undefined');
+  
   const [state, setState] = React.useState(initialState);
+  
   React.useEffect(() => {
     function updateKey() {
-      console.log('key updated to ' + (state.keyboardavoidingviewkey + 1).toString());
-
+      // if we do not give the keyboardavoiding view a new key the padding will
+      // stick around when the keyboard hides
       setState({...state, keyboardavoidingviewkey: state.keyboardavoidingviewkey + 1});
     }
     const listener = Keyboard.addListener(Platform.OS === 'android' ? 'keyboardDidHide': 'keyboardWillHide', updateKey);
 
     return function cleanup(){
-      console.log('cleanup');
       listener.remove();
     };
   });
-  console.log('rendering');
   return (
-    <View style={styles.container}>
-      {/* <View>
-        <StatusBar backgroundColor="white" barStyle="light-content" />
-      </View> */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerContents}>
-          <View>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => 
-                props.navigation.navigate('ChatList')}>
-              <Text style={styles.backButtonText}>&lt;</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.headerText}>{matchName}</Text>
-        </View>
-      </View>
-      <KeyboardAvoidingView style={styles.chat} behavior='padding' 
-        enabled keyboardVerticalOffset={100}
+    <SafeAreaView style={styles.container}>
+      <ChatScreenHeader navigation={props.navigation} />
+      <KeyboardAvoidingView behavior='padding'
+        enabled keyboardVerticalOffset={50}
+        style={styles.container}
         key={state.keyboardavoidingviewkey}>
         <View style={styles.chat}>
           <View style={styles.textBar}>
@@ -75,10 +61,12 @@ export default function ChatScreen(props) {
               <Text style={styles.sendButtonText}>^</Text>
             </TouchableOpacity>
           </View>
-          <ChatView messages={state.messages} />
+          <View style={styles.chatContainer}>
+            <ChatView messages={state.messages} />
+          </View>
         </View>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -90,24 +78,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerContainer: {
-    borderStyle: 'solid',
-    borderBottomWidth: .25,
-    marginTop: '5%',
-    marginBottom: '2%',
-    minHeight: '7%',
-  },
-  headerContents: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerText: {
-    textAlign: 'center',
-    alignContent: 'center',
-    fontWeight: 'bold',
-    fontSize: 24,
-  },
   textInput: {
     height: 40, 
     width: '90%',
@@ -117,29 +87,23 @@ const styles = StyleSheet.create({
     marginBottom: '1%',
     marginTop: '1%',
   },
-  backButton: {
-    margin: 15,
-    alignSelf: 'flex-start'
-  },
-  backButtonText: {
-    color: 'steelblue',
-    fontSize: 24,
-  },
   chat: {
     flex: 1,
     flexDirection: 'column-reverse',
     width: '100%',
   },
+  chatContainer: {
+    flex: 1,
+  },
   sendButton: {
     margin: '1%',
-    width: '5%',
+    minWidth: '5%',
   },
   sendButtonText: {
-    fontSize: 24,
+    fontSize: 32,
     color: 'steelblue',
   },
   textBar: {
-    flex: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     borderStyle: 'solid',

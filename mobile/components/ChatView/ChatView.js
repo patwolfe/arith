@@ -4,54 +4,83 @@ import {
   View,
   StyleSheet,
   Text,
-  ScrollView,
+  FlatList,
+  Platform,
+  Keyboard,
 } from 'react-native';
 
 export default function ChatView(props) {
   let scrollViewRef = null;
+  let lastMessage = null;
+
+  function scrollToEnd() {
+    scrollViewRef.scrollToEnd({animated: true});
+  }
+
+  React.useEffect(() => {
+    // When the keyboard opens scroll to the bottom
+    const listener = Keyboard.addListener(Platform.OS === 'android' 
+      ? 'keyboardDidShow'
+      : 'keyboardWillShow', scrollToEnd);
+
+    // Remove listener when component unmounts
+    return function cleanup(){
+      listener.remove();
+    };
+  });
+
   return (
-    <ScrollView
+    <FlatList
+      style={styles.container}
+      ListFooterComponent={() => (<View style={styles.listFooter}></View>)}
+      data={props.messages}
       ref={ref => scrollViewRef = ref}
-      onContentSizeChange={(_, __)=>{        
-        scrollViewRef.scrollToEnd({animated: true});}}>
-      {props.messages.map(
-        (message, i) => {
-          const [rowstyle, messagestyle, textstyle] = 
-            message.author == 'me' 
-              ? [styles.chatMessageSent, 
-                styles.chatMessageSentContainer, 
-                styles.chatMessageSentText] 
-              : [styles.chatMessageReceived, 
-                styles.chatMessageReceivedContainer, 
-                styles.chatMessageReceivedText];
-          return (
-            <View key={i}>
-              <View style={rowstyle}>
-                <View style={messagestyle}>
-                  <Text style={textstyle}>{message.content}</Text>
-                </View>
+      // eslint-disable-next-line no-unused-vars
+      onContentSizeChange={(_, __) => scrollToEnd()}
+      initialNumToRender={50}
+      keyExtractor={(_, i) => i.toString()}
+      // eslint-disable-next-line no-unused-vars
+      renderItem={({item, _, __}) => {
+        const message = item;
+        const [rowstyle, messagestyle, textstyle] = 
+          message.author == 'me' 
+            ? [styles.chatMessageSent, 
+              styles.chatMessageSentContainer, 
+              styles.chatMessageSentText] 
+            : [styles.chatMessageReceived, 
+              styles.chatMessageReceivedContainer, 
+              styles.chatMessageReceivedText];
+        const spacing_wrapper = (lastMessage && (lastMessage.author == message.author) 
+          ? styles.chatSpacingWrapperSame 
+          : styles.chatSpacingWrapperDiff);
+        lastMessage = message;
+        return (
+          <View>
+            <View style={spacing_wrapper}></View>
+            <View style={rowstyle}>
+              <View style={messagestyle}>
+                <Text style={textstyle}>{message.content}</Text>
               </View>
             </View>
-          );
-        })}
-    </ScrollView>
+          </View> 
+        );
+      }}/>
   );
 }
 
 const styles = StyleSheet.create(
   {
-    textInput: {
-      height: 40, 
-      width: '90%',
-      borderColor: 'gray', 
-      borderWidth: 1,
-      alignSelf: 'center',
+    container: {
+      flexShrink: 1,
+      flexGrow: 1,
+    },
+    listFooter: {
+      height: 50,
     },
     chatMessageSent: {
-      flex: 1,
       flexDirection: 'row-reverse',
       justifyContent: 'flex-start',
-      margin: 3,
+      margin: 2,
     },
     chatMessageSentContainer: {
       backgroundColor: '#147efb',
@@ -59,10 +88,9 @@ const styles = StyleSheet.create(
       padding: '2%',
     },
     chatMessageReceived: {
-      flex: 1,
       flexDirection: 'row',
       justifyContent: 'flex-start',
-      margin: 3,
+      margin: 2,
     },
     chatMessageReceivedContainer: {
       maxWidth: '60%',
@@ -72,14 +100,18 @@ const styles = StyleSheet.create(
     chatMessageReceivedText: {
       fontSize: 18,
       justifyContent: 'flex-start',
-      flex: 1,
       color: 'black',
     },
     chatMessageSentText: {
       fontSize: 18,
       justifyContent: 'flex-start',
-      flex: 1,
       color: 'white',
+    },
+    chatSpacingWrapperSame: {
+      maxHeight: '0%',
+    },
+    chatSpacingWrapperDiff: {
+      minHeight: '2%',
     },
   });
 
