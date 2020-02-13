@@ -2,21 +2,22 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  Text,
 } from 'react-native';
 
-export default function VerifyScreen() {
+import OTPInput from 'jumbosmash/components/OTPInput/OTPInput';
+
+export default function OTPScreen(props) {
+  const email = props.navigation.getParam('email', 'Undefined');
   return (
     <View style={styles.container}>
-      <Text>Verification Screen !!!</Text>
+      <OTPInput email={email}/>
     </View>
   );
 }
 
-VerifyScreen.navigationOptions = {
+OTPScreen.navigationOptions = {
   header: null,
 };
-
 
 const styles = StyleSheet.create({
   container: {

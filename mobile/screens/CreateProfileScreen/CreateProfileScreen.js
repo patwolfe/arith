@@ -4,15 +4,14 @@ import {
   View,
 } from 'react-native';
 
-import CreateProfileWizard from 'jumbosmash/components/CreateProfileWizard/CreateProfileWizard';
+import OTPInput from 'jumbosmash/components/OTPInput/OTPInput';
 
 export default function CreateProfileScreen() {
   return (
-    <View style={styles.content}>
-      <CreateProfileWizard 
-        userName='Pat Wolfe'
-        userPronouns='he/his'
-      />
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <OTPInput />
+      </View>
     </View>
   );
 }
@@ -22,6 +21,9 @@ CreateProfileScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   content: {
     paddingHorizontal: '5%',
     flex: 1
