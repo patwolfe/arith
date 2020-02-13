@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -25,7 +25,7 @@ export default function ChatScreen(props) {
   
   const [state, setState] = React.useState(initialState);
   
-  React.useEffect(() => {
+  useEffect(() => {
     function updateKey() {
       // if we do not give the keyboardavoiding view a new key the padding will
       // stick around when the keyboard hides

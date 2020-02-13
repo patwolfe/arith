@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   View,
@@ -17,7 +17,7 @@ export default function ChatView(props) {
     scrollViewRef.scrollToEnd({animated: true});
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     // When the keyboard opens scroll to the bottom
     const listener = Keyboard.addListener(Platform.OS === 'android' 
       ? 'keyboardDidShow'
@@ -35,12 +35,10 @@ export default function ChatView(props) {
       ListFooterComponent={() => (<View style={styles.listFooter}></View>)}
       data={props.messages}
       ref={ref => scrollViewRef = ref}
-      // eslint-disable-next-line no-unused-vars
-      onContentSizeChange={(_, __) => scrollToEnd()}
+      onContentSizeChange={() => scrollToEnd()}
       initialNumToRender={50}
       keyExtractor={(_, i) => i.toString()}
-      // eslint-disable-next-line no-unused-vars
-      renderItem={({item, _, __}) => {
+      renderItem={({item}) => {
         const message = item;
         const [rowstyle, messagestyle, textstyle] = 
           message.author == 'me' 
