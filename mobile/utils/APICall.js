@@ -2,12 +2,17 @@ import { AsyncStorage } from 'react-native';
 
 export default {
   async PostNoAuth(url, headers, body) {
+    console.log(body);
     try {
       const response = await fetch(url, {
         method: 'POST', 
         headers: headers,
         body: body,
       });
+      if (response.status === 204) {
+        console.log('204\'d');
+        return {error: false, ok: response.ok};
+      }
       let res = await response.json();
       return {error: false, ok: response.ok, res: res};
     }
@@ -16,14 +21,6 @@ export default {
       return {error: true};
     }
   },
-
-  /* 
-    GET /profile/?user={id}
-
-    GET /profile/edit
-
-    POST /profile/edit
-  */
 
   async PostAuth(url, headers, body) {
     let token = await AsyncStorage.getItem('token');
