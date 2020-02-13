@@ -57,7 +57,7 @@ async function getEditProfile(dispatch) {
 }
 
 async function submitProfile(dispatch, state) {
-  await uploadPicture(state.pictures[1], state.photoSetInfo.d[1][1].fields);
+  await uploadPicture(state.pictures[0], state.photoSetInfo.d[0][1].fields);
   dispatch({type: 'button'});
   return true;
   
@@ -69,6 +69,8 @@ async function uploadProfile(profile) {
 
 async function uploadPicture(imagePath, photoInfo) {
   let body = formDataFromPhotoInfo(photoInfo);
+  console.log(body);
+  return;
   let filename = imagePath.split('/').pop();
   const photo = {
     uri: imagePath,
@@ -82,7 +84,7 @@ async function uploadPicture(imagePath, photoInfo) {
 }
 
 function formDataFromPhotoInfo(photoInfo) {
-  let body = new FormData();
+  // let body = new FormData();
 
   // console.log('----AWS Info----');
   // console.log(`key: ${photoInfo.key}`);
@@ -91,12 +93,15 @@ function formDataFromPhotoInfo(photoInfo) {
   // console.log(`signature: ${photoInfo.signature}`);
   // console.log('---------------');
 
-
-  body.append('key', photoInfo.key);
-  body.append('AWSAccessKeyId', photoInfo.AWSAccessKeyId);
-  body.append('policy', photoInfo.policy);
-  body.append('signature', photoInfo.signature);
-  return body;
+  // body.append('key', photoInfo.key);
+  // body.append('AWSAccessKeyId', photoInfo.AWSAccessKeyId);
+  // body.append('policy', photoInfo.policy);
+  // body.append('signature', photoInfo.signature);
+  // return body;
+  let body = new FormData();
+  return Object.keys(photoInfo).reduce(
+    (body, key) => {body.append(key, photoInfo[key]); return body;}, 
+    body);
 }
 
 function reducer(state, action) {
