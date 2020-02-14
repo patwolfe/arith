@@ -15,7 +15,7 @@ import ChatScreenHeader from 'jumbosmash/components/ChatScreenHeader/ChatScreenH
 
 export default function ChatScreen(props) {
   const initialState = {
-    keyboardavoidingviewkey: 0,
+    keyboardavoidingviewkey: false,
     textInput: '',
     // TODO: Get actual messages from backend
     messages: [{content: 'Hi how\'re you doing?', author: 'me'}, 
@@ -29,7 +29,7 @@ export default function ChatScreen(props) {
     function updateKey() {
       // if we do not give the keyboardavoiding view a new key the padding will
       // stick around when the keyboard hides
-      setState({...state, keyboardavoidingviewkey: state.keyboardavoidingviewkey + 1});
+      setState((old_state) => ({...old_state, keyboardavoidingviewkey: !old_state.keyboardavoidingviewkey}));
     }
     const listener = Keyboard.addListener(Platform.OS === 'android' ? 'keyboardDidHide': 'keyboardWillHide', updateKey);
 
@@ -48,7 +48,7 @@ export default function ChatScreen(props) {
           <View style={styles.textBar}>
             <TextInput
               style={styles.textInput}
-              onChangeText={text => setState({...state, textInput: text})}
+              onChangeText={text => setState((old_state) =>  ({...old_state, textInput: text}))}
               value={state.textInput} />
             <TouchableOpacity 
               style={styles.sendButton}

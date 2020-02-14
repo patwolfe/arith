@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 
 export default function ChatView(props) {
-  let scrollViewRef = null;
+  let flatListRef = null;
   let lastMessage = null;
 
   function scrollToEnd() {
-    scrollViewRef.scrollToEnd({animated: true});
+    flatListRef.scrollToEnd({animated: true});
   }
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function ChatView(props) {
       style={styles.container}
       ListFooterComponent={() => (<View style={styles.listFooter}></View>)}
       data={props.messages}
-      ref={ref => scrollViewRef = ref}
+      ref={ref => flatListRef = ref}
       onContentSizeChange={() => scrollToEnd()}
       initialNumToRender={50}
       keyExtractor={(_, i) => i.toString()}
@@ -66,50 +66,48 @@ export default function ChatView(props) {
   );
 }
 
-const styles = StyleSheet.create(
-  {
-    container: {
-      flexShrink: 1,
-      flexGrow: 1,
-    },
-    listFooter: {
-      height: 50,
-    },
-    chatMessageSent: {
-      flexDirection: 'row-reverse',
-      justifyContent: 'flex-start',
-      margin: 2,
-    },
-    chatMessageSentContainer: {
-      backgroundColor: '#147efb',
-      maxWidth: '60%',
-      padding: '2%',
-    },
-    chatMessageReceived: {
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      margin: 2,
-    },
-    chatMessageReceivedContainer: {
-      maxWidth: '60%',
-      backgroundColor: '#d3d3d3',
-      padding: '2%',
-    },
-    chatMessageReceivedText: {
-      fontSize: 18,
-      justifyContent: 'flex-start',
-      color: 'black',
-    },
-    chatMessageSentText: {
-      fontSize: 18,
-      justifyContent: 'flex-start',
-      color: 'white',
-    },
-    chatSpacingWrapperSame: {
-      maxHeight: '0%',
-    },
-    chatSpacingWrapperDiff: {
-      minHeight: '2%',
-    },
-  });
-
+const styles = StyleSheet.create({
+  container: {
+    flexShrink: 1,
+    flexGrow: 1,
+  },
+  listFooter: {
+    height: 50,
+  },
+  chatMessageSent: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'flex-start',
+    margin: 2,
+  },
+  chatMessageSentContainer: {
+    backgroundColor: '#147efb',
+    maxWidth: '60%',
+    padding: '2%',
+  },
+  chatMessageReceived: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    margin: 2,
+  },
+  chatMessageReceivedContainer: {
+    maxWidth: '60%',
+    backgroundColor: '#d3d3d3',
+    padding: '2%',
+  },
+  chatMessageReceivedText: {
+    fontSize: 18,
+    justifyContent: 'flex-start',
+    color: 'black',
+  },
+  chatMessageSentText: {
+    fontSize: 18,
+    justifyContent: 'flex-start',
+    color: 'white',
+  },
+  chatSpacingWrapperSame: {
+    maxHeight: '0%',
+  },
+  chatSpacingWrapperDiff: {
+    minHeight: '2%',
+  },
+});
