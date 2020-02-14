@@ -9,8 +9,6 @@ from .tasks import message_task
 
 
 class Unmatch(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         current_user_id = request.user.id
         serializer = MatchIdSerializer(data=request.data)
@@ -28,8 +26,6 @@ class Unmatch(APIView):
 
 
 class SendMessage(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         serializer = SendMessageSerializer(data=request.data)
         if serializer.is_valid():
@@ -54,8 +50,6 @@ class SendMessage(APIView):
 
 
 class GetConversation(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def get(self, request):
         """get all messages for match_id."""
         match_id = request.query_params.get("match", None)
@@ -82,8 +76,6 @@ class GetConversation(APIView):
 
 
 class ViewConversation(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def put(self, request):
         serializer = MatchIdSerializer(data=request.data)
         if serializer.is_valid():
@@ -100,8 +92,6 @@ class ViewConversation(APIView):
 
 
 class GetAll(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def get(self, request):
         matches = Match.objects.list_matches(request.user)
         conversations = []

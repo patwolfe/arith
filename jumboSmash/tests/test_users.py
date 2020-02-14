@@ -5,7 +5,9 @@ from django.contrib.auth import get_user_model
 class UsersManagersTests(TestCase):
     def test_create_user(self):
         User = get_user_model()
-        user = User.objects.create_user(email="normal@user.com", password="123", first_name="normal", last_name="guy")
+        user = User.objects.create_user(
+            email="normal@user.com", first_name="normal", last_name="guy"
+        )
         self.assertEqual(user.email, "normal@user.com")
         self.assertIsNone(user.username)
 
@@ -19,7 +21,9 @@ class UsersManagersTests(TestCase):
 
     def test_create_staffuser(self):
         User = get_user_model()
-        admin_user = User.objects.create_staffuser("super@user.com", password="123", first_name="another", last_name="person")
+        admin_user = User.objects.create_staffuser(
+            "super@user.com", password="123", first_name="another", last_name="person"
+        )
         self.assertEqual(admin_user.email, "super@user.com")
         self.assertIsNone(admin_user.username)
 
@@ -30,7 +34,9 @@ class UsersManagersTests(TestCase):
 
     def test_create_superuser(self):
         User = get_user_model()
-        admin_user = User.objects.create_superuser("super@user.com", password="123", first_name="testing", last_name="poop")
+        admin_user = User.objects.create_superuser(
+            "super@user.com", password="123", first_name="testing", last_name="poop"
+        )
         self.assertEqual(admin_user.email, "super@user.com")
         self.assertIsNone(admin_user.username)
 

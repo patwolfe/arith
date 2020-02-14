@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { 
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity } from 'react-native';
 
 import * as ImagePicker from 'expo-image-picker';
 
-import { getPermissionAsync } from 'jumbosmash/utils/permissions'
+import { getPermissionAsync } from 'jumbosmash/utils/permissions';
 
 export default function PhotoBox(props) {
   const [pic, setPic] = useState('none');
@@ -18,13 +19,13 @@ export default function PhotoBox(props) {
   }
   return (
     <TouchableOpacity style={styles.photoBox}
-      onPress={() => selectPhoto(setPic)}>
+      onPress={() => selectPhoto(props.id, setPic, props.dispatch)}>
       {picDiv}
     </TouchableOpacity>
   );
 }
 
-async function selectPhoto(setPic) {
+async function selectPhoto(id, setPic, dispatch) {
   let status = await getPermissionAsync('Uploading pictures requires camera role access');
   if (status !== 'granted') {
     return;
@@ -40,6 +41,7 @@ async function selectPhoto(setPic) {
     // leave state unchanged
     return;    
   }
+  dispatch({type: 'picture', id: id, payload: result.uri});
   setPic(result.uri);
 }
 
