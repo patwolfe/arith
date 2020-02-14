@@ -7,7 +7,7 @@ import {
 
 /* Props
  * darkMode: bool, decides the color of the bar below the box (default false)
- * displayText: text to show on the button
+ * title: text to show on the button
  * onClick: function to pass to Button's onClick()
  */
 export default function ButtonCustom(props) {
