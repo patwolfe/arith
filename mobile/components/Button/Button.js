@@ -10,7 +10,7 @@ import {
  * title: text to show on the button
  * onClick: function to pass to Button's onClick()
  */
-export default function ButtonCustom(props) {
+export default function Button(props) {
 
   // determines text vs. background color (for dark or light screen)
   const barColor = props.darkMode ? ['white', 'black'] : ['black', 'white'];

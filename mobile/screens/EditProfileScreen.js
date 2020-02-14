@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 
 import profiles from '../test_data/mockProfiles';
-import TextInputCustom from '../components/TextInputCustom/TextInputCustom';
-import ButtonCustom from '../components/ButtonCustom/ButtonCustom';
+import TextInput from '../components/TextInput/TextInput';
+import Button from '../components/Button/Button';
 
 
 export default function EditProfileScreen() {
@@ -19,11 +19,10 @@ export default function EditProfileScreen() {
     fields.push(
       <View key={field} style={styles.questionGrouping}> 
         <Text style={styles.question}> {field} </Text>
-        <TextInputCustom
+        <TextInput
           style={styles.textBox}
           initText={userProfile.questions[field]}
           canExpand={true}
-          // onChangeText={(newValue) => {alert(newValue)}}
         />
       </View>
     );
@@ -39,13 +38,6 @@ export default function EditProfileScreen() {
         <Text> {userProfile.pronouns} </Text>
         { fields }
       </View>
-
-      {/* ButtonCustom demo */}
-      <ButtonCustom 
-        title={'TEST BUTTON'} 
-        darkMode={false} 
-        onClick={() => alert('This button works!')}
-      />
     </ScrollView>
   );
 }

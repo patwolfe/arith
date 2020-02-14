@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TextInput,
+  TextInput as TextInputRN,
   StyleSheet,
 } from 'react-native';
 
@@ -10,12 +10,12 @@ import {
  * canExpand: bool, whether it can be more than one line or not
  * onChangeText: what should happen with the text when it changes
  */
-export default function TextInputCustom(props) {
+export default function TextInput(props) {
   const initialText = props.initText ? props.initText : '';
   const barColor = props.darkMode ? 'white' : 'black';
   const colorMode = {borderBottomColor: barColor};
   return (
-    <TextInput
+    <TextInputRN
       defaultValue={initialText}
       maxLength={300}
       multiline={props.canExpand}
