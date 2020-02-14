@@ -13,13 +13,11 @@ import urls from 'jumbosmash/constants/Urls';
 
 export default function CreateProfileWizard(props) {
   const initState  = {
-    profile: {
-      name: props.userName,
-      pronouns: props.userPronouns,
-      bio: 'Just testing',
-      pictures: {},
-      questions: {},
-    },
+    name: props.userName,
+    pronouns: props.userPronouns,
+    bio: 'Just testing',
+    pictures: {},
+    questions: {},
     stage: 'photos',
     photoSetInfo: null
   };
@@ -29,6 +27,7 @@ export default function CreateProfileWizard(props) {
 
   // Fetch s3 urls when component is rendered
   useEffect(() => {
+    console.log("getting profile");
     getEditProfile(dispatch);
   }, []);
 
@@ -37,7 +36,7 @@ export default function CreateProfileWizard(props) {
       Alert.alert('Submitted!');
       submitProfile(dispatch, state);
     }
-  }, [state]);
+  });
 
   return (
     <View style={styles.wizard}>
@@ -57,50 +56,45 @@ async function getEditProfile(dispatch) {
 }
 
 async function submitProfile(dispatch, state) {
-  await uploadPicture(state.pictures[0], state.photoSetInfo.d[0][1].fields);
+  console.log(state);
+  let uris = Object.values(state.pictures).reduce(
+    (acc, elem) => elem !== '' ? [...acc, elem] : acc, []);
+  let tasks = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
+  await Promise.all(tasks);
   dispatch({type: 'button'});
+  console.log(uris);
+  await uploadProfile(state.profile, uris.map((uri, i) => state.photoSetInfo.d[i][0]));
   return true;
-  
 }
 
-async function uploadProfile(profile) {
+async function uploadProfile(profile, ids) {
+  let url = `${urls.backendURL}profile/edit/`;
+  console.log(ids);
+  let body = [...Array(6).keys()].reduce(
+    (acc, elem) => {acc[`photo${elem}`] = ids[elem]; return acc;}, {});
+  console.log(body);
   return true;
 }
 
 async function uploadPicture(imagePath, photoInfo) {
   let body = formDataFromPhotoInfo(photoInfo);
-  console.log(body);
-  return;
-  let filename = imagePath.split('/').pop();
-  const photo = {
-    uri: imagePath,
-    type: 'image/jpg',
-    name: filename
-  };
-  body.append('file', photo);
+  // let filename = imagePath.split('/').pop();
+  // const photo = {
+  //   uri: imagePath,
+  //   type: 'image/jpg',
+  //   name: filename
+  // };
+  body.append('file', imagePath);
   const url = urls.photoBucketURL;
   await APICall.PostNoAuth(url, {'Content-Type': 'multipart/form-data'}, body);
   return true;
 }
 
 function formDataFromPhotoInfo(photoInfo) {
-  // let body = new FormData();
-
-  // console.log('----AWS Info----');
-  // console.log(`key: ${photoInfo.key}`);
-  // console.log(`AWSAccessKeyId: ${photoInfo.AWSAccessKeyId}`);
-  // console.log(`policy: ${photoInfo.policy}`);
-  // console.log(`signature: ${photoInfo.signature}`);
-  // console.log('---------------');
-
-  // body.append('key', photoInfo.key);
-  // body.append('AWSAccessKeyId', photoInfo.AWSAccessKeyId);
-  // body.append('policy', photoInfo.policy);
-  // body.append('signature', photoInfo.signature);
-  // return body;
   let body = new FormData();
   return Object.keys(photoInfo).reduce(
     (body, key) => {body.append(key, photoInfo[key]); return body;}, 
+    // try inlining constructor
     body);
 }
 

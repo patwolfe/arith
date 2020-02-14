@@ -35,13 +35,14 @@ async function selectPhoto(id, setPic, dispatch) {
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
     aspect: [1,1],
+    base64: true
   });
 
   if (result.cancelled === true) {
     // leave state unchanged
     return;    
   }
-  dispatch({type: 'picture', id: id, payload: result.uri});
+  dispatch({type: 'picture', id: id, payload: result.base64});
   setPic(result.uri);
 }
 
