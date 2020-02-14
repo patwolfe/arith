@@ -1,25 +1,52 @@
 #review {
-  display: flex
+    display: flex
+}
+
+#submit-bar {
+    text-align: center;
+}
+
+#submit-bar a{
+    display: inline-block;
+    padding: 9px;
+    border-radius: 5px;
+    color: white;
+}
+
+#id-card {
+    display: inline-block;
+    width:400px;
+    background-color: grey;
+    margin: 0 auto;
+}
+#user_info {
+    width:50%;
+    display: inline-block;
 }
 
 h2 {
     text-align: center;
 }
 
+h3 {
+    display: inline-block;
+}
 .profile {
-  margin: 10px;
-  flex-basis: 25%;
-  flex-grow: 1;
+    margin: 10px;
+    flex-basis: 25%;
+    flex-grow: 1;
 }
 
+.photo_set {
+    display:flex;
+    justify-content: center;
+}
 
 .photo_set img {
-  display: inline-block;
-  vertical-align: middle;
-  max-height: 150px;
-  margin:5px;
-  padding: 4px;
-  opacity: 0.5;
+    max-height: 150px;
+    margin:5px;
+    padding: 4px;
+    opacity: 0.5;
 }
 
 img.added {
@@ -35,9 +62,24 @@ img.deleted {
 }
 
 .approve {
-  background-color: #70bf2b;
+    background-color: #70bf2b;
 }
 
 .reject {
-  background-color: #CC3434;
+    background-color: #CC3434;
+}
+
+.bio {
+    width: 400px;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+span.added {
+    background-color: lightgreen;
+}
+
+span.deleted {
+    background-color: pink;
+    text-decoration: line-through;
 }

@@ -49,9 +49,6 @@ class UserManager(BaseUserManager):
             user.preferred_name = data["preferred_name"]
             user.id_photo = data["id_photo"]
 
-        # TODO only set this if we need to reapprove photos or they are inactive
-        user.needs_review = True
-
         user.discoverable = data["discoverable"]
         Profile.objects.edit(user_id, profile)
         Photo.objects.edit(user_id, photos)
@@ -68,7 +65,6 @@ class UserManager(BaseUserManager):
 
         Profile.objects.approve(user_id)
 
-        user.needs_review = False
         user.save()
 
     def reject(self, user_id):
@@ -81,7 +77,6 @@ class UserManager(BaseUserManager):
         elif user.status == User.ACTIVE:
             Profile.objects.reject(user_id)
 
-        user.needs_review = False
         user.save()
 
     def ban(self, user_id):
@@ -108,7 +103,6 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=100)
     preferred_name = models.CharField(max_length=30, blank=True, null=True)
     discoverable = models.BooleanField(default=False)
-    needs_review = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
     last_status = models.CharField(
         max_length=1, choices=STATUS_CHOICES, default=INACTIVE
@@ -122,6 +116,15 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    def activate(self):
+        print("activating")
+        if self.status == User.INACTIVE:
+            self.status = User.ACTIVE
+            self.discoverable = True
+            self.save()
+        else:
+            logging.warning("User {} is not inactive, cannot activate".format(self.id))
 
 
 class ProfileManager(models.Manager):
@@ -137,7 +140,7 @@ class ProfileManager(models.Manager):
         return urls
 
     def approve(self, user_id):
-        pending_set = self.filter(user_id=user_id, approved=True).first()
+        pending_set = self.filter(user_id=user_id, approved=False).first()
         if pending_set:
             self.filter(user_id=user_id, approved=True).delete()
             pending_set.approved = True
@@ -166,12 +169,12 @@ class Profile(models.Model):
 
     approved = models.BooleanField(default=False)
 
-    photo0 = models.IntegerField(null=True)
-    photo1 = models.IntegerField(null=True)
-    photo2 = models.IntegerField(null=True)
-    photo3 = models.IntegerField(null=True)
-    photo4 = models.IntegerField(null=True)
-    photo5 = models.IntegerField(null=True)
+    photo0 = models.IntegerField(null=True, blank=True)
+    photo1 = models.IntegerField(null=True, blank=True)
+    photo2 = models.IntegerField(null=True, blank=True)
+    photo3 = models.IntegerField(null=True, blank=True)
+    photo4 = models.IntegerField(null=True, blank=True)
+    photo5 = models.IntegerField(null=True, blank=True)
 
     bio = models.TextField()
 

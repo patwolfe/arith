@@ -1,55 +1,64 @@
 {% extends "admin/change_form.html" %}
 {% load i18n admin_urls %}
 {% block object-tools-items %}
-{% if needs_review %}
-<li>
-    <a href="{% url 'admin:pending-user-approve' original.id %}" class="approve" style="background-color:#70BF2B;">Approve</a>
-</li>
-<li>
-    <a href="{% url 'admin:pending-user-reject' original.id %}" class="reject" style="background-color:#CC3434;">Reject</a>
-</li>
-{% endif %}
-
+Do we want suspend user or something up here?
 {% endblock %}
 
 {% block field_sets %}
 
 <div id="user_info">
-    {% if user.preferred_name %}
+    <h2 class="first-name">{% if user.preferred_name %}
     "{{user.preferred_name}}""
     {% else %}
     {{user.first_name}}
     {% endif %}
+    </h2>
+    <h3 class="last-name">
     {{user.last_name}}
+    </h3>
+    <h3 class="{{user.status}}">
     {{user.get_status_display}}
-
-    <img src="{{ id_photo }}" alt="Cannot find ID" id="id-card"/>
+    </h3>
+    id: {{user.id}}
 </div>
-<div id="review">
-    {% if approved_profile %}
-    <div id="approved" class="profile review">
-        <h2> Approved </h2>
-        <div class="photo_set">
-            {% for img in approved_photos %}
-            <img src="{{img}}" class = "photo pending {% if img not in pending_photos %}deleted{% endif %}"/>
-            {% endfor %}
-        </div>
+<img src="{{ id_photo }}" alt="Cannot find ID" id="id-card"/>
+<div id="pending" class="profile review">
+    <h2> Pending</h2>
+    <div class="photo_set">
+        {% for img in pending_photos %}
+        <img src="{{img}}" class = "photo pending {% if img not in approved_photos %}added{% endif %}"/>
+        {% endfor %}
     </div>
+    <div class="bio">
+        {% autoescape off %}
+        {{pending_bio}}
+        {% endautoescape %}
+    </div>
+</div>
+<div id="submit-bar">
+    <a href="{% url 'admin:pending-profile-reject' user.id %}" class="reject">Reject</a>
+    {% if user.status == "I" %}
+        <a href="{% url 'admin:pending-profile-approve-user-activate' user.id %}" class="approve">Approve and Activate</a>
+    {% else %}
+        <a href="{% url 'admin:pending-profile-approve' user.id %}" class="approve">Approve</a>
     {% endif %}
-    <div id="pending" class="profile review">
-        <h2> Pending</h2>
-        <div class="photo_set">
-            {% for img in pending_photos %}
-            <img src="{{img}}" class = "photo pending {% if img not in approved_photos %}added{% endif %}"/>
-            {% endfor %}
-        </div>
-    </div>
-    {% autoescape off %}
-    {{text_diff}}
-    {% endautoescape %}
 </div>
+{% if approved_profile %}
+<div id="approved" class="profile review">
+    <h2> Approved </h2>
+    <div class="photo_set">
+        {% for img in approved_photos %}
+        <img src="{{img}}" class = "photo pending {% if img not in pending_photos %}deleted{% endif %}"/>
+        {% endfor %}
+    </div>
+    <div class="bio">
+        {% autoescape off %}
+        {{approved_bio}}
+        {% endautoescape %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block submit_buttons_bottom %}
-Custom buttons here
 {% endblock %}
