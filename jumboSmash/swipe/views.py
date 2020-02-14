@@ -1,14 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from users.serializers import UserIdSerializer
 from .models import Interaction, Block
 
 
 class Skip(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         serializer = UserIdSerializer(data=request.data)
         if serializer.is_valid():
@@ -20,8 +17,6 @@ class Skip(APIView):
 
 
 class Smash(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         serializer = UserIdSerializer(data=request.data)
         if serializer.is_valid():
@@ -33,8 +28,6 @@ class Smash(APIView):
 
 
 class Top5(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         serializer = UserIdSerializer(data=request.data, many=True)
         if serializer.is_valid():
@@ -59,22 +52,16 @@ class Top5(APIView):
 
 
 class GetNext(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         return Response("Not implemented")
 
 
 class Refresh(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         return Response("Not implemented")
 
 
 class BlockView(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         serializer = UserIdSerializer(data=request.data)
         if serializer.is_valid():

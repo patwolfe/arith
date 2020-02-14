@@ -1,6 +1,6 @@
-import React from "react";
-import { ScrollView, View, StyleSheet, Text } from "react-native";
-import MatchFeed from "jumbosmash/components/MatchFeed/MatchFeed"
+import React from 'react';
+import { ScrollView, View, StyleSheet, Text } from 'react-native';
+import MatchFeed from 'jumbosmash/components/MatchFeed/MatchFeed';
 
 export default function MatchFeedScreen() {
   return (
