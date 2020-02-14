@@ -3,24 +3,27 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
   Image,
 } from 'react-native';
 
 import profiles from '../test_data/mockProfiles';
+import TextInputCustom from '../components/TextInputCustom/TextInputCustom';
+import ButtonCustom from '../components/ButtonCustom/ButtonCustom';
 
 
-export default function ProfileScreen() {
+export default function EditProfileScreen() {
   let userProfile = profiles['patrick'];
   let fields = [];
   for (const field in userProfile.questions) {
     fields.push(
-      <View key={field} style={styles.question_grouping}> 
+      <View key={field} style={styles.questionGrouping}> 
         <Text style={styles.question}> {field} </Text>
-        <TextInput
-          style={styles.textbox}
-          value={userProfile.questions[field]}
+        <TextInputCustom
+          style={styles.textBox}
+          initText={userProfile.questions[field]}
+          canExpand={true}
+          // onChangeText={(newValue) => {alert(newValue)}}
         />
       </View>
     );
@@ -28,19 +31,26 @@ export default function ProfileScreen() {
     
   return (
     <ScrollView style={styles.scroll}>
-      <View style={styles.profileimg}>
+      <View style={styles.profileImg}>
         <Image source={userProfile.profile_image} style={styles.image}/>
       </View>
-      <View style={styles.textcontent}>
+      <View style={styles.textContent}>
         <Text style={styles.title}> {userProfile.name} </Text>
         <Text> {userProfile.pronouns} </Text>
         { fields }
       </View>
+
+      {/* ButtonCustom demo */}
+      <ButtonCustom 
+        title={'TEST BUTTON'} 
+        darkMode={false} 
+        onClick={() => alert('This button works!')}
+      />
     </ScrollView>
   );
 }
 
-ProfileScreen.navigationOptions = {
+EditProfileScreen.navigationOptions = {
   headerTitle: 'Your Profile',
 };
 
