@@ -31,7 +31,6 @@ export default function CreateProfileWizard(props) {
 
   // Fetch s3 urls when component is rendered
   useEffect(() => {
-    console.log("getting profile");
     getEditProfile(dispatch);
   }, []);
 
@@ -62,23 +61,21 @@ async function getEditProfile(dispatch) {
 }
 
 async function submitProfile(dispatch, state) {
-  console.log(state);
   let uris = Object.values(state.pictures).reduce(
     (acc, elem) => elem !== '' ? [...acc, elem] : acc, []);
   let tasks = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
   await Promise.all(tasks);
   dispatch({type: 'button'});
-  console.log(uris);
-  await uploadProfile(state.profile, uris.map((uri, i) => state.photoSetInfo.d[i][0]));
+  await uploadProfile(state, uris.map((uri, i) => state.photoSetInfo.d[i][0]));
   return true;
 }
 
-async function uploadProfile(profile, ids) {
-  let url = `${urls.backendURL}profile/edit/`;
-  console.log(ids);
-  let body = [...Array(6).keys()].reduce(
+async function uploadProfile(state, ids) {
+  const url = `${urls.backendURL}user/profile/edit/`;
+  const photos = [...Array(6).keys()].reduce(
     (acc, elem) => {acc[`photo${elem}`] = ids[elem]; return acc;}, {});
-  console.log(body);
+  const body = {...photos, bio: state.bio };
+  const result = await APICall.PostAuth(url,  {'Content-Type': 'application/json'}, body);
   return true;
 }
 
