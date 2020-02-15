@@ -130,7 +130,6 @@ class Interaction(models.Model):
     def swipable(self):
         return not (
             Block.objects.exists_block(self.swiper, self.swiped_on)
-            # or self.swiper.status == User.BANNED
             or self.swiped_on.status == User.BANNED
         )
 
