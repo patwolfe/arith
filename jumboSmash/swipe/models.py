@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from chat.models import Match
+import random
 
 
 class InteractionManager(models.Manager):
@@ -61,29 +62,57 @@ class InteractionManager(models.Manager):
 
     def build_deck(self, active_user):
         "Create all interactions for current user and mark smash=NULL"
-        # TODO: retrieve only active users
-        all_users = User.objects.exclude(id__exact=active_user.id).values("id")
+        all_users = (
+            User.objects.exclude(id__exact=active_user.id)
+            .filter(status__exact=User.ACTIVE)
+            .values("pk")
+        )
         already_smashed = self.filter(
             swiper__exact=active_user, smash__exact=True
         ).values("swiped_on")
-        deck = all_users.difference(already_smashed)
 
+        deck = all_users.difference(already_smashed)
         for other in deck:
             interaction, _ = self.get_or_create(
-                swiper=active_user, swiped_on=User.objects.get(id=other["id"])
+                swiper=active_user, swiped_on=User.objects.get(pk=other["pk"])
             )
             interaction.smash = None
             interaction.save()
 
+    def pull_new_users(self, active_user):
+        "Add newly registered users to the deck, returns True if any new users were added"
+        new_users = (
+            User.objects.filter(status__exact=User.ACTIVE)
+            .exclude(pk=active_user.pk)
+            .values("pk")
+            .difference(self.filter(swiper__exact=active_user).values("swiped_on"))
+        )
+        for newbie in new_users:
+            interaction, _ = self.get_or_create(
+                swiper=active_user, swiped_on=User.objects.get(pk=newbie["pk"])
+            )
+            interaction.smash = None
+            interaction.save()
+        # return True if there were new users added to the Deck
+        return new_users.exists()
+
     def get_next(self, active_user):
         "Retrieve 10 users to swipe on"
-        deck = self.filter(swiper__exact=active_user, smash__exact=None)
+        deck = list(self.filter(swiper__exact=active_user, smash__exact=None))
         next = []
-        deck_index = 0
-        while len(next) < 10 and deck_index < len(deck):
-            # TODO: check if user has been banned
-            if deck[deck_index].swipable():
-                next.append(deck[deck_index])
+        count = 0
+        while len(next) < 10 and count < len(deck):
+            try:
+                rand_index = random.randint(1, len(deck) - 1)
+            except:
+                rand_index = 0
+            if deck[rand_index].swipable() and deck[rand_index] not in next:
+                next.append(deck[rand_index])
+            count += 1
+        # When we run out of users, check for newly active users
+        # - if the list was empty, try again with new users added
+        if len(next) == 0 and self.pull_new_users(active_user):
+            return self.get_next(active_user)
         return next
 
 
@@ -99,7 +128,11 @@ class Interaction(models.Model):
     objects = InteractionManager()
 
     def swipable(self):
-        return not Block.objects.exists_block(self.swiper, self.swiped_on)
+        return not (
+            Block.objects.exists_block(self.swiper, self.swiped_on)
+            # or self.swiper.status == User.BANNED
+            or self.swiped_on.status == User.BANNED
+        )
 
     class Meta:
         unique_together = [["swiper", "swiped_on"]]

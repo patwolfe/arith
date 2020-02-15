@@ -52,13 +52,20 @@ class Top5(APIView):
 
 
 class GetNext(APIView):
-    def post(self, request):
-        return Response("Not implemented")
+    def get(self, request):
+        up_next = Interaction.objects.get_next(request.user)
+        serializer = UserSerializer(up_next, many=True)
+        return Response(serializer.data)
 
 
 class Refresh(APIView):
     def post(self, request):
-        return Response("Not implemented")
+        serializer = UserIdSerializer(data=request.data)
+        if serializer.is_valid():
+            Interaction.objects.build_deck(request.user)
+            return Response("Deck built! Swipe away!", status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BlockView(APIView):
