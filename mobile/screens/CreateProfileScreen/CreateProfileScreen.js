@@ -5,12 +5,13 @@ import {
 } from 'react-native';
 
 import CreateProfileWizard from 'jumbosmash/components/CreateProfileWizard/CreateProfileWizard';
-
+import Test from 'jumbosmash/components/Test';
 export default function CreateProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <CreateProfileWizard />
+        {/* <Test /> */}
       </View>
     </View>
   );

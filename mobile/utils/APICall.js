@@ -2,7 +2,6 @@ import { AsyncStorage } from 'react-native';
 
 export default {
   async PostNoAuth(url, headers, body) {
-    console.log(body);
     try {
       const response = await fetch(url, {
         method: 'POST', 
