@@ -11,6 +11,10 @@ import PhotoPicker from 'jumbosmash/components/PhotoPicker/PhotoPicker';
 import QuestionPicker from 'jumbosmash/components/QuestionPicker/QuestionPicker';
 import urls from 'jumbosmash/constants/Urls';
 
+/* Props:
+  name, pronouns, bio: Strings, all come from previous 
+  stage of profile creation
+*/
 export default function CreateProfileWizard(props) {
   const initState  = {
     name: props.userName,
@@ -27,14 +31,12 @@ export default function CreateProfileWizard(props) {
 
   // Fetch s3 urls when component is rendered
   useEffect(() => {
-    console.log("getting profile");
     getEditProfile(dispatch);
   }, []);
 
   useEffect(() => {
     if (state.stage === 'done') {
       Alert.alert('Submitted!');
-      submitProfile(dispatch, state);
     }
   });
 
@@ -43,7 +45,10 @@ export default function CreateProfileWizard(props) {
       {state.stage === 'questions' ? questionPicker : photoPicker}
       <Button 
         title={state.stage === 'questions' ? 'Submit' : 'Next'}
-        onPress={() => dispatch({type: 'button'})}/>
+        onPress={state.stage === 'questions' ? 
+          () => submitProfile(dispatch, state) : 
+          () => dispatch({type: 'button'})}
+      />
     </View>
   );
 }
@@ -56,37 +61,37 @@ async function getEditProfile(dispatch) {
 }
 
 async function submitProfile(dispatch, state) {
-  console.log(state);
   let uris = Object.values(state.pictures).reduce(
     (acc, elem) => elem !== '' ? [...acc, elem] : acc, []);
   let tasks = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
   await Promise.all(tasks);
   dispatch({type: 'button'});
-  console.log(uris);
-  await uploadProfile(state.profile, uris.map((uri, i) => state.photoSetInfo.d[i][0]));
+  await uploadProfile(state, uris.map((uri, i) => state.photoSetInfo.d[i][0]));
   return true;
 }
 
-async function uploadProfile(profile, ids) {
-  let url = `${urls.backendURL}profile/edit/`;
-  console.log(ids);
-  let body = [...Array(6).keys()].reduce(
+async function uploadProfile(state, ids) {
+  const url = `${urls.backendURL}user/profile/edit/`;
+  const photos = [...Array(6).keys()].reduce(
     (acc, elem) => {acc[`photo${elem}`] = ids[elem]; return acc;}, {});
-  console.log(body);
+  const body = {...photos, bio: state.bio };
+  const result = await APICall.PostAuth(url,  {'Content-Type': 'application/json'}, body);
   return true;
 }
 
 async function uploadPicture(imagePath, photoInfo) {
   let body = formDataFromPhotoInfo(photoInfo);
-  // let filename = imagePath.split('/').pop();
-  // const photo = {
-  //   uri: imagePath,
-  //   type: 'image/jpg',
-  //   name: filename
-  // };
-  body.append('file', imagePath);
+  let filename = imagePath.split('/').pop();
+  const photo = {
+    uri: imagePath,
+    type: 'image/jpg',
+    name: filename
+  };
+  body.append('file', photo);
+  console.log('here');
+  console.log(body);
   const url = urls.photoBucketURL;
-  await APICall.PostNoAuth(url, {'Content-Type': 'multipart/form-data'}, body);
+  await APICall.PostNoAuth(url, {Accept: 'application/json','Content-Type': 'multipart/form-data'}, body);
   return true;
 }
 
@@ -94,7 +99,6 @@ function formDataFromPhotoInfo(photoInfo) {
   let body = new FormData();
   return Object.keys(photoInfo).reduce(
     (body, key) => {body.append(key, photoInfo[key]); return body;}, 
-    // try inlining constructor
     body);
 }
 
