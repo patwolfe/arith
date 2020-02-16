@@ -85,7 +85,7 @@ async function uploadPicture(imagePath, photoInfo) {
   const photo = {
     uri: imagePath,
     type: 'image/jpg',
-    name: filename
+    name: `${filename}.jpg` 
   };
   body.append('file', photo);
   console.log('here');
