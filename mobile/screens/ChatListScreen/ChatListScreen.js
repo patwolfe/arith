@@ -15,10 +15,9 @@ export default function ChatListScreen(props) {
         contentContainerStyle={styles.contentContainer}>
         <View>
           <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Chats</Text>
+            <Text style={styles.headerText}>Chat</Text>
           </View>
           <ChatList navigation={props.navigation}/>
-        
         </View>
 
       </ScrollView>
@@ -35,10 +34,9 @@ ChatListScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#a9c6de',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 50,
   },
   headerContainer: {
     borderStyle: 'solid',
@@ -46,9 +44,10 @@ const styles = StyleSheet.create({
     paddingBottom: '5%',
   },
   headerText: {
-    textAlign: 'center',
+    textAlign: 'left',
     alignContent: 'center',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 24,
+    paddingLeft: 30,
   }
 });
