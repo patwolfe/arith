@@ -53,11 +53,10 @@ export default function ChatScreen(props) {
             <TouchableOpacity 
               style={styles.sendButton}
               disabled={state.textInput == ''}
-              onPress={() => 
-                setState({
-                  ...state,
-                  textInput: '', 
-                  messages: state.messages.concat({content: state.textInput, author: 'me'})})}>
+              onPress={() => setState(() => ({
+                ...state,
+                textInput: '', 
+                messages: state.messages.concat({content: state.textInput, author: 'me'})}))}>
               <Text style={styles.sendButtonText}>^</Text>
             </TouchableOpacity>
           </View>
