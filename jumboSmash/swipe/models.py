@@ -63,13 +63,13 @@ class InteractionManager(models.Manager):
     def build_deck(self, active_user):
         "Create all interactions for current user and mark smash=NULL"
         all_users = (
-            User.objects.exclude(id__exact=active_user.id)
-            .filter(status__exact=User.ACTIVE)
+            User.objects.exclude(id=active_user.id)
+            .filter(status=User.ACTIVE)
             .values("pk")
         )
-        already_smashed = self.filter(
-            swiper__exact=active_user, smash__exact=True
-        ).values("swiped_on")
+        already_smashed = self.filter(swiper=active_user, smash=True).values(
+            "swiped_on"
+        )
 
         deck = all_users.difference(already_smashed)
         for other in deck:
@@ -82,10 +82,10 @@ class InteractionManager(models.Manager):
     def pull_new_users(self, active_user):
         "Add newly registered users to the deck, returns True if any new users were added"
         new_users = (
-            User.objects.filter(status__exact=User.ACTIVE)
+            User.objects.filter(status=User.ACTIVE)
             .exclude(pk=active_user.pk)
             .values("pk")
-            .difference(self.filter(swiper__exact=active_user).values("swiped_on"))
+            .difference(self.filter(swiper=active_user).values("swiped_on"))
         )
         for newbie in new_users:
             interaction, _ = self.get_or_create(
@@ -98,7 +98,7 @@ class InteractionManager(models.Manager):
 
     def get_next(self, active_user):
         "Retrieve 10 users to swipe on"
-        deck = list(self.filter(swiper__exact=active_user, smash__exact=None))
+        deck = list(self.filter(swiper=active_user, smash=None))
         next = []
         count = 0
         while len(next) < 10 and count < len(deck):
