@@ -20,7 +20,7 @@ for line in names_file:
         "groups": [],
         "user_permissions": [],
     }
-    user = {"model": "users.customuser", "pk": count, "fields": fields}
+    user = {"model": "users.user", "pk": count, "fields": fields}
     dummy_users.append(user)
 
 outfile = open("../jumboSmash/tests/med_test_users.json", "w+")
