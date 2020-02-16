@@ -1,8 +1,11 @@
+from mock import patch
 from django.test import TestCase
 from users.models import User
 from rest_framework.test import force_authenticate, APIRequestFactory
 from chat.models import Message, Match
 from chat.views import SendMessage, GetConversation
+from chat.tasks import message_task
+from chat.serializers import MessageSerializer
 
 
 class MessageManagerTest(TestCase):
@@ -21,6 +24,11 @@ class MessageManagerTest(TestCase):
         self.assertEqual(message.sender.id, 1)
         self.assertEqual(message.content, "u up?")
 
+    def test_updated_delivered(self):
+        message = Message.objects.get(pk=1)
+        self.assertIsNone(message.delivered)
+        self.assertIsNotNone(Message.objects.update_delivered(1))
+
     def test_list_messages(self):
         match = Match.objects.get(pk=1)
         list_m = Message.objects.list_messages(match)
@@ -33,17 +41,40 @@ class MessageManagerTest(TestCase):
         self.assertEqual(list_m[0].id, 1)
         self.assertEqual(list_m[1].id, 2)
 
-        #assert does not have messages not associated with match
+        # assert does not have messages not associated with match
         self.assertNotIn(3, [m.id for m in list_m])
 
 
-class SendMessageViewsTest(TestCase):
-    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+class MessageTaskTest(TestCase):
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
 
-    def test_send_message_user_in_match(self):
+    def test_message_task(self):
+        message = Message.objects.get(pk=1)
+        self.assertIsNone(message.delivered)
+        m_serializer = MessageSerializer(message)
+
+        updated_m = message_task(m_serializer.data)
+        self.assertIsNotNone(updated_m.delivered)
+
+
+class SendMessageViewsTest(TestCase):
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
+
+    @patch("chat.views.message_task.delay")
+    def test_send_message_user_in_match(self, message_task):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 1, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 1, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -52,11 +83,14 @@ class SendMessageViewsTest(TestCase):
         self.assertEqual(response.data["match"], 1)
         self.assertEqual(response.data["sender"], 1)
         self.assertIsNotNone(response.data["sent"])
+        message_task.assert_called_once_with(response.data)
 
     def test_send_message_user_not_in_match(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 1, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 1, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -66,7 +100,9 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_unmatched(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 2, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 2, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -76,7 +112,9 @@ class SendMessageViewsTest(TestCase):
     def test_send_message_nonexistent_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.post("chat/send/", {"match": 4, "content": "hello"}, format="json")
+        request = factory.post(
+            "chat/send/", {"match": 4, "content": "hello"}, format="json"
+        )
         force_authenticate(request, user)
         view = SendMessage.as_view()
         response = view(request)
@@ -95,7 +133,11 @@ class SendMessageViewsTest(TestCase):
 
 
 class GetConversationViewsTest(TestCase):
-    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json", "tests/dummy_messages.json"]
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
 
     def test_get_conversation_user_in_match(self):
         user = User.objects.get(pk=1)
@@ -108,9 +150,9 @@ class GetConversationViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
 
-        self.assertEqual(response.data[0]['match'], 1)
-        self.assertEqual(response.data[1]['match'], 1)
-        self.assertNotIn(2, [m['match'] for m in response.data])
+        self.assertEqual(response.data[0]["match"], 1)
+        self.assertEqual(response.data[1]["match"], 1)
+        self.assertNotIn(2, [m["match"] for m in response.data])
 
     def test_get_conversation_user_not_in_match(self):
         user = User.objects.get(pk=3)
