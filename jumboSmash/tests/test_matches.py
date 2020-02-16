@@ -19,6 +19,8 @@ class ModelManagerTests(TestCase):
 
         self.assertFalse(match.top5)
         self.assertFalse(match.unmatched)
+        self.assertFalse(match.user_1_viewed)
+        self.assertFalse(match.user_2_viewed)
 
     def test_make_match_invalid(self):
         """ Attempt to double-create a match """
@@ -83,6 +85,49 @@ class ModelManagerTests(TestCase):
         user_2 = User.objects.get(pk=2)
         match = Match.objects.create_top5_match(user_1, user_2)
         self.assertTrue(match.top5)
+
+
+class ModelManagerDummyMatches(TestCase):
+    fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json"]
+
+    def test_mark_other_unviewed_second_user(self):
+        match = Match.objects.get(pk=2)
+        user_1_viewed = match.user_1_viewed
+
+        updated_match = Match.objects.mark_other_unviewed(match, match.user_1)
+        self.assertEqual(updated_match.user_1_viewed, user_1_viewed)
+        self.assertFalse(updated_match.user_2_viewed)
+
+    def test_mark_other_unviewed_first_user(self):
+        match = Match.objects.get(pk=2)
+        user_2_viewed = match.user_2_viewed
+
+        updated_match = Match.objects.mark_other_unviewed(match, match.user_2)
+        self.assertEqual(updated_match.user_2_viewed, user_2_viewed)
+        self.assertFalse(updated_match.user_1_viewed)
+
+    def test_mark_viewed_first_user(self):
+        match = Match.objects.get(pk=1)
+        user_2_viewed = match.user_2_viewed
+
+        updated_match = Match.objects.mark_viewed(match, match.user_1)
+        self.assertTrue(match.user_1_viewed)
+        self.assertEqual(user_2_viewed, updated_match.user_2_viewed)
+
+    def test_mark_viewed_second_user(self):
+        match = Match.objects.get(pk=1)
+        user_1_viewed = match.user_1_viewed
+
+        updated_match = Match.objects.mark_viewed(match, match.user_2)
+        self.assertTrue(match.user_2_viewed)
+        self.assertEqual(user_1_viewed, updated_match.user_1_viewed)
+
+    def test_update_last_active(self):
+        match = Match.objects.get(pk=1)
+        last_active = match.last_active
+
+        updated_match = Match.objects.update_last_active(match)
+        self.assertNotEqual(last_active, updated_match.last_active)
 
 
 class ModelViewsTest(TestCase):
