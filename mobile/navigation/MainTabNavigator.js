@@ -13,10 +13,10 @@ import EditProfileScreen from 'jumbosmash/screens/EditProfileScreen';
 import EntryScreen from 'jumbosmash/screens/EntryScreen/EntryScreen';
 import LoginScreen from 'jumbosmash/screens/LoginScreen/LoginScreen';
 import MatchFeedScreen from 'jumbosmash/screens/MatchFeedScreen/MatchFeedScreen';
+import OTPScreen from 'jumbosmash/screens/OTPScreen/OTPScreen';
 import ProfileScreen from 'jumbosmash/screens/ProfileScreen';
 import RegisterScreen from 'jumbosmash/screens/RegisterScreen/RegisterScreen';
 import SettingsScreen from 'jumbosmash/screens/SettingsScreen';
-import VerifyScreen from 'jumbosmash/screens/VerifyScreen/VerifyScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -118,7 +118,7 @@ const EntryStack = createStackNavigator(
   {
     Entry: EntryScreen,
     Login: LoginScreen,
-    Verify: VerifyScreen,
+    OTP: OTPScreen,
     Register: RegisterScreen,
     CreateProfile: CreateProfileScreen
   },

@@ -80,7 +80,7 @@ WSGI_APPLICATION = "jumboSmash.wsgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
+        "auth.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
@@ -132,4 +132,4 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 
 # Uncomment this line to send emails to the console not mailhog
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
