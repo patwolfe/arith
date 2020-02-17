@@ -10,3 +10,8 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = "__all__"
+
+
+class SendMessageSerializer(serializers.Serializer):
+    match = serializers.PrimaryKeyRelatedField(queryset=Match.objects.all())
+    content = serializers.CharField()

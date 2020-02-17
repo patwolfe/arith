@@ -79,6 +79,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "jumboSmash.wsgi.application"
 
+
+CELERY_BROKER_URL = 'amqp://localhost'
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "auth.authentication.TokenAuthentication",
@@ -92,6 +95,7 @@ PASSWORDLESS_AUTH = {
     "PASSWORDLESS_REGISTER_NEW_USERS": False,
     "PASSWORDLESS_AUTH_PREFIX": "",
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

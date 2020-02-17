@@ -53,6 +53,13 @@ class MessageManager(models.Manager):
         message.save()
         return message
 
+    def update_delivered(self, id):
+        """retrieves message by id and updates the delivered timestamp."""
+        message = self.get(pk=id)
+        message.delivered = timezone.now()
+        message.save()
+        return message
+
     def list_messages(self, match):
         """Returns a QuerySet of all messages for a given match ordered by time sent."""
         return self.filter(match=match).order_by("sent")
