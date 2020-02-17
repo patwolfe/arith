@@ -85,21 +85,21 @@ class UserManager(BaseUserManager):
 
     def ban(self, user_id):
         user = self.get(id=user_id)
-        user.last_status = user.status
         user.status = User.BANNED
         user.save()
 
     def unban(self, user_id):
         user = self.get(id=user_id)
-        user.status = user.last_status
+        user.status = User.ACTIVE
         user.save()
 
 
 class User(AbstractUser):
     INACTIVE = "I"
     ACTIVE = "A"
+    SUSPENDED = "S"
     BANNED = "B"
-    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (BANNED, "Bannned"))
+    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (SUSPENDED, "Suspended"), (BANNED, "Bannned"))
 
     username = None
     email = models.EmailField(("email address"), unique=True)
@@ -109,9 +109,6 @@ class User(AbstractUser):
     discoverable = models.BooleanField(default=False)
     needs_review = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
-    last_status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, default=INACTIVE
-    )
     id_photo = models.URLField(blank=True, null=True)
 
     USERNAME_FIELD = "email"

@@ -1,10 +1,15 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views import APIView
+from report.models import Report
+
 
 class ReportView(APIView):
     """Report a user"""
-    def get(self, request):
-        # permission_classes = [AllowAny]
+    def post(self, request):
+        reporter = request.user.id
+        reportee = request.data.get("user")
+        info = request.data.get("info")
+
+        Report.objects.report(reporter, reportee, info)
+
         return Response("reported")

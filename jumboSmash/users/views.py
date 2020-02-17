@@ -15,7 +15,7 @@ class ListUsers(APIView):
 
     def get(self, request):
         queryset = User.objects.all()
-        serializer = UserSerializer(queryset, many=True)
+        serializer = SimpleUserSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
@@ -42,9 +42,6 @@ class EditProfile(APIView):
         user_id = request.user.id
         serializer = FullUserSerializer(data=request.data, context={"request": request})
         serializer.is_valid()
-        print("-----------------------------------")
-        print(serializer.validated_data)
-        print("-----------------------------------")
         user = User.objects.edit(user_id, serializer.validated_data)
         ret_serializer = FullUserSerializer(user, context={"request": request})
         return Response(ret_serializer.data)
@@ -63,7 +60,6 @@ class CheckUserExists(APIView):
             return render(request, "user_check.html", {})
         try:
             user = User.objects.get(email=email)
-            print(SimpleUserSerializer(user).data)
             return render(
                 request, "successful_check.html", {"email": email, "user": user},
             )
