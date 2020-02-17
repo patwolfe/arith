@@ -5,7 +5,7 @@ from report.models import Report, ReportObject
 
 
 class ReportObjectAdmin(admin.ModelAdmin):
-    list_display = ["reporter", "reportee", "report_time", "needs_review", "result"]
+    list_display = ["reporter", "reportee", "report_time", "info", "needs_review", "result"]
     ordering = ["-needs_review", "-report_time"]
     search_fields = ["reporter__email", "reportee__email", "info"]
     fields = ["reporter", "reportee", "info", "report_time", "needs_review", "result"]
@@ -13,9 +13,11 @@ class ReportObjectAdmin(admin.ModelAdmin):
 
 
 class ReportAdmin(ReportObjectAdmin):
-    list_display = ["reporter", "reportee", "report_time", "needs_review"]
-    ordering = ["-needs_review", "report_time"]
-    readonly_fields = ["reporter", "reportee", "info", "report_time", "needs_review", "result"]
+    list_display = ["report_time", "info", "needs_review"]
+    ordering = ["report_time"]
+    search_fields = ["info"]
+    fields = ["info", "report_time"]
+    readonly_fields = ["report_time", "info"]
 
     def get_queryset(self, request):
         return self.model.objects.filter(needs_review=True)
