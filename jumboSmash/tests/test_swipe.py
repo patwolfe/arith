@@ -7,7 +7,13 @@ from swipe.views import Smash, Skip, Top5
 
 
 class InteractionManagerTests(TestCase):
-    fixtures = ["tests/dummy_users.json"]
+    fixtures = ["tests/med_test_users.json"]
+
+    def activate_all(self):
+        """Activate all users"""
+        for user in User.objects.all():
+            user.status = User.ACTIVE
+            user.save()
 
     def test_smash(self):
         """ Smashing """
@@ -127,6 +133,128 @@ class InteractionManagerTests(TestCase):
 
         self.assertEqual(len(matches), 1)
         self.assertTrue(matches[0].top5)
+
+    def test_first_build(self):
+        "First build of the deck - create all interactions, smash = null"
+        # Activate all users before building Deck
+        self.activate_all()
+        active = User.objects.get(pk=1)
+        Interaction.objects.build_deck(active)
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+
+        self.assertEqual(len(deck), 99)
+        # I shouldn't show up in my own deck
+        with self.assertRaises(Interaction.DoesNotExist):
+            _ = Interaction.objects.get(swiper=1, swiped_on=1)
+
+    def test_skip_then_refresh(self):
+        "Rebuild deck after skipping - user should reappear in deck"
+        self.activate_all()
+        active = User.objects.get(pk=1)
+        Interaction.objects.build_deck(active)
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+
+        # Left swipe on other user
+        other_user = Interaction.objects.get(swiper=active, swiped_on=98)
+        other_user.smash = False
+        other_user.save()
+
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+        self.assertEqual(len(deck), 98)
+
+        # Refresh
+        Interaction.objects.build_deck(active)
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+        self.assertEqual(len(deck), 99)
+
+    def test_smash_then_refresh(self):
+        "Rebuild deck after smashing - user should not reappear in deck"
+        self.activate_all()
+        active = User.objects.get(pk=1)
+        Interaction.objects.build_deck(active)
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+
+        # Smash someone
+        other_user = Interaction.objects.get(swiper=active, swiped_on=98)
+        other_user.smash = True
+        other_user.save()
+
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+        self.assertEqual(len(deck), 98)
+
+        # Refresh
+        Interaction.objects.build_deck(active)
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+        self.assertEqual(len(deck), 98)
+
+    def test_get_next(self):
+        "Test retrieve users to swipe, confirm no duplicates"
+        self.activate_all()
+        active = User.objects.get(pk=1)
+        Interaction.objects.build_deck(active)
+        already_seen = []
+
+        cards = Interaction.objects.get_next(active)
+        while len(cards) > 0:
+            # feelin thirsty - swipe right on everyone
+            for card in cards:
+                card.smash = True
+                card.save()
+                self.assertFalse(card in already_seen)
+                already_seen.append(card)
+            cards = Interaction.objects.get_next(active)
+
+        # I have smashed everyone -- refreshed, my deck is now empty
+        Interaction.objects.build_deck(active)
+        deck = Interaction.objects.filter(swiper=active, smash=None)
+        self.assertEqual(len(deck), 0)
+
+    def test_get_next_banned(self):
+        "Banned users never appear in deck, even if they are banned after deck is built"
+        self.activate_all()
+        active = User.objects.get(pk=1)
+        Interaction.objects.build_deck(active)
+
+        ban = User.objects.get(pk=25)
+        ban.status = User.BANNED
+        ban.save()
+
+        cards = Interaction.objects.get_next(active)
+        while len(cards) > 0:
+            # Picky picky - skip everyone
+            for card in cards:
+                card.smash = False
+                card.save()
+            cards = Interaction.objects.get_next(active)
+            self.assertFalse(Interaction.objects.get(swiped_on=ban) in cards)
+
+    def test_get_next_new_users(self):
+        "New users activated while swiping should appear at the end of the deck"
+        # Activate every other user
+        index = 0
+        for user in User.objects.all():
+            if index % 2 == 1:
+                user.status = User.ACTIVE
+                user.save()
+            index += 1
+
+        active = User.objects.get(pk=1)
+        Interaction.objects.build_deck(active)
+
+        self.assertEqual(len(Interaction.objects.filter(swiper=active)), 50)
+        cards = Interaction.objects.get_next(active)
+        # After building deck, activate the rest of the users and ensure each user
+        # appears only once in the deck
+        self.activate_all()
+        already_seen = []
+        while len(cards) > 0:
+            for card in cards:
+                card.smash = True
+                card.save()
+                self.assertFalse(card in already_seen)  # check no duplicates
+                already_seen.append(card)
+            cards = Interaction.objects.get_next(active)
+        self.assertEqual(len(already_seen), 99)
 
 
 class InteractionsViewsTest(TestCase):
