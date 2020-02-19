@@ -35,6 +35,7 @@ export default function OTPInput(props) {
         return false;
       }
 
+      console.log(result.res);
       let storageResult = await APICall.storeToken(result.res.token);
       setLoading(false);
       return storageResult;
