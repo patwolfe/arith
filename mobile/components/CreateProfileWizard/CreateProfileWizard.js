@@ -30,6 +30,8 @@ export default function CreateProfileWizard(props) {
   const photoPicker = <PhotoPicker dispatch={dispatch}/>;
 
   // Fetch s3 urls when component is rendered
+  // TODO: figure out if this should just be 
+  // done in the submitProfile function
   useEffect(() => {
     getEditProfile(dispatch);
   }, []);
@@ -56,6 +58,11 @@ export default function CreateProfileWizard(props) {
 async function getEditProfile(dispatch) {
   const url = `${urls.backendURL}user/profile/edit/`;
   const result = await APICall.GetAuth(url);
+  if (result.error || !result.ok) {
+    console.log(result);
+    return false;
+  }
+
   // save urls in state
   dispatch({type: 'updatePhotoSetInfo', photoSetInfo: result.res});
 }
@@ -63,19 +70,28 @@ async function getEditProfile(dispatch) {
 async function submitProfile(dispatch, state) {
   let uris = Object.values(state.pictures).reduce(
     (acc, elem) => elem !== '' ? [...acc, elem] : acc, []);
-  let tasks = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
-  await Promise.all(tasks);
-  dispatch({type: 'button'});
+  let uploads = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
+
+  let results = await Promise.all(uploads);
+  if (results.some((elem) => elem === false)) {
+    return false;
+  } 
+
   await uploadProfile(state, uris.map((uri, i) => state.photoSetInfo.d[i][0]));
+  dispatch({type: 'button'});
   return true;
 }
 
 async function uploadProfile(state, ids) {
   const url = `${urls.backendURL}user/profile/edit/`;
-  const photos = [...Array(6).keys()].reduce(
-    (acc, elem) => {acc[`photo${elem}`] = ids[elem]; return acc;}, {});
-  const body = {...photos, bio: state.bio };
-  const result = await APICall.PostAuth(url,  {'Content-Type': 'application/json'}, body);
+  const body = [...Array(6).keys()].reduce(
+    (acc, elem) => ({...acc, [`photo${elem}`]: ids[elem] ? ids[elem] : null}), {bio: state.bio});
+ 
+  const result = await APICall.PostAuth(url,  {Accept: 'application/json', 'Content-Type': 'application/json'}, JSON.stringify(body));
+  if (result.error || !result.ok) {
+    console.log(result);
+    return false;
+  }
   return true;
 }
 
@@ -87,26 +103,24 @@ async function uploadPicture(imagePath, photoInfo) {
     type: 'image/jpg',
     name: `${filename}.jpg` 
   };
+
   body.append('file', photo);
-  console.log('here');
-  console.log(body);
   const url = urls.photoBucketURL;
   await APICall.PostNoAuth(url, {Accept: 'application/json','Content-Type': 'multipart/form-data'}, body);
   return true;
 }
 
 function formDataFromPhotoInfo(photoInfo) {
-  let body = new FormData();
   return Object.keys(photoInfo).reduce(
     (body, key) => {body.append(key, photoInfo[key]); return body;}, 
-    body);
+    new FormData);
 }
 
 function reducer(state, action) {
   switch(action.type) {
   case 'picture':
     return {...state, pictures: {...state.pictures, [action.id]: action.payload}};
-  case 'question':      
+  case 'question':
     return {...state, questions: {...state.questions, [action.id]: action.payload}};
   case 'button': {
     let nextStep = '';
@@ -114,7 +128,7 @@ function reducer(state, action) {
       nextStep = 'questions';
     } else if (state.stage === 'done') {
       nextStep = 'photos';
-    } else { 
+    } else {
       nextStep = 'done';
     }
     return {...state, stage: nextStep};
