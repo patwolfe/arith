@@ -7,7 +7,9 @@ import {
   TextInput,
 } from 'react-native';
 
+import APICall from 'jumbosmash/utils/APICall';
 import LoadingModal from 'jumbosmash/components/LoadingModal/LoadingModal';
+import urls from 'jumbosmash/constants/Urls';
 
 export default function LoginScreen(props) {
   const [email, setEmail] = useState('');
@@ -25,15 +27,17 @@ export default function LoginScreen(props) {
       <TextInput style={styles.inputField}
         editable
         autoCapitalize='none'
-        onChangeText={(newText) => setEmail(newText)}/>     
+        onChangeText={(newText) => setEmail(newText.toLowerCase())}/>     
       <Button title='Login'
         onPress={() => {
+          setEmail('patrick.wolfe@tufts.edu')
           setLoading(true);
-          checkEmail(email).then(valid =>
+          requestEmail(email).then(valid =>
           { 
             if (valid) {
               setRejected(false);
-              props.navigation.navigate('Verify');
+              console.log(email);
+              props.navigation.navigate('OTP', {email: email});
             }
             else {
               setRejected(true);
@@ -47,16 +51,12 @@ export default function LoginScreen(props) {
   );
 }
 
-async function checkEmail(email) {
-  // Async sleep to mock API call
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  email = email.toLowerCase();
-  if (email === 'patrick.wolfe@tufts.edu' ||
-      email === 'alexis.walker@tufts.edu' ||
-      email === 'william.rusk@tufts.edu') {
-    return true;
-  }
-  return false;
+async function requestEmail(email) {
+  let url = `${urls.backendURL}auth/email/`;
+  let result = await APICall.PostNoAuth(url,
+    {'Content-Type': 'application/x-www-form-urlencoded'},
+    `email=${email}`);
+  return !result.error && result.ok;
 }
 
 LoginScreen.navigationOptions = {

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "users",
     "swipe",
     "chat",
+
 ]
 
 MIDDLEWARE = [
@@ -78,9 +79,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "jumboSmash.wsgi.application"
 
+
+CELERY_BROKER_URL = 'amqp://localhost'
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
+        "auth.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": (
@@ -99,6 +103,7 @@ PASSWORDLESS_AUTH = {
     "PASSWORDLESS_REGISTER_NEW_USERS": False,
     "PASSWORDLESS_AUTH_PREFIX": "",
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -140,7 +145,7 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 
 # Uncomment this line to send emails to the console not mailhog
-# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 AWS_STORAGE_BUCKET = "jumbosmash2020-test"
+
