@@ -40,56 +40,6 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-    def edit(self, user_id, data):
-        user = self.get(id=user_id)
-        profile = data.pop("profile")
-        photos = data.pop("photos")
-
-        if user.status == User.INACTIVE:
-            user.preferred_name = data["preferred_name"]
-            user.id_photo = data["id_photo"]
-
-        user.discoverable = data["discoverable"]
-        Profile.objects.edit(user_id, profile)
-        Photo.objects.edit(user_id, photos)
-
-        user.save()
-        return user
-
-    def approve(self, user_id):
-        user = self.get(id=user_id)
-
-        if user.status == User.INACTIVE:
-            user.status = User.ACTIVE
-            user.discoverable = True
-
-        Profile.objects.approve(user_id)
-
-        user.save()
-
-    def reject(self, user_id):
-        # TODO trigger email/push notification
-        user = self.get(id=user_id)
-
-        if user.status == User.INACTIVE:
-            ProfileBody.objects.reject(user_id)
-            Profile.objects.reject(user_id)
-        elif user.status == User.ACTIVE:
-            Profile.objects.reject(user_id)
-
-        user.save()
-
-    def ban(self, user_id):
-        user = self.get(id=user_id)
-        user.last_status = user.status
-        user.status = User.BANNED
-        user.save()
-
-    def unban(self, user_id):
-        user = self.get(id=user_id)
-        user.status = user.last_status
-        user.save()
-
 
 class User(AbstractUser):
     INACTIVE = "I"
@@ -117,8 +67,17 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+    def ban(self):
+        self.last_status = self.status
+        self.status = User.BANNED
+        self.save()
+
+    def unban(self):
+        user.status = self.last_status
+        self.save()
+
     def activate(self):
-        print("activating")
+        """ Marks user as active and discoverable """
         if self.status == User.INACTIVE:
             self.status = User.ACTIVE
             self.discoverable = True
@@ -139,25 +98,8 @@ class ProfileManager(models.Manager):
             urls.append([i, create_presigned_post(self.to_aws_key(user_id, i))])
         return urls
 
-    def approve(self, user_id):
-        pending_set = self.filter(user_id=user_id, approved=False).first()
-        if pending_set:
-            self.filter(user_id=user_id, approved=True).delete()
-            pending_set.approved = True
-            pending_set.save()
-            return pending_set
-        else:
-            logging.warning(
-                "Cannot approve photos for user {}, no pending photos exist".format(
-                    user_id
-                )
-            )
-
-    def reject(self, user_id):
-        # TODO trigger email/push notification
-        self.filter(user_id=user_id, approved=False).delete()
-
     def get_profiles(self, user):
+        """ Returns approved, pending profiles """
         return (
             self.filter(user=user, approved=True).first(),
             self.filter(user=user, approved=False).first(),
@@ -224,6 +166,17 @@ class Profile(models.Model):
             setattr(self, fname, fval)
         super(Profile, self).save()
         return self
+
+    def approve(self):
+        # TODO concurrency, notify
+        Profile.objects.filter(user_id=self.user_id, approved=True).delete()
+        self.approved = True
+        self.save()
+        return self
+
+    def reject(self):
+        # TODO notify
+        self.delete()
 
 
 class ReviewProfile(Profile):

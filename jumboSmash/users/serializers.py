@@ -39,20 +39,22 @@ class ProfileSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """ Confirm new photo order is valid """
         empty_photo = False
-        photo_count = 0
+        photo_list = []
         for i in range(0, 6):
             photo = data["photo" + str(i)]
             empty_photo = (photo is None) or empty_photo
             if photo is not None:
-                photo_count += 1
                 if empty_photo:
                     raise serializers.ValidationError(
                         "Cannot have photos after empty photo slot"
                     )
                 if photo < 0 or photo > 11:
                     raise serializers.ValidationError("Photo id out of range")
+                if photo in photo_list:
+                    raise serializers.ValidationError("Photos cannot appear twice")
 
-        if photo_count < 3:
+                photo_list.append(photo)
+        if len(photo_list) < 3:
             raise serializers.ValidationError("Profile must have at least 3 photos")
         return data
 

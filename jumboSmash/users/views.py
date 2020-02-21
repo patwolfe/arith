@@ -36,11 +36,16 @@ class GetProfile(APIView):
         user_serializer.is_valid(raise_exception=True)
         requested_user = user_serializer.validated_data["user"]
         approved, pending = Profile.objects.get_profiles(requested_user)
-        if requested_user == request.user:
-            serializer = ProfileSerializer(pending)
+
+        profile = pending or approved if requested_user == request.user else approved
+        if profile:
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
         else:
-            serializer = ProfileSerializer(approved)
-        return Response(serializer.data)
+            return Response(
+                "User does not have an approved profile",
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 class EditProfile(APIView):
@@ -58,7 +63,7 @@ class EditProfile(APIView):
         )
         serializer.is_valid(raise_exception=True)
         profile = serializer.save()
-        return Response("what should this respond")
+        return Response()
 
 
 class CheckUserExists(APIView):

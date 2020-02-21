@@ -176,19 +176,19 @@ class ReviewProfileAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def approve(self, request, profile_id, *args, **kwargs):
-        logging.info("User {} profile approved".format(profile_id))
-        Profile.objects.approve(profile_id)
+        profile = Profile.objects.get(pk=profile_id).approve()
+        logging.info("User {} profile approved".format(profile.user.id))
         return HttpResponseRedirect("/admin/users/reviewprofile")
 
     def reject(self, request, profile_id, *args, **kwargs):
-        logging.info("User {} profile rejected".format(profile_id))
-        Profile.objects.reject(profile_id)
+        profile = Profile.objects.get(pk=profile_id).reject()
+        logging.info("User {} profile rejected".format(profile.user.id))
         return HttpResponseRedirect("/admin/users/reviewprofile")
 
     def approve_and_activate(self, request, profile_id, *args, **kwargs):
-        logging.info("User {} profile approved, user activated".format(profile_id))
-        profile = Profile.objects.approve(profile_id)
+        profile = Profile.objects.get(pk=profile_id).approve()
         profile.user.activate()
+        logging.info("User {} profile approved, user activated".format(profile.user.id))
         return HttpResponseRedirect("/admin/users/reviewprofile")
 
 

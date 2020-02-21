@@ -100,7 +100,34 @@ class ProfileSerializerTests(TestCase):
         self.assertEqual(pending.photo_list(), order)
         self.assertEqual(old_approved, approved)
 
-# TODO:
-# - test for deleted pending
-# - test endpoints
-# - test same photo id multiple times
+    def test_photo_repeats(self):
+        """ Photo repeats are not allowed """
+        user = User.objects.get(pk=1)
+        old_approved, old_pending = Profile.objects.get_profiles(user=user)
+
+        order = [3, 1, 2, 5, 5, None]
+        serializer = ProfileSerializer(
+            data=makeProfileJSON(1, order), context={"user": user}
+        )
+        self.assertFalse(serializer.is_valid())
+
+
+class ModelViewsTest(TestCase):
+    fixtures = ["tests/dummy_users.json", "tests/dummy_profiles.json"]
+    factory = APIRequestFactory()
+
+    def test_get_own_profile_pending(self):
+        """ User gets their own pending profile if it exists """
+        pass
+
+    def test_get_own_profile_approved(self):
+        """ User gets their own approved profile if nothing is pending """
+        pass
+
+    def test_get_other_profile_approved(self):
+        """ User can see other's approved profiles """
+        pass
+
+    def test_get_other_profile_dne(self):
+        """ User cannot see other's pending profiles, 404"""
+        pass
