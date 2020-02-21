@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TextInput as TextInputRN,
+  Text,
+  View,
   StyleSheet,
 } from 'react-native';
 
@@ -9,19 +11,33 @@ import {
  * initText: initial content of the text box on load
  * canExpand: bool, whether it can be more than one line or not
  * onChangeText: what should happen with the text when it changes
+ * maxLength: int, max # characters, 300 by default
+ * displayCount: bool, whether counter should show or not
  */
 export default function TextInput(props) {
+
+  const maxLength = props.maxLength ? props.maxLength : 300;
   const initialText = props.initText ? props.initText : '';
   const barColor = props.darkMode ? 'white' : 'black';
   const colorMode = {borderBottomColor: barColor};
+
+  const [textLength, setTextLength] = useState(initialText.length);
+  const counter = props.displayCount ? <Text>{textLength}/{maxLength}</Text> : <Text />;
+
   return (
-    <TextInputRN
-      defaultValue={initialText}
-      maxLength={300}
-      multiline={props.canExpand}
-      style={[styles.textBox, colorMode]}
-      onChangeText={props.onChangeText}
-    />
+    <View> 
+      <TextInputRN
+        defaultValue={initialText}
+        maxLength={maxLength}
+        multiline={props.canExpand}
+        style={[styles.textBox, colorMode]}
+        onChangeText={(newText) => {
+          setTextLength(newText.length);
+          props.onChangeText;
+        }}
+      />
+      {counter}
+    </View>
   );  
 }
 

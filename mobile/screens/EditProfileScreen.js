@@ -23,6 +23,7 @@ export default function EditProfileScreen() {
           style={styles.textBox}
           initText={userProfile.questions[field]}
           canExpand={true}
+          displayCount={true}
         />
       </View>
     );
