@@ -27,7 +27,7 @@ class UserAdmin(UserAdmin):
         extra_context['id_photo'] = user.id_photo
         extra_context['profiles'] = map(lambda profile: profile.get_profile(), Profile.objects.filter(user=object_id))
         extra_context['photo_sets'] = map(lambda photo_set: photo_set.get_photos(), Photo.objects.filter(user=object_id))
-        return super(UserAdmin, self).change_view(request, object_id, form_url, extra_context=extra_context)
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
 
     class Media: 
         css = {'all': ('users/admin/admin.css',)}

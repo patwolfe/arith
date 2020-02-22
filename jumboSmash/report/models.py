@@ -4,8 +4,7 @@ from users.models import User
 
 class ReportManger(models.Manager):
     def report(self, reporter, reportee, info):
-        num_matched = User.objects.filter(id=reportee).exclude(status=User.BANNED).update(status=User.SUSPENDED)
-        # distinction between suspended and banned is just for needs_review
+        num_matched = User.objects.filter(id=reportee).exclude(status=User.BANNED).update(status=User.REPORTED)
         needs_review = True
         result = None
         if not num_matched:
@@ -22,14 +21,14 @@ class ReportManger(models.Manager):
 
         if action == "ban":
             # set user to banned, skip other reports, mark this report as banned
-            User.objects.filter(id=reportee, status=User.SUSPENDED).update(status=User.BANNED)
+            User.objects.filter(id=reportee, status=User.REPORTED).update(status=User.BANNED)
             self.filter(reportee=reportee, needs_review=True).exclude(id=request_id).update(needs_review=False, result=Report.SKIPPED)
             result = Report.BANNED
         elif action == "dismiss":
             # set user to active only if no other reports are active, mark this report as dismissed
             other_active = self.filter(reportee=reportee, needs_review=True).exclude(id=request_id).exists()
             if not other_active:
-                User.objects.filter(id=reportee, status=User.SUSPENDED).update(status=User.ACTIVE)
+                User.objects.filter(id=reportee, status=User.REPORTED).update(status=User.ACTIVE)
             result = Report.DISMISSED
 
         r.needs_review = False

@@ -97,9 +97,9 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     INACTIVE = "I"
     ACTIVE = "A"
-    SUSPENDED = "S"
+    REPORTED = "R"
     BANNED = "B"
-    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (SUSPENDED, "Suspended"), (BANNED, "Bannned"))
+    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (REPORTED, "Reported"), (BANNED, "Bannned"))
 
     username = None
     email = models.EmailField(("email address"), unique=True)
