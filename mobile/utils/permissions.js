@@ -8,4 +8,12 @@ async function getPermissionAsync(alertMessage) {
   return status;
 }
 
-export { getPermissionAsync };
+async function getCameraPermissionAsync(alertMessage) {
+  const { status } = await Permissions.askAsync(Permissions.CAMERA);
+  if (status !== 'granted') {
+    alert(alertMessage);
+  }
+  return status;
+}
+
+export { getPermissionAsync, getCameraPermissionAsync};
