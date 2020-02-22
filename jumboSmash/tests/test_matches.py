@@ -87,13 +87,13 @@ class ModelManagerTests(TestCase):
 
 class ModelViewsTest(TestCase):
     fixtures = ["tests/dummy_users.json", "tests/dummy_matches.json"]
+    factory = APIRequestFactory()
 
     def test_unmatch_valid_1(self):
         """ Confirms user_1 can unmatch match """
         user = User.objects.get(pk=1)
 
-        factory = APIRequestFactory()
-        request = factory.post("chat/unmatch/", {"match": 1}, format="json")
+        request = self.factory.post("chat/unmatch/", {"match": 1}, format="json")
         force_authenticate(request, user=user)
         view = Unmatch.as_view()
         response = view(request)
@@ -107,8 +107,7 @@ class ModelViewsTest(TestCase):
         """ Confirms user_2 can unmatch match """
         user = User.objects.get(pk=2)
 
-        factory = APIRequestFactory()
-        request = factory.post("chat/unmatch/", {"match": 1}, format="json")
+        request = self.factory.post("chat/unmatch/", {"match": 1}, format="json")
         force_authenticate(request, user=user)
         view = Unmatch.as_view()
         response = view(request)
@@ -122,8 +121,7 @@ class ModelViewsTest(TestCase):
         """ User not in match cannot unmatch """
         user = User.objects.get(pk=3)
 
-        factory = APIRequestFactory()
-        request = factory.post("chat/unmatch/", {"match": 1}, format="json")
+        request = self.factory.post("chat/unmatch/", {"match": 1}, format="json")
         force_authenticate(request, user=user)
         view = Unmatch.as_view()
         response = view(request)

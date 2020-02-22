@@ -6,9 +6,11 @@ from django.core.exceptions import (
     MultipleObjectsReturned,
     ValidationError,
 )
+from .s3utils import create_presigned_url, create_presigned_post
 
 import datetime
 import uuid
+import logging
 
 
 class UserManager(BaseUserManager):
@@ -20,79 +22,23 @@ class UserManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
         )
-        user.set_unusable_password()
         user.save()
         return user
 
     def create_staffuser(self, email, password, first_name, last_name):
         user = self.create_user(email, first_name, last_name)
-        user.set_password(password)
         user.is_staff = True
+        user.set_password(password)
         user.save()
         return user
 
     def create_superuser(self, email, password, first_name, last_name):
         user = self.create_user(email, first_name, last_name)
-        user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
+        user.set_password(password)
         user.save()
         return user
-
-    def edit(self, user_id, data):
-        user = self.get(id=user_id)
-        profile = data.pop("profile")
-        photos = data.pop("photos")
-
-        if user.status == User.INACTIVE:
-            user.preferred_name = data["preferred_name"]
-            user.id_photo = data["id_photo"]
-
-        # TODO only set this if we need to reapprove photos or they are inactive
-        user.needs_review = True
-
-        user.discoverable = data["discoverable"]
-        Profile.objects.edit(user_id, profile)
-        Photo.objects.edit(user_id, photos)
-
-        user.save()
-        return user
-
-    def approve(self, user_id):
-        user = self.get(id=user_id)
-
-        if user.status == User.INACTIVE:
-            user.status = User.ACTIVE
-            user.discoverable = True
-
-        Photo.objects.approve(user_id)
-
-        user.needs_review = False
-        user.save()
-
-    def reject(self, user_id):
-        # TODO trigger email/push notification
-        user = self.get(id=user_id)
-
-        if user.status == User.INACTIVE:
-            Profile.objects.reject(user_id)
-            Photo.objects.reject(user_id)
-        elif user.status == User.ACTIVE:
-            Photo.objects.reject(user_id)
-
-        user.needs_review = False
-        user.save()
-
-    def ban(self, user_id):
-        user = self.get(id=user_id)
-        user.status = User.BANNED
-        user.save()
-
-    def unban(self, user_id):
-        user = self.get(id=user_id)
-        user.status = User.ACTIVE
-        user.save()
-
 
 class User(AbstractUser):
     INACTIVE = "I"
@@ -107,7 +53,6 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=100)
     preferred_name = models.CharField(max_length=30, blank=True, null=True)
     discoverable = models.BooleanField(default=False)
-    needs_review = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
     id_photo = models.URLField(blank=True, null=True)
 
@@ -119,111 +64,118 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+    def ban(self):
+        self.last_status = self.status
+        self.status = User.BANNED
+        self.save()
+
+    def unban(self):
+        user.status = self.last_status
+        self.save()
+
+    def activate(self):
+        """ Marks user as active and discoverable """
+        if self.status == User.INACTIVE:
+            self.status = User.ACTIVE
+            self.discoverable = True
+            self.save()
+        else:
+            logging.warning("User {} is not inactive, cannot activate".format(self.id))
+
 
 class ProfileManager(models.Manager):
-    def edit(self, user_id, data):
-        profile, _ = self.get_or_create(user_id=user_id)
-        profile.bio = data["bio"]
-        profile.save()
+    def to_aws_key(self, user_id, photo_id):
+        url_format = "{}/profile/{}.jpg"
+        return url_format.format(user_id, photo_id)
 
-    def reject(self, user_id):
-        self.filter(user_id=user_id).delete()
+    def get_upload_urls(self, user_id):
+        "Gets all the upload url + fields for given user"
+        urls = []
+        for i in range(6, 12):
+            urls.append([i, create_presigned_post(self.to_aws_key(user_id, i))])
+        return urls
+
+    def get_profiles(self, user):
+        """ Returns approved, pending profiles """
+        return (
+            self.filter(user=user, approved=True).first(),
+            self.filter(user=user, approved=False).first(),
+        )
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, related_name="profile", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    approved = models.BooleanField(default=False)
+
+    photo0 = models.IntegerField(null=True, blank=True)
+    photo1 = models.IntegerField(null=True, blank=True)
+    photo2 = models.IntegerField(null=True, blank=True)
+    photo3 = models.IntegerField(null=True, blank=True)
+    photo4 = models.IntegerField(null=True, blank=True)
+    photo5 = models.IntegerField(null=True, blank=True)
+
     bio = models.TextField()
 
     objects = ProfileManager()
 
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["user"], name="unique_profile")]
-
-    def get_profile(self):
-        return {"user": self.user, "bio": self.bio}
-
-
-class PhotoManager(models.Manager):
-    def get_photos(self, user_id):
-        photos = Photo.objects.filter(user_id=user_id)
-        approved_photo = None
-        unapproved_photo = None
-
-        for photo in photos:
-            if photo.approved:
-                approved_photo = photo
-            else:
-                unapproved_photo = photo
-
-        return approved_photo, unapproved_photo
-
-    def edit(self, user_id, data):
-        # TODO allow reordering of photos
-        # TODO return changed bool
-        defaults = {
-            "user_id": user_id,
-            "approved": False,
-            "photo0": data["photo0"],
-            "photo1": data["photo1"],
-            "photo2": data["photo2"],
-            "photo3": data["photo3"],
-            "photo4": data["photo4"],
-            "photo5": data["photo5"],
-        }
-        self.update_or_create(user_id=user_id, approved=False, defaults=defaults)
-
-    def approve(self, user_id):
-        approved_photo, unapproved_photo = self.get_photos(user_id)
-
-        if unapproved_photo:
-            if approved_photo:
-                approved_photo.delete()
-            unapproved_photo.approved = True
-            unapproved_photo.full_clean()
-            unapproved_photo.save()
-        else:
-            print(
-                "Tried approving photos for user but no unapproved photos existed".format(
-                    user_id
-                )
-            )
-
-    def reject(self, user_id):
-        # TODO trigger email/push notification
-        self.filter(user_id=user_id, approved=False).delete()
-
-
-class Photo(models.Model):
-    user = models.ForeignKey(User, related_name="photo", on_delete=models.CASCADE)
-    approved = models.BooleanField(default=False)
-    photo0 = models.URLField()
-    photo1 = models.URLField()
-    photo2 = models.URLField()
-    photo3 = models.URLField()
-    photo4 = models.URLField()
-    photo5 = models.URLField()
-
-    objects = PhotoManager()
-
+    # Note 0-5 are approved, 6-11 are reserved for uploads
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["user", "approved"], name="unique_photo")
+            models.UniqueConstraint(fields=["user", "approved"], name="unique_profile")
         ]
 
     def __str__(self):
-        return "User {} Photos ({})".format(
+        return "User {} Profile ({})".format(
             self.user, "Approved" if self.approved else "Pending"
         )
 
-    def get_photos(self):
-        return {
-            "photos": [
-                self.photo0,
-                self.photo1,
-                self.photo2,
-                self.photo3,
-                self.photo4,
-                self.photo5,
-            ],
-            "approved": self.approved,
-        }
+    def photo_list(self):
+        """ Returns list of photo ids """
+        list = []
+        for i in range(0, 6):
+            list.append(getattr(self, "photo" + str(i)))
+        return list
+
+    def get_display_urls(self):
+        """ Gets display urls for photos in set and returns them as a id:url mapping """
+        urls = {}
+        for photo in self.photo_list():
+            if photo:
+                urls[photo] = create_presigned_url(
+                    Profile.objects.to_aws_key(self.user.id, photo)
+                )
+        return urls
+
+    def is_photo_reorder(self, profile2):
+        """ Returns true if the profile2 is the same as the current profile just with photos rearranged """
+        curr_img_list = self.photo_list()
+        # should check for duplicates
+        for img in profile2.photo_list():
+            if img is not None and img not in curr_img_list:
+                return False
+        return self.bio == profile2.bio
+
+    def update(self, **kwargs):
+        mfields = iter(self._meta.fields)
+        mods = [(f.attname, kwargs[f.attname]) for f in mfields if f.attname in kwargs]
+        for fname, fval in mods:
+            setattr(self, fname, fval)
+        super(Profile, self).save()
+        return self
+
+    def approve(self):
+        # TODO concurrency, notify
+        Profile.objects.filter(user_id=self.user_id, approved=True).delete()
+        self.approved = True
+        self.save()
+        return self
+
+    def reject(self):
+        # TODO notify
+        self.delete()
+
+
+class ReviewProfile(Profile):
+    class Meta:
+        proxy = True
