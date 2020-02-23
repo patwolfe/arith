@@ -25,39 +25,39 @@ Once you are on the EC2 instance (you should see some funky ElasticBeanstalk ASC
 
 *API*
 
-/chat
+    /chat
 
-    /unmatch: mark this match as unmatched
-    
-    /send: post message
-    
-    /convo: retrieve all messages for this match
-    
-/swipe
+        /unmatch: mark this match as unmatched
 
-    /smash: right swipe on a user
-    
-    /skip: left swipe on a user
-    
-    /get_next:  retrieve 10 users to swipe (not yet merged)
-    
-    /refresh: rebuild the deck for the current user so that they can see users they skipped previously (not yet merged)
-    
-    /block
-    
-    /top5
-    
-/auth
+        /send: post message
 
-    /logout
-    
-/user
+        /convo: retrieve all messages for this match
 
-    /list: list all registered users
-    
-    /profile: retrieve profile for a given user
-    
-    /profile/edit: post profile changes
-    
-    /check: verify that a user (given email) exists in the database
-    
+    /swipe
+
+        /smash: right swipe on a user
+
+        /skip: left swipe on a user
+
+        /get_next:  retrieve 10 users to swipe (not yet merged)
+
+        /refresh: rebuild the deck for the current user so that they can see users they skipped previously (not yet merged)
+
+        /block
+
+        /top5
+
+    /auth
+
+        /logout
+
+    /user
+
+        /list: list all registered users
+
+        /profile: retrieve profile for a given user
+
+        /profile/edit: post profile changes
+
+        /check: verify that a user (given email) exists in the database
+
