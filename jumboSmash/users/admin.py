@@ -178,18 +178,18 @@ class ProfileReviewAdmin(admin.ModelAdmin):
     def approve(self, request, profile_id, *args, **kwargs):
         profile = Profile.objects.get(pk=profile_id).approve()
         logging.info("User {} profile approved".format(profile.user.id))
-        return HttpResponseRedirect("/admin/users/reviewprofile")
+        return HttpResponseRedirect("/admin/users/profilereview")
 
     def reject(self, request, profile_id, *args, **kwargs):
         profile = Profile.objects.get(pk=profile_id).reject()
         logging.info("User {} profile rejected".format(profile.user.id))
-        return HttpResponseRedirect("/admin/users/reviewprofile")
+        return HttpResponseRedirect("/admin/users/profilereview")
 
     def approve_and_activate(self, request, profile_id, *args, **kwargs):
         profile = Profile.objects.get(pk=profile_id).approve()
         profile.user.activate()
         logging.info("User {} profile approved, user activated".format(profile.user.id))
-        return HttpResponseRedirect("/admin/users/reviewprofile")
+        return HttpResponseRedirect("/admin/users/profilereview")
 
 
 admin.site.register(ProfileReview, ProfileReviewAdmin)
