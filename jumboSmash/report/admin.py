@@ -40,11 +40,11 @@ class ReportReviewAdmin(ReportAdmin):
 
     def ban(self, request, report_id, *args, **kwargs):
         Report.objects.review(int(report_id), "ban")
-        return HttpResponseRedirect(reverse("admin:report_reportreview_changelist"))
+        return HttpResponseRedirect(reverse("admin:report_reviewreport_changelist"))
 
     def dismiss(self, request, report_id, *args, **kwargs):
         Report.objects.review(int(report_id), "dismiss")
-        return HttpResponseRedirect(reverse("admin:report_reportreview_changelist"))
+        return HttpResponseRedirect(reverse("admin:report_reviewreport_changelist"))
 
 
 admin.site.register(Report, ReportAdmin)
