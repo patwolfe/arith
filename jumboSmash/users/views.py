@@ -66,6 +66,20 @@ class EditProfile(APIView):
         return Response()
 
 
+class UpdateToken(APIView):
+    """
+    Endpoint to update the push token for user.
+    """
+
+    def post(self, request):
+        user = request.user
+        if "token" in request.data and type(request.data["token"]) is str:
+            user.update_push_token(request.data["token"])
+            return Response("token updated", status=status.HTTP_200_OK)
+        else:
+            return Response("Invalid request.", status=status.HTTP_404_NOT_FOUND)
+
+
 class CheckUserExists(APIView):
     """
     Endpoint to confirm email is in our list of seniors.

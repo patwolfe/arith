@@ -1,5 +1,8 @@
 from django.test import TestCase
+from rest_framework.test import force_authenticate, APIRequestFactory
 from django.contrib.auth import get_user_model
+from users.models import User
+from users.views import UpdateToken
 
 
 class UsersManagersTests(TestCase):
@@ -66,3 +69,40 @@ class UserRetrievalTests(TestCase):
         # check user is not in db
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(email=email)
+
+
+class UserViewTests(TestCase):
+    fixtures = ["tests/dummy_users.json"]
+    factory = APIRequestFactory()
+
+    def test_update_token_valid(self):
+        user = User.objects.get(pk=1)
+
+        request = self.factory.post("user/push_token/", {"token": '12345678910'}, format="json")
+        force_authenticate(request, user=user)
+        view = UpdateToken.as_view()
+        response = view(request)
+
+        updated_user = User.objects.get(pk=1)
+        self.assertEqual(updated_user.push_token, '12345678910')
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_token_request_not_str(self):
+        user = User.objects.get(pk=1)
+
+        request = self.factory.post("user/push_token/", {"token": 12345678910}, format="json")
+        force_authenticate(request, user=user)
+        view = UpdateToken.as_view()
+        response = view(request)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_update_token_request_empty(self):
+        user = User.objects.get(pk=1)
+
+        request = self.factory.post("user/push_token/", {}, format="json")
+        force_authenticate(request, user=user)
+        view = UpdateToken.as_view()
+        response = view(request)
+
+        self.assertEqual(response.status_code, 404)
