@@ -207,7 +207,7 @@ class ViewConversationViewsTest(TestCase):
     def test_view_conversation_user_in_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.put("chat/view/", {"match": 1}, format="json")
+        request = factory.post("chat/view/", {"match": 1}, format="json")
         force_authenticate(request, user)
         view = ViewConversation.as_view()
         response = view(request)
@@ -219,7 +219,7 @@ class ViewConversationViewsTest(TestCase):
     def test_view_conversation_user_not_in_match(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.put("chat/view/", {"match": 1}, format="json")
+        request = factory.post("chat/view/", {"match": 1}, format="json")
         force_authenticate(request, user)
         view = ViewConversation.as_view()
         response = view(request)
@@ -229,7 +229,7 @@ class ViewConversationViewsTest(TestCase):
     def test_view_conversation_invalid_data(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.put("chat/view/", {}, format="json")
+        request = factory.post("chat/view/", {}, format="json")
         force_authenticate(request, user)
         view = ViewConversation.as_view()
         response = view(request)
@@ -239,7 +239,7 @@ class ViewConversationViewsTest(TestCase):
     def test_view_conversation_unmatched(self):
         user = User.objects.get(pk=2)
         factory = APIRequestFactory()
-        request = factory.put("chat/view/", {"match": 2}, format="json")
+        request = factory.post("chat/view/", {"match": 2}, format="json")
         force_authenticate(request, user)
         view = ViewConversation.as_view()
         response = view(request)
