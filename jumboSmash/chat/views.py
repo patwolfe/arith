@@ -94,7 +94,7 @@ class GetAll(APIView):
         matches = Match.objects.list_matches(request.user)
         conversations = []
         for match in matches:
-            match_info = {"content": ""}
+            match_info = {"match": match.id, "content": ""}
             message = Message.objects.recent_message(match)
             if message:
                 match_info["content"] = message.content
