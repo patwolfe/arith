@@ -74,7 +74,7 @@ class GetConversation(APIView):
 
 
 class ViewConversation(APIView):
-    def put(self, request):
+    def post(self, request):
         serializer = MatchIdSerializer(data=request.data)
         if serializer.is_valid():
             match = serializer.validated_data["match"]
