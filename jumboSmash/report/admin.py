@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.urls import re_path, reverse
-from report.models import Report, ReportObject
+from report.models import Report, ReviewReport
 
 
-class ReportObjectAdmin(admin.ModelAdmin):
+class ReportAdmin(admin.ModelAdmin):
     list_display = ["reporter", "reportee", "report_time", "info", "needs_review", "result"]
     ordering = ["-needs_review", "-report_time"]
     search_fields = ["reporter__email", "reportee__email", "info"]
@@ -12,7 +12,7 @@ class ReportObjectAdmin(admin.ModelAdmin):
     readonly_fields = ["report_time"]
 
 
-class ReportAdmin(ReportObjectAdmin):
+class ReviewReportAdmin(ReportAdmin):
     list_display = ["report_time", "info", "needs_review"]
     ordering = ["report_time"]
     search_fields = ["info"]
@@ -39,13 +39,13 @@ class ReportAdmin(ReportObjectAdmin):
         return custom_urls + urls
 
     def ban(self, request, report_id, *args, **kwargs):
-        Report.objects.review(report_id, "ban")
-        return HttpResponseRedirect(reverse("admin:report_report_changelist"))
+        Report.objects.review(int(report_id), "ban")
+        return HttpResponseRedirect(reverse("admin:report_reviewreport_changelist"))
 
     def dismiss(self, request, report_id, *args, **kwargs):
-        Report.objects.review(report_id, "dismiss")
-        return HttpResponseRedirect(reverse("admin:report_report_changelist"))
+        Report.objects.review(int(report_id), "dismiss")
+        return HttpResponseRedirect(reverse("admin:report_reviewreport_changelist"))
 
 
-admin.site.register(ReportObject, ReportObjectAdmin)
 admin.site.register(Report, ReportAdmin)
+admin.site.register(ReviewReport, ReviewReportAdmin)
