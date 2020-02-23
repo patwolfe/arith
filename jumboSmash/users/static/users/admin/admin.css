@@ -1,52 +1,85 @@
-.container {
-  display: flex
-}
-.user-info {
-  width: 25%;
+#review {
+    display: flex
 }
 
-.user-info select {
-  width: 100%;
+#submit-bar {
+    text-align: center;
 }
 
-.user-info .form-row {
-  padding-top: 0px;
-  border: none;
+#submit-bar a{
+    display: inline-block;
+    padding: 9px;
+    border-radius: 5px;
+    color: white;
 }
 
+#id-card {
+    display: inline-block;
+    width:400px;
+    background-color: grey;
+    margin: 0 auto;
+}
+#user_info {
+    width:50%;
+    display: inline-block;
+}
+
+h2 {
+    text-align: center;
+}
+
+h3 {
+    display: inline-block;
+}
 .profile {
-  width: 25%;
-}
-
-.profile img {
-  display: block;
-  max-width: 100%;
-  max-height: 200px;
-  padding-bottom: 15px;
+    margin: 10px;
+    flex-basis: 25%;
+    flex-grow: 1;
 }
 
 .photo_set {
-  display: block;
-  width: 50%;
-}
-
-.photo_set td {
-  border: none;
-  padding: 0px;
+    display:flex;
+    justify-content: center;
 }
 
 .photo_set img {
-  display: inline;
-  vertical-align: middle;
-  padding: 0px 5px 5px 0px;
-  max-width: 150px;
-  max-height: 150px;
+    max-height: 150px;
+    margin:5px;
+    padding: 4px;
+    opacity: 0.5;
+}
+
+img.added {
+    border: solid limegreen 3px;
+    padding:1px;
+    opacity: 1.0;
+}
+
+img.deleted {
+    border: solid maroon 3px;
+    padding: 1px;
+    opacity: 0.25;
 }
 
 .approve {
-  background-color: #70bf2b;
+    background-color: #70bf2b;
 }
 
 .reject {
-  background-color: #CC3434;
+    background-color: #CC3434;
+}
+
+.bio {
+    width: 400px;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+span.added {
+    background-color: lightgreen;
+}
+
+span.deleted {
+    background-color: pink;
+    text-decoration: line-through;
 }

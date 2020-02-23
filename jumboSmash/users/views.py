@@ -3,9 +3,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from users.models import User, Profile
-from users.serializers import SimpleUserSerializer, FullUserSerializer
+from users.serializers import (
+    UserIdSerializer,
+    SimpleUserSerializer,
+    ProfileSerializer,
+)
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.shortcuts import render
+import logging
 
 
 class ListUsers(APIView):
@@ -21,16 +26,26 @@ class ListUsers(APIView):
 
 class GetProfile(APIView):
     """
-    Get a profile and photos for user
+    Get a profile for given user
     """
 
-    # TODO don't show if banned
+    # TODO don't show if banned <- or should this be blocked elsewhere
 
     def get(self, request):
-        user_id = request.query_params.get("id")
-        user = User.objects.get(id=user_id)
-        serializer = FullUserSerializer(user, context={"request": request})
-        return Response(serializer.data)
+        user_serializer = UserIdSerializer(data=request.query_params)
+        user_serializer.is_valid(raise_exception=True)
+        requested_user = user_serializer.validated_data["user"]
+        approved, pending = Profile.objects.get_profiles(requested_user)
+
+        profile = pending or approved if requested_user == request.user else approved
+        if profile:
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
+        else:
+            return Response(
+                "User does not have an approved profile",
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 class EditProfile(APIView):
@@ -38,16 +53,17 @@ class EditProfile(APIView):
     Edit profile for currently logged in user
     """
 
+    def get(self, request):
+        return Response({"d": Profile.objects.get_upload_urls(request.user.id)})
+
     def post(self, request):
         user_id = request.user.id
-        serializer = FullUserSerializer(data=request.data, context={"request": request})
-        serializer.is_valid()
-        print("-----------------------------------")
-        print(serializer.validated_data)
-        print("-----------------------------------")
-        user = User.objects.edit(user_id, serializer.validated_data)
-        ret_serializer = FullUserSerializer(user, context={"request": request})
-        return Response(ret_serializer.data)
+        serializer = ProfileSerializer(
+            data=request.data, context={"user": request.user}
+        )
+        serializer.is_valid(raise_exception=True)
+        profile = serializer.save()
+        return Response()
 
 
 class CheckUserExists(APIView):
@@ -63,7 +79,6 @@ class CheckUserExists(APIView):
             return render(request, "user_check.html", {})
         try:
             user = User.objects.get(email=email)
-            print(SimpleUserSerializer(user).data)
             return render(
                 request, "successful_check.html", {"email": email, "user": user},
             )
