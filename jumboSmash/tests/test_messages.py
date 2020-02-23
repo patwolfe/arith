@@ -264,6 +264,8 @@ class GetAllViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["match"], 1)
+        self.assertEqual(response.data[1]["match"], 3)
         self.assertEqual(response.data[0]["user_name"], "Jumbo")
         self.assertEqual(response.data[1]["user_name"], "Anime")
         self.assertEqual(response.data[0]["content"], ":)")
