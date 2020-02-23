@@ -176,6 +176,6 @@ class Profile(models.Model):
         self.delete()
 
 
-class ProfileReview(Profile):
+class ReviewProfile(Profile):
     class Meta:
         proxy = True

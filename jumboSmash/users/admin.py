@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import User, Profile, ProfileReview
+from users.models import User, Profile, ReviewProfile
 from django.utils.html import format_html
 from django.urls import re_path, reverse
 from django.http import HttpResponseRedirect
@@ -119,7 +119,7 @@ class ProfileAdmin(admin.ModelAdmin):
 admin.site.register(Profile, ProfileAdmin)
 
 
-class ProfileReviewAdmin(admin.ModelAdmin):
+class ReviewProfileAdmin(admin.ModelAdmin):
     list_display = ["user", "user_status"]
 
     def user_status(self, obj):
@@ -192,4 +192,4 @@ class ProfileReviewAdmin(admin.ModelAdmin):
         return HttpResponseRedirect("/admin/users/reviewprofile")
 
 
-admin.site.register(ProfileReview, ProfileReviewAdmin)
+admin.site.register(ReviewProfile, ReviewProfileAdmin)
