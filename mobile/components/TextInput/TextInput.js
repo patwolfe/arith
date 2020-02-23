@@ -33,7 +33,7 @@ export default function TextInput(props) {
         style={[styles.textBox, colorMode]}
         onChangeText={(newText) => {
           setTextLength(newText.length);
-          props.onChangeText;
+          props.onChangeText(newText);
         }}
       />
       {counter}
