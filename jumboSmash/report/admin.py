@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.urls import re_path, reverse
-from report.models import Report, ReviewReport
+from report.models import Report, ReportReview
 
 
 class ReportAdmin(admin.ModelAdmin):
@@ -12,7 +12,7 @@ class ReportAdmin(admin.ModelAdmin):
     readonly_fields = ["report_time"]
 
 
-class ReviewReportAdmin(ReportAdmin):
+class ReportReviewAdmin(ReportAdmin):
     list_display = ["report_time", "info", "needs_review"]
     ordering = ["report_time"]
     search_fields = ["info"]
@@ -48,4 +48,4 @@ class ReviewReportAdmin(ReportAdmin):
 
 
 admin.site.register(Report, ReportAdmin)
-admin.site.register(ReviewReport, ReviewReportAdmin)
+admin.site.register(ReportReview, ReportReviewAdmin)

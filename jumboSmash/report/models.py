@@ -69,6 +69,6 @@ class Report(models.Model):
     objects = ReportManger()
 
 
-class ReviewReport(Report):
+class ReportReview(Report):
     class Meta:
         proxy = True
