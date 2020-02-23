@@ -23,28 +23,29 @@ class ReportManger(models.Manager):
 
         r = self.create(reporter_id=reporter, reportee_id=reportee, info=info, needs_review=needs_review, result=result)
 
-    def review(self, report_id, action):
+    def ban(self, report_id):
         r = self.get(id=report_id)
         reportee = r.reportee.id
-        result = None
 
-        if action == "ban":
-            # set user to banned, skip other reports, mark this report as banned
-            User.objects.filter(id=reportee, status=User.REPORTED).update(status=User.BANNED)
-            self.filter(reportee=reportee, needs_review=True).exclude(id=report_id).update(needs_review=False, result=Report.SKIPPED)
-            result = Report.BANNED
-        elif action == "dismiss":
-            # set user to active only if no other reports are active, mark this report as dismissed
-            other_active = self.filter(reportee=reportee, needs_review=True).exclude(id=report_id).exists()
-            if not other_active:
-                User.objects.filter(id=reportee, status=User.REPORTED).update(status=User.ACTIVE)
-            result = Report.DISMISSED
-        else:
-            logging.error("Action %s on report %d unknown! Perhaps a new review action was added?", action, report_id)
-            return
+        # set user to banned, skip other reports, mark this report as banned
+        User.objects.filter(id=reportee, status=User.REPORTED).update(status=User.BANNED)
+        self.filter(reportee=reportee, needs_review=True).exclude(id=report_id).update(needs_review=False, result=Report.SKIPPED)
 
         r.needs_review = False
-        r.result = result
+        r.result = Report.BANNED
+        r.save()
+
+    def dismiss(self, report_id):
+        r = self.get(id=report_id)
+        reportee = r.reportee.id
+
+        # set user to active only if no other reports are active, mark this report as dismissed
+        other_active = self.filter(reportee=reportee, needs_review=True).exclude(id=report_id).exists()
+        if not other_active:
+            User.objects.filter(id=reportee, status=User.REPORTED).update(status=User.ACTIVE)
+
+        r.needs_review = False
+        r.result = Report.DISMISSED
         r.save()
 
 

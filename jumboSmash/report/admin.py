@@ -39,11 +39,11 @@ class ReviewReportAdmin(ReportAdmin):
         return custom_urls + urls
 
     def ban(self, request, report_id, *args, **kwargs):
-        Report.objects.review(int(report_id), "ban")
+        Report.objects.ban(int(report_id))
         return HttpResponseRedirect(reverse("admin:report_reviewreport_changelist"))
 
     def dismiss(self, request, report_id, *args, **kwargs):
-        Report.objects.review(int(report_id), "dismiss")
+        Report.objects.dismiss(int(report_id))
         return HttpResponseRedirect(reverse("admin:report_reviewreport_changelist"))
 
 

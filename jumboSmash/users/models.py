@@ -64,15 +64,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-    def ban(self):
-        self.last_status = self.status
-        self.status = User.BANNED
-        self.save()
-
-    def unban(self):
-        user.status = self.last_status
-        self.save()
-
     def activate(self):
         """ Marks user as active and discoverable """
         if self.status == User.INACTIVE:
