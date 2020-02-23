@@ -40,12 +40,12 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-
 class User(AbstractUser):
     INACTIVE = "I"
     ACTIVE = "A"
+    REPORTED = "R"
     BANNED = "B"
-    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (BANNED, "Bannned"))
+    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (REPORTED, "Reported"), (BANNED, "Bannned"))
 
     username = None
     email = models.EmailField(("email address"), unique=True)
@@ -54,9 +54,6 @@ class User(AbstractUser):
     preferred_name = models.CharField(max_length=30, blank=True, null=True)
     discoverable = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
-    last_status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, default=INACTIVE
-    )
     id_photo = models.URLField(blank=True, null=True)
 
     USERNAME_FIELD = "email"
@@ -66,15 +63,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
-
-    def ban(self):
-        self.last_status = self.status
-        self.status = User.BANNED
-        self.save()
-
-    def unban(self):
-        user.status = self.last_status
-        self.save()
 
     def activate(self):
         """ Marks user as active and discoverable """
