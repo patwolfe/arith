@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+{% block object-tools-items %}
+  <li>
+    <a href="{% url 'admin:report-dismiss' original.id %}" class="approve" style="background-color:#70BF2B;">Dismiss</a>
+  </li>
+  <li>
+    <a href="{% url 'admin:report-ban' original.id %}" class="reject" style="background-color:#CC3434;">Ban</a>
+  </li>
+{% endblock %}
+{% block submit_buttons_bottom %}{% endblock %}
