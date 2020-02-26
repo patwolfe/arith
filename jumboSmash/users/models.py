@@ -85,6 +85,12 @@ class User(AbstractUser):
         else:
             logging.warning("User {} is not inactive, cannot activate".format(self.id))
 
+    def id_upload_url(self):
+        return create_presigned_post("{}/id.jpg".format(self.id))
+
+    def id_photo(self):
+        return create_presigned_url("{}/id.jpg".format(self.id))
+
 
 class ProfileManager(models.Manager):
     def to_aws_key(self, user_id, photo_id):

@@ -7,6 +7,7 @@ from users.serializers import (
     UserIdSerializer,
     SimpleUserSerializer,
     ProfileSerializer,
+    SetUpSerializer,
 )
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.shortcuts import render
@@ -63,7 +64,27 @@ class EditProfile(APIView):
         )
         serializer.is_valid(raise_exception=True)
         profile = serializer.save()
-        return Response()
+        return Response("")
+
+
+class SetupUser(APIView):
+    """
+    Setup the profile for a user
+    """
+
+    def get(self, request):
+        return Response(request.user.id_upload_url())
+
+    def post(self, request):
+        user_id = request.user.id
+        serializer = SetUpSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if request.user.status == User.INACTIVE:
+            request.user.preferred_name = serializer["name"].value
+            request.user.save()
+            return Response()
+        else:
+            return Response("User is already setup")
 
 
 class CheckUserExists(APIView):
