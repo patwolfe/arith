@@ -15,3 +15,6 @@ source $DIR/bin/activate
 # run collect static in staging
 cd /var/app/staging/jumboSmash
 python manage.py collectstatic
+
+# run db migrate for sqlite
+python manage.py migrate --run-syncdb
