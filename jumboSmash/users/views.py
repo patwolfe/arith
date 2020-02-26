@@ -64,7 +64,7 @@ class EditProfile(APIView):
         )
         serializer.is_valid(raise_exception=True)
         profile = serializer.save()
-        return Response("Profile edit submitted")
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SetupUser(APIView):
@@ -82,7 +82,7 @@ class SetupUser(APIView):
         if request.user.status == User.INACTIVE:
             request.user.preferred_name = serializer["name"].value
             request.user.save()
-            return Response("User setup successful")
+            return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response("User is already setup", status=status.HTTP_409_CONFLICT)
 
