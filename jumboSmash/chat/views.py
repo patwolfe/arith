@@ -102,10 +102,16 @@ class GetAll(APIView):
             if match.user_1 == request.user:
                 match_info["user_name"] = match.user_2.first_name
                 match_info["viewed"] = match.user_1_viewed
-                match_info["photo"] = Profile.objects.get_profiles(match.user_1)[0].get_first_photo_url()
+                profiles = Profile.objects.get_profiles(match.user_2)
+                match_info["photo"] = None
+                if profiles:
+                    match_info["photo"] = profiles[0].get_first_photo_url()
             else:
                 match_info["user_name"] = match.user_1.first_name
                 match_info["viewed"] = match.user_2_viewed
-                match_info["photo"] = Profile.objects.get_profiles(match.user_1)[0].get_first_photo_url()
+                profiles = Profile.objects.get_profiles(match.user_1)
+                match_info["photo"] = None
+                if profiles:
+                    match_info["photo"] = profiles[0].get_first_photo_url()
             conversations.append(match_info)
         return Response(conversations, status=status.HTTP_200_OK)
