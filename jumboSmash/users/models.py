@@ -144,6 +144,13 @@ class Profile(models.Model):
                 )
         return urls
 
+    def get_first_photo_url(self):
+        """ Returns a presigned url for photo0 of the profile"""
+        if self.photo0:
+            return create_presigned_url(Profile.objects.to_aws_key(self.user.id, self.photo0))
+        else:
+            return None
+
     def is_photo_reorder(self, profile2):
         """ Returns true if the profile2 is the same as the current profile just with photos rearranged """
         curr_img_list = self.photo_list()

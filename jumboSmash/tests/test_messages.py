@@ -1,6 +1,6 @@
 from mock import patch
 from django.test import TestCase
-from users.models import User
+from users.models import User, Profile
 from rest_framework.test import force_authenticate, APIRequestFactory
 from chat.models import Message, Match
 from chat.views import SendMessage, GetConversation, GetAll, ViewConversation
@@ -252,9 +252,11 @@ class GetAllViewsTests(TestCase):
         "tests/dummy_users.json",
         "tests/dummy_matches.json",
         "tests/dummy_messages.json",
+        "tests/dummy_profiles.json",
     ]
 
-    def test_get_all(self):
+    @patch("chat.views.Profile.get_first_photo_url")
+    def test_get_all(self, create_url):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
         request = factory.get("chat/all/", {}, format="json")
@@ -264,9 +266,12 @@ class GetAllViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["match"], 1)
+        self.assertEqual(response.data[1]["match"], 3)
         self.assertEqual(response.data[0]["user_name"], "Jumbo")
         self.assertEqual(response.data[1]["user_name"], "Anime")
         self.assertEqual(response.data[0]["content"], ":)")
-        self.assertEqual(response.data[1]["content"], "")
+        self.assertEqual(response.data[1]["content"], None)
         self.assertFalse(response.data[0]["viewed"])
         self.assertFalse(response.data[1]["viewed"])
+        self.assertEqual(create_url.call_count, 2)
