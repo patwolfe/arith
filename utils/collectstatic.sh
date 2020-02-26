@@ -17,4 +17,9 @@ cd /var/app/staging/jumboSmash
 python manage.py collectstatic
 
 # run db migrate for sqlite
-python manage.py migrate --run-syncdb
+python manage.py makemigrations users
+python manage.py makemigrations swipe
+python manage.py makemigrations chat
+python manage.py makemigrations report
+python manage.py migrate
+
