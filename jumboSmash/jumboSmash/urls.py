@@ -22,4 +22,5 @@ urlpatterns = [
     path("swipe/", include("swipe.urls")),
     path("chat/", include("chat.urls")),
     path("auth/", include("auth.urls")),
+    path("report/", include("report.urls")),
 ]
