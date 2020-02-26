@@ -25,7 +25,7 @@ SECRET_KEY = "t2-^klq$70pqm@+k3sz9s*g$b_u@b0x&l&$5qpzjnfsom^zg9m"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["jumbosmash-dev.us-east-1.elasticbeanstalk.com", "jumbosmash-prod.us-east-1.elasticbeanstalk.com", "jumbosmash-stage.us-east-1.elasticbeanstalk.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "users",
     "swipe",
     "chat",
-
+    "report",
 ]
 
 MIDDLEWARE = [
@@ -136,6 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = "static"
 
 # Mailhog
 EMAIL_HOST = "127.0.0.1"

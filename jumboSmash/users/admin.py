@@ -147,7 +147,7 @@ class ReviewProfileAdmin(admin.ModelAdmin):
         extra_context["approved_bio"] = approved_bio
         extra_context["pending_bio"] = pending_bio
 
-        return super(ReviewProfileAdmin, self).change_view(
+        return super().change_view(
             request, object_id, form_url, extra_context=extra_context
         )
 
