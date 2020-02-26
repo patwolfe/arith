@@ -33,4 +33,28 @@
             "approved": false,
             "bio": "hello",
             "user": 2}
+},
+{"model": "users.Profile",
+ "pk": 4,
+ "fields":{ "photo0":  5,
+            "photo1": 6,
+            "photo2": 7,
+            "photo3": null,
+            "photo4": null,
+            "photo5": null,
+            "approved": true,
+            "bio": "hello",
+            "user": 3}
+},
+{"model": "users.Profile",
+ "pk": 5,
+ "fields":{ "photo0":  8,
+            "photo1": 9,
+            "photo2": 10,
+            "photo3": null,
+            "photo4": null,
+            "photo5": null,
+            "approved": false,
+            "bio": "hello",
+            "user": 3}
 }]

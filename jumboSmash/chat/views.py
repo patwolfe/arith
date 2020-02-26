@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from users.models import Profile
 from .models import Message, Match
 from .serializers import MatchIdSerializer, MessageSerializer, SendMessageSerializer
 from .tasks import message_task
@@ -94,17 +95,17 @@ class GetAll(APIView):
         matches = Match.objects.list_matches(request.user)
         conversations = []
         for match in matches:
-            match_info = {"match": match.id, "content": ""}
+            match_info = {"match": match.id, "content": None}
             message = Message.objects.recent_message(match)
             if message:
                 match_info["content"] = message.content
             if match.user_1 == request.user:
                 match_info["user_name"] = match.user_2.first_name
                 match_info["viewed"] = match.user_1_viewed
-                # match_info["photo"] = Photo.objects.get_photos(match.user_2.pk)
+                match_info["photo"] = Profile.objects.get_profiles(match.user_1)[0].get_first_photo_url()
             else:
                 match_info["user_name"] = match.user_1.first_name
                 match_info["viewed"] = match.user_2_viewed
-                # match_info["photo"] = Photo.objects.get_photos(match.user_1.pk)
+                match_info["photo"] = Profile.objects.get_profiles(match.user_1)[0].get_first_photo_url()
             conversations.append(match_info)
         return Response(conversations, status=status.HTTP_200_OK)
