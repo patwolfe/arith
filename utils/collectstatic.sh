@@ -14,4 +14,4 @@ source $DIR/bin/activate
 
 # run collect static in staging
 cd /var/app/staging/jumboSmash
-python manage.py collecstatic
+python manage.py collectstatic
