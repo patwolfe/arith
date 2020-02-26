@@ -126,3 +126,5 @@ yarn.lock
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
+# Django migrations
+migrations
