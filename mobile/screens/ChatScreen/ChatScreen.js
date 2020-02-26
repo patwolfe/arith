@@ -13,7 +13,7 @@ import {
 import ChatView from 'jumbosmash/components/ChatView/ChatView';
 import ChatScreenHeader from 'jumbosmash/components/ChatScreenHeader/ChatScreenHeader';
 import BlobBackground from 'jumbosmash/components/BlobBackground/BlobBackground';
-
+import colors from 'jumbosmash/constants/Colors';
 import blobs from 'jumbosmash/constants/Blobs';
 
 export default function ChatScreen(props) {
@@ -43,12 +43,13 @@ export default function ChatScreen(props) {
   return (
     <View style={styles.container}>
       <BlobBackground style={styles.container}
-        gradient={{start_color: '#E13D71', end_color: '#5E43C4'}}
+        gradient={{start_color: colors.chatGradientStart, end_color: colors.chatGradientEnd}}
         blobs={blobs.cold_blobs}>
         <SafeAreaView style={styles.safeView}>
           <ChatScreenHeader navigation={props.navigation} />
+
           <KeyboardAvoidingView behavior='padding'
-            enabled keyboardVerticalOffset={50}
+            keyboardVerticalOffset={50}
             style={styles.container}
             key={state.keyboardavoidingviewkey}>
             <View style={styles.chat}>
@@ -59,7 +60,7 @@ export default function ChatScreen(props) {
                   value={state.textInput} />
                 <TouchableOpacity 
                   style={styles.sendButton}
-                  disabled={state.textInput == ''}
+                  disabled={state.textInput === ''}
                   onPress={() => setState(() => ({
                     ...state,
                     textInput: '', 
