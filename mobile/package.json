@@ -23,6 +23,7 @@
     "expo-constants": "~8.0.0",
     "expo-font": "~8.0.0",
     "expo-image-picker": "^8.0.2",
+    "expo-linear-gradient": "~8.0.0",
     "expo-web-browser": "~8.0.0",
     "react": "16.9.0",
     "react-dom": "~16.9.0",
@@ -30,6 +31,7 @@
     "react-native-gesture-handler": "~1.5.0",
     "react-native-reanimated": "~1.4.0",
     "react-native-screens": "2.0.0-alpha.12",
+    "react-native-svg": "9.13.3",
     "react-native-web": "~0.11.7",
     "react-navigation": "~4.0.10",
     "react-navigation-stack": "~1.10.3",
@@ -46,6 +48,7 @@
     "eslint-plugin-react-hooks": "^2.3.0",
     "eslint-plugin-react-native": "^3.8.1",
     "jest-expo": "~36.0.1",
+    "react-native-svg-transformer": "^0.14.3",
     "redux-devtools": "^3.5.0"
   },
   "private": true

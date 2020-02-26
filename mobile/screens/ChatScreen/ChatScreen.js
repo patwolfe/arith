@@ -12,6 +12,9 @@ import {
 } from 'react-native';
 import ChatView from 'jumbosmash/components/ChatView/ChatView';
 import ChatScreenHeader from 'jumbosmash/components/ChatScreenHeader/ChatScreenHeader';
+import BlobBackground from 'jumbosmash/components/BlobBackground/BlobBackground';
+
+import blobs from 'jumbosmash/constants/Blobs';
 
 export default function ChatScreen(props) {
   const initialState = {
@@ -38,34 +41,40 @@ export default function ChatScreen(props) {
     };
   });
   return (
-    <SafeAreaView style={styles.container}>
-      <ChatScreenHeader navigation={props.navigation} />
-      <KeyboardAvoidingView behavior='padding'
-        enabled keyboardVerticalOffset={50}
-        style={styles.container}
-        key={state.keyboardavoidingviewkey}>
-        <View style={styles.chat}>
-          <View style={styles.textBar}>
-            <TextInput
-              style={styles.textInput}
-              onChangeText={text => setState((old_state) =>  ({...old_state, textInput: text}))}
-              value={state.textInput} />
-            <TouchableOpacity 
-              style={styles.sendButton}
-              disabled={state.textInput == ''}
-              onPress={() => setState(() => ({
-                ...state,
-                textInput: '', 
-                messages: state.messages.concat({content: state.textInput, author: 'me'})}))}>
-              <Text style={styles.sendButtonText}>^</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.chatContainer}>
-            <ChatView messages={state.messages} />
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <BlobBackground style={styles.container}
+        gradient={{start_color: '#E13D71', end_color: '#5E43C4'}}
+        blobs={blobs.cold_blobs}>
+        <SafeAreaView style={styles.safeView}>
+          <ChatScreenHeader navigation={props.navigation} />
+          <KeyboardAvoidingView behavior='padding'
+            enabled keyboardVerticalOffset={50}
+            style={styles.container}
+            key={state.keyboardavoidingviewkey}>
+            <View style={styles.chat}>
+              <View style={styles.textBar}>
+                <TextInput
+                  style={styles.textInput}
+                  onChangeText={text => setState((old_state) =>  ({...old_state, textInput: text}))}
+                  value={state.textInput} />
+                <TouchableOpacity 
+                  style={styles.sendButton}
+                  disabled={state.textInput == ''}
+                  onPress={() => setState(() => ({
+                    ...state,
+                    textInput: '', 
+                    messages: state.messages.concat({content: state.textInput, author: 'me'})}))}>
+                  <Text style={styles.sendButtonText}>^</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.chatContainer}>
+                <ChatView messages={state.messages} />
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </BlobBackground>
+    </View>
   );
 }
 
@@ -75,6 +84,10 @@ ChatScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  safeView: {
+    backgroundColor: 'transparent',
     flex: 1,
   },
   textInput: {
