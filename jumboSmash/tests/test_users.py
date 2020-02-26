@@ -78,7 +78,7 @@ class UserSetupTests(TestCase):
         view = SetupUser.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
         edited_user = User.objects.get(pk=1)
 
