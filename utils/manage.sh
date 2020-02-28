@@ -14,7 +14,7 @@ else
   exit 1
 fi
 
-cat /opt/elasticbeanstalk/deployment/env > .env
+sudo cat /opt/elasticbeanstalk/deployment/env > .env
 
 # activate virtual env
 pipenv install --skip-lock
