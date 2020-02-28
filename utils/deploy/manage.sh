@@ -5,11 +5,15 @@ if [[ ! $RDS_HOSTNAME ]] ; then
   sudo sh -c 'cat /opt/elasticbeanstalk/deployment/env > .env'
 fi
 
-if ! pipenv run python jumboSmash/manage.py "$@" ; then
+pipenv run python jumboSmash/manage.py "$@"
+
+EXIT_CODE=$?
+if [ ! $EXIT_CODE ] ; then
+  echo
   echo "+-------------------------------------------------------+"
   echo "|                                                       |"
   echo "| MAKE SURE TO RUN 00_init TO INSTALL VIRTUAL ENV FIRST |"
   echo "|                                                       |"
   echo "+-------------------------------------------------------+"
-  exit $?
+  exit $EXIT_CODE
 fi
