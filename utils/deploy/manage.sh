@@ -8,7 +8,7 @@ fi
 pipenv run python jumboSmash/manage.py "$@"
 
 EXIT_CODE=$?
-if [ $EXIT_CODE ] ; then
+if [ $EXIT_CODE != 0 ] ; then
   echo
   echo "+---------------------------------------------+"
   echo "|                                             |"
