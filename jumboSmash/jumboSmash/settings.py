@@ -120,18 +120,6 @@ if 'RDS_HOSTNAME' in os.environ:
             'PORT': os.environ['RDS_PORT'],
         }
     }
-# local (or other) postgres database
-elif os.environ['DB'] == "pg":
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'jumbosmash-dev',
-            'USER': 'jumbosmash-dev',
-            'PASSWORD': 'jumbosmash-dev',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
 # default sqlite database
 else:
     DATABASES = {
