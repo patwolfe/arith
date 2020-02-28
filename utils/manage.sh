@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 if [[ $1 = '--usage' ]] ; then
   echo "Use this script to run manage.py in django app"
   echo "$ manage.sh runserver"
@@ -14,7 +13,8 @@ else
   exit 1
 fi
 
-sudo cat /opt/elasticbeanstalk/deployment/env > .env
+# import env variables
+sudo sh -c 'cat /opt/elasticbeanstalk/deployment/env > .env'
 
 # activate virtual env
 pipenv install --skip-lock
