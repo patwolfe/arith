@@ -128,3 +128,6 @@ yarn.lock
 
 # Django migrations
 migrations
+
+# Django static files
+static

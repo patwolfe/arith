@@ -5,7 +5,7 @@ if [[ ! $RDS_HOSTNAME ]] ; then
   sudo sh -c 'cat /opt/elasticbeanstalk/deployment/env > .env'
 fi
 
-pipenv run python jumboSmash/manage.py $1
+pipenv run python jumboSmash/manage.py "$@"
 
 exit 0
 
