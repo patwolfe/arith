@@ -33,9 +33,13 @@ class SendMessage(APIView):
             if not match.unmatched and (
                 match.user_1 == request.user or match.user_2 == request.user
             ):
+                if request.user == match.user_1:
+                    recipient = match.user_2
+                else:
+                    recipient = match.user_1
                 message = Message.objects.create_message(match, request.user, content)
                 m_serializer = MessageSerializer(message)
-                message_task.delay(m_serializer.data)
+                message_task.delay(m_serializer.data, recipient)
                 _ = Match.objects.mark_other_unviewed(match, request.user)
                 _ = Match.objects.update_last_active(match)
                 return Response(m_serializer.data, status=status.HTTP_201_CREATED)
