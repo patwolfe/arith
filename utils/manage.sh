@@ -1,9 +1,5 @@
 #!/bin/bash
 
-. /opt/elasticbeanstalk/deployment/env
-echo "START"
-echo $RDS_HOSTNAME
-echo "END"
 
 if [[ $1 = '--usage' ]] ; then
   echo "Use this script to run manage.py in django app"
@@ -17,6 +13,8 @@ else
   echo "MUST BE IN ROOT OF CURRENT APP (/var/app/current)"
   exit 1
 fi
+
+cat /opt/elasticbeanstalk/deployment/env > .env
 
 # activate virtual env
 pipenv install --skip-lock
