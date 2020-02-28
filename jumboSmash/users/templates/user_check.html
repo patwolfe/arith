@@ -3,17 +3,169 @@
 <head>
     <meta charset="utf-8">
     <title>Senior Check</title>
+    <!-- <link rel="stylesheet" href="./user_check.css" type="text/css"/> -->
+    <style type="text/css">
+    body {
+        background-color: #15223D;
+        color:white;
+        font-family:'Arial Black';
+    }
+    h1 {
+        width:100%;
+        font-size:6rem;
+        font-weight:bold;
+        text-align: left;
+        color: #fff;
+        margin-left:8%;
+    }
+    h2 {
+        margin-left:11%;
+        width:100%;
+        font-size:2.5rem;
+        margin-top:-7%;
+    }
+    form {
+        width:100%;
+        text-align:center;
+    }
+    input {
+        padding:1rem;
+        display:inline-block;
+        width:30%;
+        color:white!important;
+        background:transparent;
+        border-radius:2rem;
+        border: .2em solid  white;
+        font-size:1rem;
+    }
+    input:focus, input:active {
+        background:rgba(98, 113, 132, .75);
+        outline:none;
+        color:white;
+    }
+    input::placeholder {
+        color:white;
+    }
+    h3 {
+        text-align:center;
+    }
+    p {
+        width: 25%;
+        margin-left: 11%;
+        margin-top:-2%;
+    }
+    .email_addr a {
+        color: #E13D71;
+        text-decoration: none;
+    }
+    #smash_status {
+        width:70%;
+        display:block;
+        margin: auto;
+    }
+    .title {
+        width: 49%;
+        font-size:2rem;
+        text-align:right;
+        float:left;
+    }
+    .smol {
+        font-size:2rem;
+    }
+    .results {
+        float: right;
+        width: 49%;
+        text-align:left;
+        font-size:5rem;
+        line-height:90%;
+        margin-top:-1%;
+    }
+    .results p {
+        font-size: .2rem;
+        width: 100%;
+    }
+    /* SVG styling */
+    #svg_container {
+        width:100%;
+        height:100%;
+    }
+    .leftbluebox {
+        position:fixed;
+        height:50%;
+        width:50%;
+        transform:rotate(-25%);
+        margin-left:-20%;
+        margin-top:-10%;
+        z-index:-1;
+    }
+    .leftpinkbox {
+        position:fixed;
+        z-index:-1;
+        height:35%;
+        width:35%;
+        margin-top:9%;
+        margin-left:-15%;
+    }
+    .middlebluebox {
+        position:fixed;
+        z-index:-1;
+        height:20%;
+        width:20%;
+        margin-left:25%;
+        margin-top:27%;
+        transform:rotate(180deg);
+    }
+    .middletealbox {
+        position:fixed;
+        z-index:-1;
+        height:65%;
+        width:65%;
+        margin-left:45%;
+        margin-top:5%;
+        transform:rotate(180deg);
+    }
+    .rightbluebox {
+        position:fixed;
+        z-index: -1;
+        height:30%;
+        width:30%;
+        margin-left:75%;
+        margin-top:25%;
+    }
+    .tiny {
+        float:right;
+        font-size: 1rem;
+        line-height: 115%;
+        width:100%;
+        margin-top: 10%;
+    }
+</style>
+
 </head>
 <body>
-    <h1>Senior Check</h1>
+    <div id="svg_container">
+        <svg xmlns="http://www.w3.org/2000/svg" class="leftbluebox" viewBox="0 0 1337.7 1407.15"><defs><style>.cls-1,.cls-2{fill:#12e6d5;}.cls-2{opacity:0.5;}</style></defs><title>Asset 1cover pic2</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect class="cls-1" x="93.4" y="241.91" width="1069.37" height="1072.34" rx="164.91" transform="translate(-202.41 221.15) rotate(-17.24)"/><rect class="cls-2" x="174.93" y="92.9" width="1069.37" height="1072.34" rx="164.91" transform="translate(-154.58 238.62) rotate(-17.24)"/></g></g></svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="leftpinkbox" viewBox="0 0 899.71 848.85"><defs><style>.cls-3,.cls-4{fill:#e13d71;}.cls-4{opacity:0.5;}</style></defs><title>Asset 2cover pic2</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect class="cls-3" x="46" y="95.63" width="705.57" height="707.54" rx="164.91" transform="translate(144.58 -95) rotate(16.55)"/><rect class="cls-4" x="148.14" y="45.68" width="705.57" height="707.54" rx="164.91" transform="translate(134.58 -126.17) rotate(16.55)"/></g></g></svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="middlebluebox" viewBox="0 0 491.42 497.17"><defs><style>.cls-5,.cls-6{fill:#1154bf;}.cls-5{opacity:0.5;}</style></defs><title>Asset 3cover pic2</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect class="cls-5" x="22.48" y="64.51" width="408.83" height="422.49" rx="108.63" transform="translate(-3.21 548.84) rotate(-100.43)"/><rect class="cls-6" x="59.06" y="11.21" width="408.83" height="422.49" rx="102.31" transform="translate(92.42 521.87) rotate(-100.43)"/></g></g></svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="middletealbox" viewBox="0 0 1060.08 1146.67"><defs><style>.cls-7,.cls-8{fill:#12e6d5;}.cls-7{opacity:0.5;}</style></defs><title>Asset 4cover pic2</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect class="cls-7" x="89.76" y="213.72" width="842.52" height="844.87" rx="164.91" transform="translate(178.77 1381.43) rotate(-117.2)"/><rect class="cls-8" x="127.79" y="88.08" width="842.52" height="844.87" rx="164.91" transform="translate(345.93 1232.2) rotate(-117.2)"/></g></g></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="rightbluebox" viewBox="0 0 636.86 659.63"><defs><style>.cls-9,.cls-10{fill:#093da0;}.cls-10{opacity:0.5;}</style></defs><title>Asset 5cover pic2</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect class="cls-9" x="18.98" y="89.14" width="551.35" height="552.89" rx="164.91" transform="translate(-11.52 721.58) rotate(-100.43)"/><rect class="cls-10" x="66.52" y="17.6" width="551.35" height="552.89" rx="164.91" transform="translate(114.99 683.83) rotate(-100.43)"/></g></g></svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1397 191"><defs><style>.cls-1{fill:none;stroke:#fff;stroke-miterlimit:10;stroke-width:5px;}.cls-2{fill:#fff;}</style></defs><title>Asset 6cover pic2</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect class="cls-1" x="2.5" y="2.5" width="1392" height="186" rx="93"/><path class="cls-2" d="M82.59,55.46A32,32,0,1,0,126.6,66,32,32,0,0,0,82.59,55.46Zm25.1,40.91c-7.06,4.33-16.53,1.74-21.15-5.79S83.9,73.43,91,69.09s16.53-1.73,21.15,5.8S114.75,92,107.69,96.37Z"/><rect class="cls-2" x="113.72" y="93.05" width="16" height="52.35" rx="7.88" transform="translate(-44.38 81.26) rotate(-31.53)"/></g></g></svg>
+    </div>
+    <h1>jumbosmash</h1>
+    <h2>help us help you</h2>
     <p>
-        Enter your email.
+        Check your email below to ensure a seamless smash signup upon official release of jumbosmash!
     </p>
     <form>
-        Email: <input type="text" name="email" default="{{email }}"><br>
-        <input type="submit" value="Check" >
+        <input type="text" name="email" default="{{email }}" placeholder="firstname.lastname@tufts.edu" onfocus="this.placeholder=''">
     </form>
-    {% block results %}
-    {% endblock %}
+    <div id="smash_status">
+        <div class="title">smash status:&nbsp;</div>
+        {% block results %}{% endblock %}
+    </div>
 </body>
 </html>

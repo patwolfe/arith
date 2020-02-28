@@ -1,7 +1,6 @@
 {% extends 'user_check.html' %}
 
 {% block results %}
-<p>We found the following user: </p>
-
-<p> {{user.first_name}} {{user.last_name}} </p>
+<div class="results"><div class="smol"> {{user.first_name}} {{user.last_name}} is a</div>certified smasher!
+<div class="tiny">please email us at <span class="email_addr"><a href="mailto:jumbosmash2020%gmail.com?subject=Change Preferred Name">jumbosmash2020@gmail.com</a></span> if you'd like to change your preferred name.</div></div>
 {% endblock %}

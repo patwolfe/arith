@@ -1,0 +1,134 @@
+body {
+    background-color: #15223D;
+    color:white;
+    font-family:'Arial Black';
+}
+h1 {
+    width:100%;
+    font-size:6rem;
+    font-weight:bold;
+    text-align: left;
+    color: #fff;
+    margin-left:8%;
+}
+h2 {
+    margin-left:11%;
+    width:100%;
+    font-size:2.5rem;
+    margin-top:-7%;
+}
+form {
+    width:100%;
+    text-align:center;
+}
+input {
+    padding:1rem;
+    display:inline-block;
+    width:30%;
+    color:white!important;
+    background:transparent;
+    border-radius:2rem;
+    border: .2em solid  white;
+    font-size:1rem;
+}
+input:focus, input:active {
+    background:rgba(98, 113, 132, .75);
+    outline:none;
+    color:white;
+}
+input::placeholder {
+    color:white;
+}
+h3 {
+    text-align:center;
+}
+p {
+    width: 25%;
+    margin-left: 11%;
+    margin-top:-2%;
+}
+.email_addr a {
+    color: #E13D71;
+    text-decoration: none;
+}
+#smash_status {
+    width:70%;
+    display:block;
+    margin: auto;
+}
+.title {
+    width: 49%;
+    font-size:2rem;
+    text-align:right;
+    float:left;
+}
+.smol {
+    font-size:2rem;
+}
+.results {
+    float: right;
+    width: 49%;
+    text-align:left;
+    font-size:5rem;
+    line-height:90%;
+    margin-top:-1%;
+}
+.results p {
+    font-size: .2rem;
+    width: 100%;
+}
+/* SVG styling */
+#svg_container {
+    width:100%;
+    height:100%;
+}
+.leftbluebox {
+    position:fixed;
+    height:50%;
+    width:50%;
+    transform:rotate(-25%);
+    margin-left:-20%;
+    margin-top:-10%;
+    z-index:-1;
+}
+.leftpinkbox {
+    position:fixed;
+    z-index:-1;
+    height:35%;
+    width:35%;
+    margin-top:9%;
+    margin-left:-15%;
+}
+.middlebluebox {
+    position:fixed;
+    z-index:-1;
+    height:20%;
+    width:20%;
+    margin-left:25%;
+    margin-top:27%;
+    transform:rotate(180deg);
+}
+.middletealbox {
+    position:fixed;
+    z-index:-1;
+    height:65%;
+    width:65%;
+    margin-left:45%;
+    margin-top:5%;
+    transform:rotate(180deg);
+}
+.rightbluebox {
+    position:fixed;
+    z-index: -1;
+    height:30%;
+    width:30%;
+    margin-left:75%;
+    margin-top:25%;
+}
+.tiny {
+    float:right;
+    font-size: 1rem;
+    line-height: 115%;
+    width:100%;
+    margin-top: 10%;
+}

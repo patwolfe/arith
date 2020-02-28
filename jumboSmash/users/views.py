@@ -55,14 +55,15 @@ class CheckUserExists(APIView):
     Endpoint to confirm email is in our list of seniors.
     """
 
-    permissions = [AllowAny]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         email = request.query_params.get("email")
         if not email:
             return render(request, "user_check.html", {})
         try:
-            user = User.objects.get(email=email)
+            lowercase_email = email.lower()
+            user = User.objects.get(email=lowercase_email)
             print(SimpleUserSerializer(user).data)
             return render(
                 request, "successful_check.html", {"email": email, "user": user},
