@@ -30,7 +30,7 @@ export default function LoginScreen(props) {
         onChangeText={(newText) => setEmail(newText.toLowerCase())}/>     
       <Button title='Login'
         onPress={() => {
-          setEmail('patrick.wolfe@tufts.edu')
+          setEmail('patrick.wolfe@tufts.edu');
           setLoading(true);
           requestEmail(email).then(valid =>
           { 
