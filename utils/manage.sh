@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. /opt/elasticbeanstalk/deployment/env
+
 if [[ $1 = '--usage' ]] ; then
   echo "Use this script to run manage.py in django app"
   echo "$ manage.sh runserver"
