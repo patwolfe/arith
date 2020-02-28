@@ -1,6 +1,9 @@
 #!/bin/bash
 
 . /opt/elasticbeanstalk/deployment/env
+echo "START"
+echo $RDS_HOSTNAME
+echo "END"
 
 if [[ $1 = '--usage' ]] ; then
   echo "Use this script to run manage.py in django app"
