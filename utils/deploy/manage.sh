@@ -13,6 +13,7 @@ if [ $EXIT_CODE ] ; then
   echo "+-------------------------------------------------------+"
   echo "|                                                       |"
   echo "| MAKE SURE TO RUN 00_init TO INSTALL VIRTUAL ENV FIRST |"
+  echo "|      THIS SCRIPT MUST BE RUN AT THE PROJECT ROOT      |"
   echo "|                                                       |"
   echo "+-------------------------------------------------------+"
   exit $EXIT_CODE
