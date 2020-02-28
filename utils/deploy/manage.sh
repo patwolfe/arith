@@ -11,4 +11,5 @@ if ! pipenv run python jumboSmash/manage.py "$@" ; then
   echo "| MAKE SURE TO RUN 00_init TO INSTALL VIRTUAL ENV FIRST |"
   echo "|                                                       |"
   echo "+-------------------------------------------------------+"
+  exit $?
 fi
