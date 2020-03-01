@@ -20,7 +20,7 @@ class InteractionManager(models.Manager):
             assert 0, "Interaction already marked 'smash', cannot 'skip'"
         return interaction
 
-    def smash(self, swiper, swiped_on, react_num, element):
+    def smash(self, swiper, swiped_on, react_num, profile_element):
         """ Records a right (positive) swipe on a profile """
         interaction, _ = self.get_or_create(swiper=swiper, swiped_on=swiped_on)
         if not interaction.smash:
@@ -28,7 +28,7 @@ class InteractionManager(models.Manager):
             # again, this shouldn't be happening so not sure what the best behavior is
             interaction.smash = True
             interaction.reaction = react_num
-            interaction.reacted_to = element
+            interaction.reacted_to = profile_lement
             interaction.save()
             try:
                 complement = self.get(swiper=swiped_on, swiped_on=swiper)

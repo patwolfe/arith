@@ -19,7 +19,6 @@ class Skip(APIView):
 
 class Smash(APIView):
     def post(self, request):
-        # serializer = UserIdSerializer(data=request.data)
         serializer = InteractionSerializer(data=request.data)
         serializer.validate(request.data)
         if serializer.is_valid():
