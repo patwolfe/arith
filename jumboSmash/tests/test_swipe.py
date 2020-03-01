@@ -19,7 +19,7 @@ class InteractionManagerTests(TestCase):
         """ Smashing """
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
-        interaction = Interaction.objects.smash(swiper, swiped_on)
+        interaction = Interaction.objects.smash(swiper, swiped_on, 3, 4)
 
         self.assertEqual(interaction.swiper.id, 1)
         self.assertEqual(interaction.swiped_on.id, 2)
@@ -44,7 +44,7 @@ class InteractionManagerTests(TestCase):
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
         _ = Interaction.objects.skip(swiper, swiped_on)
-        interaction = Interaction.objects.smash(swiper, swiped_on)
+        interaction = Interaction.objects.smash(swiper, swiped_on, 4, 7)
 
         self.assertEqual(interaction.swiper.id, 1)
         self.assertEqual(interaction.swiped_on.id, 2)
@@ -56,7 +56,7 @@ class InteractionManagerTests(TestCase):
         """ Smashing then skipping should not change interaction """
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
-        _ = Interaction.objects.smash(swiper, swiped_on)
+        _ = Interaction.objects.smash(swiper, swiped_on, 2, 6)
 
         with self.assertRaises(Exception):
             Interaction.objects.skip(swiper, swiped_on)
@@ -70,10 +70,10 @@ class InteractionManagerTests(TestCase):
         """ Double smashing should trigger assertion """
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
-        _ = Interaction.objects.smash(swiper, swiped_on)
+        _ = Interaction.objects.smash(swiper, swiped_on, 1, 1)
 
         with self.assertRaises(Exception):
-            Interaction.objects.smash(swiper, swiped_on)
+            Interaction.objects.smash(swiper, swiped_on, 1, 1)
 
         interaction = Interaction.objects.get(swiper=swiper, swiped_on=swiped_on)
 
@@ -84,8 +84,8 @@ class InteractionManagerTests(TestCase):
         """ A match is created by complementary smash swipes """
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
-        _ = Interaction.objects.smash(swiper, swiped_on)
-        _ = Interaction.objects.smash(swiped_on, swiper)
+        _ = Interaction.objects.smash(swiper, swiped_on, 1, 1)
+        _ = Interaction.objects.smash(swiped_on, swiper, 1, 1)
         # ideally this should probably be a mock not an actual call
         self.assertEqual(len(list(Match.objects.list_matches(swiper))), 1)
 
@@ -93,7 +93,7 @@ class InteractionManagerTests(TestCase):
         """ A match is not created with smash + skip swipes"""
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
-        _ = Interaction.objects.smash(swiper, swiped_on)
+        _ = Interaction.objects.smash(swiper, swiped_on, 2, 2)
         _ = Interaction.objects.skip(swiped_on, swiper)
 
         self.assertEqual(len(list(Match.objects.list_matches(swiper))), 0)
@@ -111,7 +111,7 @@ class InteractionManagerTests(TestCase):
         """ Top5 cannot be applied to existing interaction """
         swiper = User.objects.get(pk=1)
         swiped_on = User.objects.get(pk=2)
-        _ = Interaction.objects.smash(swiper, swiped_on)
+        _ = Interaction.objects.smash(swiper, swiped_on, 1, 1)
         with self.assertRaises(Exception):
             _ = Interaction.objects.top5(swiper, swiped_on)
 
@@ -265,7 +265,11 @@ class InteractionsViewsTest(TestCase):
         user = User.objects.get(pk=1)
 
         factory = APIRequestFactory()
-        request = factory.post("swipe/smash/", {"user": 2}, format="json")
+        request = factory.post(
+            "swipe/smash/",
+            {"swiped_on": 2, "reacted_to": 1, "reaction": 3},
+            format="json",
+        )
         force_authenticate(request, user=user)
         view = Smash.as_view()
         response = view(request)
@@ -274,6 +278,21 @@ class InteractionsViewsTest(TestCase):
 
         smash = Interaction.objects.get(swiper=user, swiped_on=2)
         self.assertTrue(smash.smash)
+
+    def test_smash_missing_reaction(self):
+        """ Smash endpoint does not create interaction if missing reaction """
+        user = User.objects.get(pk=1)
+
+        factory = APIRequestFactory()
+        request = factory.post("swipe/smash/", {"swiped_on": 2}, format="json")
+        force_authenticate(request, user=user)
+        view = Smash.as_view()
+        response = view(request)
+
+        self.assertEqual(response.status_code, 400)
+        # Interaction missing reaction should not exist
+        with self.assertRaises(Exception):
+            Interaction.objects.get(swiper=user, swiped_on=2)
 
     def test_skip_valid(self):
         """ Skip endpoint creates skip interaction """
