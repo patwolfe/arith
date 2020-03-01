@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from users.serializers import UserIdSerializer
+from swipe.serializers import InteractionSerializer
 from .models import Interaction, Block
 
 
@@ -18,10 +19,14 @@ class Skip(APIView):
 
 class Smash(APIView):
     def post(self, request):
-        serializer = UserIdSerializer(data=request.data)
+        # serializer = UserIdSerializer(data=request.data)
+        serializer = InteractionSerializer(data=request.data)
+        serializer.validate(request.data)
         if serializer.is_valid():
-            swiped_on = serializer.validated_data["user"]
-            Interaction.objects.smash(request.user, swiped_on)
+            swiped_on = serializer.validated_data["swiped_on"]
+            reacted_to = serializer.validated_data["reacted_to"]
+            reaction = serializer.validated_data["reaction"]
+            Interaction.objects.smash(request.user, swiped_on, reaction, reacted_to)
             return Response("Smash!", status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
