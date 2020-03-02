@@ -28,7 +28,7 @@ class InteractionManager(models.Manager):
             # again, this shouldn't be happening so not sure what the best behavior is
             interaction.smash = True
             interaction.reaction = react_num
-            interaction.reacted_to = profile_lement
+            interaction.reacted_to = profile_element
             interaction.save()
             try:
                 complement = self.get(swiper=swiped_on, swiped_on=swiper)
