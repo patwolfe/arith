@@ -13,4 +13,5 @@ class InteractionSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if "reaction" not in data or "reacted_to" not in data:
             raise serializers.ValidationError("smash interactions must contain a reaction")
+        super.validate(data)
         return data

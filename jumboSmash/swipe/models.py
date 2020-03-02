@@ -127,7 +127,7 @@ class Interaction(models.Model):
     top5 = models.BooleanField(default=False)
     skip_count = models.PositiveIntegerField(default=0)
 
-    REACTIONS = ((i, i) for i in range(5))
+    REACTIONS = ((1, "wow"), (2, "butt"), (3, "fire"), (4, "heart_eyes"), (5, "laugh"))
     reaction = models.PositiveIntegerField(choices=REACTIONS, null=True)
     PROFILE_ELEMENTS = (
         (1, "photo1"),
