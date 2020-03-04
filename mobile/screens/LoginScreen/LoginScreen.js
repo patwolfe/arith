@@ -52,7 +52,7 @@ export default function LoginScreen(props) {
 }
 
 async function requestEmail(email) {
-  let url = `${urls.backendURL}auth/email/`;
+  let url = `${urls.backendURL}/auth/email/`;
   let result = await APICall.PostNoAuth(url,
     {'Content-Type': 'application/x-www-form-urlencoded'},
     `email=${email}`);
