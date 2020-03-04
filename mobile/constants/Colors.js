@@ -11,4 +11,6 @@ export default {
   warningText: '#666804',
   noticeBackground: tintColor,
   noticeText: '#fff',
+  chatGradientStart: '#E13D71',
+  chatGradientEnd: '#5E43C4',
 };

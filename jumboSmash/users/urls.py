@@ -1,5 +1,6 @@
 from django.urls import include, path
 from users.views import ListUsers, GetProfile, EditProfile, CheckUserExists, UpdateToken
+from users.views import ListUsers, GetProfile, EditProfile, CheckUserExists, SetupUser
 
 urlpatterns = [
     path("list/", ListUsers.as_view()),
@@ -7,4 +8,5 @@ urlpatterns = [
     path("profile/edit/", EditProfile.as_view()),
     path("check/", CheckUserExists.as_view()),
     path("push_token/", UpdateToken.as_view()),
+    path("setup/", SetupUser.as_view()),
 ]
