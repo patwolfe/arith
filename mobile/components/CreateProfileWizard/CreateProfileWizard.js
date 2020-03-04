@@ -28,14 +28,7 @@ export default function CreateProfileWizard(props) {
   const [state, dispatch] = useReducer(reducer, initState); 
   const questionPicker = <QuestionPicker dispatch={dispatch}/>;
   const photoPicker = <PhotoPicker dispatch={dispatch}/>;
-
-  // Fetch s3 urls when component is rendered
-  // TODO: figure out if this should just be 
-  // done in the submitProfile function
-  useEffect(() => {
-    getEditProfile(dispatch);
-  }, []);
-
+  
   useEffect(() => {
     if (state.stage === 'done') {
       Alert.alert('Submitted!');
@@ -68,6 +61,7 @@ async function getEditProfile(dispatch) {
 }
 
 async function submitProfile(dispatch, state) {
+  await getEditProfile(dispatch);
   let uris = Object.values(state.pictures).reduce(
     (acc, elem) => elem !== '' ? [...acc, elem] : acc, []);
   let uploads = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
