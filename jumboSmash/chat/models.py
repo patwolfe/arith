@@ -18,36 +18,6 @@ class MatchManager(models.Manager):
         match.save()
         return match
 
-    def unmatch(self, match):
-        """ Marks given match as 'unmatched' """
-        match.unmatched = True
-        match.save()
-        return match
-
-    def mark_other_unviewed(self, match, user):
-        """Updates given match to unviewed for the user who is not the one passed through."""
-        if user == match.user_1:
-            match.user_2_viewed = False
-        else:
-            match.user_1_viewed = False
-        match.save()
-        return match
-
-    def mark_viewed(self, match, user):
-        """Updates given match to viewed for the user who is passed through."""
-        if user == match.user_1:
-            match.user_1_viewed = True
-        else:
-            match.user_2_viewed = True
-        match.save()
-        return match
-
-    def update_last_active(self, match):
-        """Updates last active timestamp of given match to current time."""
-        match.last_active = timezone.now()
-        match.save()
-        return match
-
     def list_matches(self, user):
         """ Returns a QuerySet of all matches a user is part of in order of last active."""
         return self.filter(
@@ -69,6 +39,31 @@ class Match(models.Model):
     class Meta:
         verbose_name_plural = "Matches"
         unique_together = [["user_1", "user_2"]]
+
+    def unmatch(self):
+        """ Marks given match as 'unmatched' """
+        self.unmatched = True
+        self.save()
+
+    def mark_other_unviewed(self, user):
+        """Updates given match to unviewed for the user who is not the one passed through."""
+        if user == self.user_1:
+            self.user_2_viewed = False
+        else:
+            self.user_1_viewed = False
+
+    def mark_viewed(self, user):
+        """Updates given match to viewed for the user who is passed through."""
+        if user == self.user_1:
+            self.user_1_viewed = True
+        else:
+            self.user_2_viewed = True
+        self.save()
+
+    def update_last_active(self):
+        """Updates last active timestamp of given match to current time."""
+        self.last_active = timezone.now()
+        self.save()
 
 
 class MessageManager(models.Manager):

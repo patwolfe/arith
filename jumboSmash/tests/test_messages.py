@@ -122,7 +122,7 @@ class SendMessageViewsTest(TestCase):
         view = SendMessage.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_send_message_match_key_missing(self):
         user = User.objects.get(pk=1)
@@ -132,7 +132,7 @@ class SendMessageViewsTest(TestCase):
         view = SendMessage.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
 
 class GetConversationViewsTest(TestCase):
@@ -225,7 +225,7 @@ class ViewConversationViewsTest(TestCase):
         view = ViewConversation.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_view_conversation_invalid_data(self):
         user = User.objects.get(pk=1)
@@ -235,7 +235,7 @@ class ViewConversationViewsTest(TestCase):
         view = ViewConversation.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_view_conversation_unmatched(self):
         user = User.objects.get(pk=2)
@@ -245,7 +245,7 @@ class ViewConversationViewsTest(TestCase):
         view = ViewConversation.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
 
 class GetAllViewsTests(TestCase):

@@ -74,7 +74,6 @@ class User(AbstractUser):
         else:
             logging.warning("User {} is not inactive, cannot activate".format(self.id))
 
-
     def update_push_token(self, token):
         """Updates user's push notification token."""
         self.push_token = token

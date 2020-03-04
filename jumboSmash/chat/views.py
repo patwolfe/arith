@@ -9,47 +9,38 @@ from .tasks import message_task
 
 class Unmatch(APIView):
     def post(self, request):
-        current_user_id = request.user.id
-        serializer = MatchIdSerializer(data=request.data)
-        if serializer.is_valid():
-            match = serializer.validated_data["match"]
-            if match.user_1.pk == current_user_id or match.user_2.pk == current_user_id:
-                Match.objects.unmatch(match)
-                return Response("Unmatched", status=status.HTTP_201_CREATED)
-            else:
-                return Response(
-                    "You are not in this match", status=status.HTTP_403_FORBIDDEN
-                )
-
-        return Response("Invalid request", status=status.HTTP_400_BAD_REQUEST)
+        serializer = MatchIdSerializer(data=request.data, context={"user": request.user})
+        serializer.is_valid(raise_exception=True)
+        match = serializer.validated_data["match"]
+        match.unmatch()
+        return Response("Unmatched", status=status.HTTP_201_CREATED)
 
 
 class SendMessage(APIView):
     def post(self, request):
         serializer = SendMessageSerializer(data=request.data)
-        if serializer.is_valid():
-            match = serializer.validated_data["match"]
-            content = serializer.validated_data["content"]
-            if not match.unmatched and (
-                match.user_1 == request.user or match.user_2 == request.user
-            ):
-                if request.user == match.user_1:
-                    recipient = match.user_2
-                else:
-                    recipient = match.user_1
-                message = Message.objects.create_message(match, request.user, content)
-                m_serializer = MessageSerializer(message)
-                message_task.delay(m_serializer.data, recipient)
-                _ = Match.objects.mark_other_unviewed(match, request.user)
-                _ = Match.objects.update_last_active(match)
-                return Response(m_serializer.data, status=status.HTTP_201_CREATED)
+
+        serializer.is_valid(raise_exception=True)
+        match = serializer.validated_data["match"]
+        content = serializer.validated_data["content"]
+        if not match.unmatched and (
+            match.user_1 == request.user or match.user_2 == request.user
+        ):
+            if request.user == match.user_1:
+                recipient = match.user_2
             else:
-                return Response(
-                    "User does not have access to this match.",
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+                recipient = match.user_1
+            message = Message.objects.create_message(match, request.user, content)
+            m_serializer = MessageSerializer(message)
+            message_task.delay(m_serializer.data, recipient)
+            match.mark_other_unviewed(request.user)
+            match.update_last_active()
+            return Response(m_serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response("Match does not exist", status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                "User does not have access to this match.",
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
 
 class GetConversation(APIView):
@@ -80,18 +71,11 @@ class GetConversation(APIView):
 
 class ViewConversation(APIView):
     def post(self, request):
-        serializer = MatchIdSerializer(data=request.data)
-        if serializer.is_valid():
-            match = serializer.validated_data["match"]
-            if not match.unmatched and (match.user_1 == request.user or match.user_2 == request.user):
-                _ = Match.objects.mark_viewed(match, request.user)
-                return Response("Viewed", status=status.HTTP_200_OK)
-            else:
-                return Response("User does not have access to this conversation.",
-                                status=status.HTTP_403_FORBIDDEN)
-        else:
-            return Response("Match does not exist",
-                            status=status.HTTP_403_FORBIDDEN)
+        serializer = MatchIdSerializer(data=request.data, context={"user": request.user})
+        serializer.is_valid(raise_exception=True)
+        match = serializer.validated_data["match"]
+        match.mark_viewed(request.user)
+        return Response("Viewed", status=status.HTTP_200_OK)
 
 
 class GetAll(APIView):
