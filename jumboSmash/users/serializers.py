@@ -3,10 +3,23 @@ from users.models import User, Profile
 from django.core.exceptions import ObjectDoesNotExist
 from types import SimpleNamespace
 import logging
+from django.core.validators import RegexValidator
 
 
 class UserIdSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+
+class SetUpSerializer(serializers.Serializer):
+    name = serializers.CharField(
+        validators=[
+            RegexValidator(
+                regex="^[a-zA-Z]*$",
+                message="Preferred name must only use letters",
+                code="invalid_name",
+            )
+        ]
+    )
 
 
 class SimpleUserSerializer(serializers.ModelSerializer):
