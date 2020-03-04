@@ -67,7 +67,7 @@ async function getEditProfile(dispatch) {
 }
 
 async function submitProfile(dispatch, state) {
-  let uris = Object.values(state.pictures).reduce(
+  const uris = Object.values(state.pictures).reduce(
     (acc, elem) => elem !== '' ? [...acc, elem] : acc, []);
   const uploads = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
   const results = await Promise.all(uploads);
