@@ -49,8 +49,7 @@ export default function CreateProfileWizard(props) {
         title={state.stage === 'questions' ? 'Submit' : 'Next'}
         onPress={state.stage === 'questions' ? 
           () => submitProfile(dispatch, state) : 
-          () => dispatch({type: 'button'})}
-      />
+          () => dispatch({type: 'button'})}/>
     </View>
   );
 }
