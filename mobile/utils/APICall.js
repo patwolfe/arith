@@ -8,11 +8,11 @@ export default {
         headers: headers,
         body: body,
       });
+      
       if (response.status === 204) {
-        console.log('204\'d');
         return {error: false, ok: response.ok};
       }
-      console.log(res);
+      
       let res = await response.json();
       return {error: false, ok: response.ok, res: res};
     }
@@ -26,10 +26,8 @@ export default {
     let token = await AsyncStorage.getItem('token');
     if (token === null) {
       console.log('token is null in async storage');
-      token = '5c139f11301e5037f18b06028c04e081432d9692';
+      return {error: true, message: 'No auth token'};
     }
-
-    console.log(body);
   
     try {
       const response = await fetch(url, {
@@ -37,6 +35,11 @@ export default {
         headers: {...headers, Authorization: `Bearer ${token}`},
         body: body
       });
+     
+      if (response.status === 204) {
+        return {error: false, ok: response.ok};
+      }
+     
       let res = await response.json();
       return {error: false, ok: response.ok, res: res};
     }
@@ -51,8 +54,7 @@ export default {
     let token = await AsyncStorage.getItem('token');
     if (token === null) {
       console.log('token is null in async storage');
-      token = '5c139f11301e5037f18b06028c04e081432d9692';
-      //return {error: true, message: 'Auth token not found'};
+      return {error: true, message: 'No auth token'};
     }
 
     try {
