@@ -5,6 +5,15 @@ import {
   TextInput, 
   View } from 'react-native';
 
+/* Props:
+ * dispatch: function from userReducer in parent component
+ * that update's parent state with the filled in question
+ * 
+ * question: String with question this q/a component is asking
+ * 
+ * id: Integer key for question used if parent state contains a 
+ * list or object of q/a pairs
+ */
 export default function Question(props) {
   return (
     <View style={styles.container}>
