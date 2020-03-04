@@ -94,8 +94,8 @@ async function uploadProfile(state, ids) {
 }
 
 async function uploadPicture(imagePath, photoInfo) {
-  let body = formDataFromPhotoInfo(photoInfo);
-  let filename = imagePath.split('/').pop();
+  const body = formDataFromPhotoInfo(photoInfo);
+  const filename = imagePath.split('/').pop();
   const photo = {
     uri: imagePath,
     type: 'image/jpg',
