@@ -42,8 +42,7 @@ export default function CreateProfileWizard(props) {
         title={state.stage === 'questions' ? 'Submit' : 'Next'}
         onPress={state.stage === 'questions' ? 
           () => submitProfile(dispatch, state) : 
-          () => dispatch({type: 'button'})}
-      />
+          () => dispatch({type: 'button'})}/>
     </View>
   );
 }
@@ -62,10 +61,10 @@ async function getEditProfile(dispatch) {
 
 async function submitProfile(dispatch, state) {
   await getEditProfile(dispatch);
-  let uris = Object.values(state.pictures).reduce(
+  const uris = Object.values(state.pictures).reduce(
     (acc, elem) => elem !== '' ? [...acc, elem] : acc, []);
-  let uploads = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
-  let results = await Promise.all(uploads);
+  const uploads = uris.map((uri, i) => uploadPicture(uri, state.photoSetInfo.d[i][1].fields));
+  const results = await Promise.all(uploads);
   if (results.some((elem) => elem === false)) {
     return false;
   }
@@ -89,8 +88,8 @@ async function uploadProfile(state, ids) {
 }
 
 async function uploadPicture(imagePath, photoInfo) {
-  let body = formDataFromPhotoInfo(photoInfo);
-  let filename = imagePath.split('/').pop();
+  const body = formDataFromPhotoInfo(photoInfo);
+  const filename = imagePath.split('/').pop();
   const photo = {
     uri: imagePath,
     type: 'image/jpg',
