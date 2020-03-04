@@ -10,6 +10,7 @@ import ChatListScreen from 'jumbosmash/screens/ChatListScreen/ChatListScreen';
 import ChatScreen from 'jumbosmash/screens/ChatScreen/ChatScreen';
 import CreateProfileScreen from 'jumbosmash/screens/CreateProfileScreen/CreateProfileScreen';
 import EditProfileScreen from 'jumbosmash/screens/EditProfileScreen';
+import IDUploadScreen from 'jumbosmash/screens/IDUploadScreen/IDUploadScreen';
 import EntryScreen from 'jumbosmash/screens/EntryScreen/EntryScreen';
 import LoginScreen from 'jumbosmash/screens/LoginScreen/LoginScreen';
 import MatchFeedScreen from 'jumbosmash/screens/MatchFeedScreen/MatchFeedScreen';
@@ -26,7 +27,7 @@ const config = Platform.select({
 
 const ProfileStack = createStackNavigator(
   {
-    Profile: ProfileScreen,
+    Profile: CreateProfileScreen,
     Edit: EditProfileScreen,
   },
   config
@@ -135,6 +136,7 @@ const EntryStack = createStackNavigator(
     Login: LoginScreen,
     OTP: OTPScreen,
     Register: RegisterScreen,
+    IDUpload: IDUploadScreen,
     CreateProfile: CreateProfileScreen
   },
   {

@@ -25,7 +25,7 @@ SECRET_KEY = "t2-^klq$70pqm@+k3sz9s*g$b_u@b0x&l&$5qpzjnfsom^zg9m"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["jumbosmash-dev.us-east-1.elasticbeanstalk.com", "jumbosmash-prod.us-east-1.elasticbeanstalk.com", "jumbosmash-stage.us-east-1.elasticbeanstalk.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "users",
     "swipe",
     "chat",
-
+    "report",
 ]
 
 MIDDLEWARE = [
@@ -108,12 +108,26 @@ PASSWORDLESS_AUTH = {
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+# AWS RDS Database
+if 'RDS_HOSTNAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
     }
-}
+# default sqlite database
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+    }
 
 # Overides default user model
 AUTH_USER_MODEL = "users.User"
@@ -136,6 +150,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_ROOT = "static"
 
 # Mailhog
 EMAIL_HOST = "127.0.0.1"

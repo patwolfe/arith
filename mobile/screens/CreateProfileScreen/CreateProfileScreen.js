@@ -4,13 +4,13 @@ import {
   View,
 } from 'react-native';
 
-import OTPInput from 'jumbosmash/components/OTPInput/OTPInput';
+import CreateProfileWizard from 'jumbosmash/components/CreateProfileWizard/CreateProfileWizard';
 
 export default function CreateProfileScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <OTPInput />
+        <CreateProfileWizard />
       </View>
     </View>
   );
