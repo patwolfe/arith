@@ -120,3 +120,14 @@ yarn.lock
 # Misc
 *.DS_Store
 *.idea
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+# Django migrations
+migrations
+
+# Django static files
+static
