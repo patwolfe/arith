@@ -260,7 +260,7 @@ class GetAllViewsTests(TestCase):
     def test_get_all(self, create_url):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.get("chat/all/", {}, format="json")
+        request = factory.get("chat/all/")
         force_authenticate(request, user)
         view = GetAll.as_view()
         response = view(request)
