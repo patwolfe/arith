@@ -23,8 +23,8 @@ export default function OTPInput(props) {
   useEffect(() => {
     const sendOTP = async () => {
       setLoading(true);
-      let url = `${urls.backendURL}/auth/token/`;
-      let result = await APICall.PostNoAuth(url, 
+      const url = `${urls.backendURL}/auth/token/`;
+      const result = await APICall.PostNoAuth(url, 
         {'Content-Type': 'application/x-www-form-urlencoded'},
         `email=${props.email}&token=${state.otp}`
       );
