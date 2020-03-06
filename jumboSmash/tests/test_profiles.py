@@ -21,13 +21,6 @@ class ProfileSerializerTests(TestCase):
         )
         self.assertTrue(serializer.is_valid())
 
-    def test_out_of_range_photo(self):
-        """ Out of range photo ids fail """
-        serializer = ProfileSerializer(
-            data=makeProfileJSON(1, [0, 1, 17, None, None, None])
-        )
-        self.assertFalse(serializer.is_valid())
-
     def test_photo_after_null(self):
         """ Photo after 'None' fails """
         serializer = ProfileSerializer(

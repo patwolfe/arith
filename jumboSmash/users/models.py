@@ -6,7 +6,7 @@ from django.core.exceptions import (
     MultipleObjectsReturned,
     ValidationError,
 )
-from .s3utils import create_presigned_url, create_presigned_post
+from .s3utils import create_presigned_url, create_presigned_post, delete_photos
 
 import datetime
 import uuid
@@ -40,12 +40,18 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
+
 class User(AbstractUser):
     INACTIVE = "I"
     ACTIVE = "A"
     REPORTED = "R"
     BANNED = "B"
-    STATUS_CHOICES = ((INACTIVE, "Inactive"), (ACTIVE, "Active"), (REPORTED, "Reported"), (BANNED, "Bannned"))
+    STATUS_CHOICES = (
+        (INACTIVE, "Inactive"),
+        (ACTIVE, "Active"),
+        (REPORTED, "Reported"),
+        (BANNED, "Bannned"),
+    )
 
     username = None
     email = models.EmailField(("email address"), unique=True)
@@ -85,11 +91,15 @@ class ProfileManager(models.Manager):
         url_format = "{}/profile/{}.jpg"
         return url_format.format(user_id, photo_id)
 
-    def get_upload_urls(self, user_id):
+    def get_upload_urls(self, user):
         "Gets all the upload url + fields for given user"
+        approved, _ = self.get_profiles(user)
+
+        max_id = approved.max_photo_id + 1 if approved else 0
+
         urls = []
-        for i in range(6, 12):
-            urls.append([i, create_presigned_post(self.to_aws_key(user_id, i))])
+        for i in range(max_id, max_id + 6):
+            urls.append([i, create_presigned_post(self.to_aws_key(user.id, i))])
         return urls
 
     def get_profiles(self, user):
@@ -111,6 +121,7 @@ class Profile(models.Model):
     photo3 = models.IntegerField(null=True, blank=True)
     photo4 = models.IntegerField(null=True, blank=True)
     photo5 = models.IntegerField(null=True, blank=True)
+    max_photo_id = models.IntegerField(default=0)
 
     bio = models.TextField()
 
@@ -154,10 +165,33 @@ class Profile(models.Model):
         return self.bio == profile2.bio
 
     def update(self, **kwargs):
+        """ Updates a profile, deletes removed photos from s3"""
+
         mfields = iter(self._meta.fields)
-        mods = [(f.attname, kwargs[f.attname]) for f in mfields if f.attname in kwargs]
-        for fname, fval in mods:
+        photo_mods = [
+            (f.attname, kwargs[f.attname])
+            for f in mfields
+            if f.attname in kwargs and f.attname.startswith("photo")
+        ]
+
+        old_photo_list = self.photo_list()
+
+        for fname, fval in photo_mods:
             setattr(self, fname, fval)
+
+        new_photo_list = self.photo_list()
+
+        delete_photos(
+            [
+                Profile.objects.to_aws_key(self.user.id, x)
+                for x in old_photo_list
+                if x not in new_photo_list
+            ]
+        )
+
+        self.max_photo_id = max(self.max_photo_id, kwargs["max_photo_id"])
+        self.bio = kwargs["bio"]
+
         super(Profile, self).save()
         return self
 
@@ -171,6 +205,15 @@ class Profile(models.Model):
     def reject(self):
         # TODO notify
         self.delete()
+
+    def clean(self):
+        photo_list_max = max([x for x in self.photo_list() if x is not None])
+        if self.max_photo_id < photo_list_max:
+            self.max_photo_id = photo_list_max
+
+    def save(self, **kwargs):
+        self.clean()
+        return super(Profile, self).save(**kwargs)
 
 
 class ReviewProfile(Profile):

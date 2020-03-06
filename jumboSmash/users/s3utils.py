@@ -3,6 +3,7 @@ from django.conf import settings
 import boto3
 import logging
 
+
 def create_presigned_url(object_name, expiration=3600):
     """Generate a presigned URL to share an S3 object
 
@@ -53,3 +54,10 @@ def create_presigned_post(object_name, fields=None, conditions=None, expiration=
         return None
 
     return response
+
+
+def delete_photos(photo_list):
+    s3_client = boto3.client("s3")
+    # s3_client.delete_objects(photo_list)
+    print(photo_list)
+    pass
