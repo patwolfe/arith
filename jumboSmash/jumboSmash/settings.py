@@ -25,7 +25,13 @@ SECRET_KEY = "t2-^klq$70pqm@+k3sz9s*g$b_u@b0x&l&$5qpzjnfsom^zg9m"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["jumbosmash-dev.us-east-1.elasticbeanstalk.com", "jumbosmash-prod.us-east-1.elasticbeanstalk.com", "jumbosmash-stage.us-east-1.elasticbeanstalk.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "jumbosmash-dev.us-east-1.elasticbeanstalk.com",
+    "jumbosmash-prod.us-east-1.elasticbeanstalk.com",
+    "jumbosmash-stage.us-east-1.elasticbeanstalk.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -80,12 +86,10 @@ TEMPLATES = [
 WSGI_APPLICATION = "jumboSmash.wsgi.application"
 
 
-CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = "amqp://localhost"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "auth.authentication.TokenAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("auth.authentication.TokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": (
         "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
@@ -109,15 +113,15 @@ PASSWORDLESS_AUTH = {
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 # AWS RDS Database
-if 'RDS_HOSTNAME' in os.environ:
+if "RDS_HOSTNAME" in os.environ:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ["RDS_DB_NAME"],
+            "USER": os.environ["RDS_USERNAME"],
+            "PASSWORD": os.environ["RDS_PASSWORD"],
+            "HOST": os.environ["RDS_HOSTNAME"],
+            "PORT": os.environ["RDS_PORT"],
         }
     }
 # default sqlite database
@@ -164,3 +168,14 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 AWS_STORAGE_BUCKET = "jumbosmash2020-test"
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler",},},
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+        },
+    },
+}

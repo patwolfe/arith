@@ -36,11 +36,11 @@ Do we want suspend user or something up here?
     </div>
 </div>
 <div id="submit-bar">
-    <a href="{% url 'admin:pending-profile-reject' user.id %}" class="reject">Reject</a>
+    <a href="{% url 'admin:pending-profile-reject' original.id %}" class="reject">Reject</a>
     {% if user.status == "I" %}
-        <a href="{% url 'admin:pending-profile-approve-user-activate' user.id %}" class="approve">Approve and Activate</a>
+        <a href="{% url 'admin:pending-profile-approve-user-activate' original.id %}" class="approve">Approve and Activate</a>
     {% else %}
-        <a href="{% url 'admin:pending-profile-approve' user.id %}" class="approve">Approve</a>
+        <a href="{% url 'admin:pending-profile-approve' original.id %}" class="approve">Approve</a>
     {% endif %}
 </div>
 {% if approved_profile %}

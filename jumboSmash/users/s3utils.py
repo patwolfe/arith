@@ -3,6 +3,8 @@ from django.conf import settings
 import boto3
 import logging
 
+logger = logging.getLogger("django")
+
 
 def create_presigned_url(object_name, expiration=3600):
     """Generate a presigned URL to share an S3 object
@@ -57,7 +59,11 @@ def create_presigned_post(object_name, fields=None, conditions=None, expiration=
 
 
 def delete_photos(photo_list):
+    logger.warning("DELETING PHOTOS")
+    logger.warning(photo_list)
     s3_client = boto3.client("s3")
-    # s3_client.delete_objects(photo_list)
-    print(photo_list)
-    pass
+    logger.info({"Objects": [{"Key": photo} for photo in photo_list]})
+    s3_client.delete_objects(
+        Bucket=settings.AWS_STORAGE_BUCKET,
+        Delete={"Objects": [{"Key": photo} for photo in photo_list]},
+    )

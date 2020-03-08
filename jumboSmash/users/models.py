@@ -12,6 +12,8 @@ import datetime
 import uuid
 import logging
 
+logger = logging.getLogger("django")
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -77,7 +79,7 @@ class User(AbstractUser):
             self.discoverable = True
             self.save()
         else:
-            logging.warning("User {} is not inactive, cannot activate".format(self.id))
+            logger.warning("User {} is not inactive, cannot activate".format(self.id))
 
     def id_upload_url(self):
         return create_presigned_post("{}/id.jpg".format(self.id))
@@ -175,19 +177,15 @@ class Profile(models.Model):
         ]
 
         old_photo_list = self.photo_list()
+        logger.info(old_photo_list)
 
         for fname, fval in photo_mods:
             setattr(self, fname, fval)
 
         new_photo_list = self.photo_list()
+        logger.info(new_photo_list)
 
-        delete_photos(
-            [
-                Profile.objects.to_aws_key(self.user.id, x)
-                for x in old_photo_list
-                if x not in new_photo_list
-            ]
-        )
+        self.delete_photos(new_photo_list, old_photo_list)
 
         self.max_photo_id = max(self.max_photo_id, kwargs["max_photo_id"])
         self.bio = kwargs["bio"]
@@ -197,7 +195,11 @@ class Profile(models.Model):
 
     def approve(self):
         # TODO concurrency, notify
-        Profile.objects.filter(user_id=self.user_id, approved=True).delete()
+        approved = Profile.objects.filter(user_id=self.user_id, approved=True).first()
+        if approved:
+            self.delete_photos(self.photo_list(), approved.photo_list())
+            approved.delete()
+
         self.approved = True
         self.save()
         return self
@@ -214,6 +216,19 @@ class Profile(models.Model):
     def save(self, **kwargs):
         self.clean()
         return super(Profile, self).save(**kwargs)
+
+    def delete_photos(self, new_photos, old_photos):
+        logging.warning("UPDATING PHOTOS")
+
+        to_delete = [x for x in old_photos if x not in new_photos]
+        logging.warning(old_photos)
+        logging.warning(new_photos)
+        logging.warning(to_delete)
+
+        if to_delete:
+            delete_photos(
+                [Profile.objects.to_aws_key(self.user.id, x) for x in to_delete]
+            )
 
 
 class ReviewProfile(Profile):
