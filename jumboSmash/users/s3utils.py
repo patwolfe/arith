@@ -59,10 +59,8 @@ def create_presigned_post(object_name, fields=None, conditions=None, expiration=
 
 
 def delete_photos(photo_list):
-    logger.warning("DELETING PHOTOS")
-    logger.warning(photo_list)
+    logger.info("DELETING PHOTOS", photo_list)
     s3_client = boto3.client("s3")
-    logger.info({"Objects": [{"Key": photo} for photo in photo_list]})
     s3_client.delete_objects(
         Bucket=settings.AWS_STORAGE_BUCKET,
         Delete={"Objects": [{"Key": photo} for photo in photo_list]},

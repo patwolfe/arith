@@ -177,13 +177,11 @@ class Profile(models.Model):
         ]
 
         old_photo_list = self.photo_list()
-        logger.info(old_photo_list)
 
         for fname, fval in photo_mods:
             setattr(self, fname, fval)
 
         new_photo_list = self.photo_list()
-        logger.info(new_photo_list)
 
         self.delete_photos(new_photo_list, old_photo_list)
 
@@ -218,12 +216,7 @@ class Profile(models.Model):
         return super(Profile, self).save(**kwargs)
 
     def delete_photos(self, new_photos, old_photos):
-        logging.warning("UPDATING PHOTOS")
-
         to_delete = [x for x in old_photos if x not in new_photos]
-        logging.warning(old_photos)
-        logging.warning(new_photos)
-        logging.warning(to_delete)
 
         if to_delete:
             delete_photos(
