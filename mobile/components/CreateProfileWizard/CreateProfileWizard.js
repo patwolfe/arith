@@ -48,7 +48,7 @@ export default function CreateProfileWizard(props) {
 }
 
 async function getEditProfile(dispatch) {
-  const url = `${urls.backendURL}user/profile/edit/`;
+  const url = `${urls.backendURL}/user/profile/edit/`;
   const result = await APICall.GetAuth(url);
   if (result.error || !result.ok) {
     console.log(result);
@@ -75,7 +75,7 @@ async function submitProfile(dispatch, state) {
 }
 
 async function uploadProfile(state, ids) {
-  const url = `${urls.backendURL}user/profile/edit/`;
+  const url = `${urls.backendURL}/user/profile/edit/`;
   const body = [...Array(6).keys()].reduce(
     (acc, elem) => ({...acc, [`photo${elem}`]: ids[elem] ? ids[elem] : null}), {bio: state.bio});
  
