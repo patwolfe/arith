@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ProfileView from '../ProfileView/ProfileView';
+import ProfileView from 'jumbosmash/components/ProfileView/ProfileView';
 import { View, Text, StyleSheet } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import profiles from '../../test_data/mockProfiles';
+import profiles from 'jumbosmash/test_data/mockProfiles';
 
 export default function MatchFeed() {
   const names = ['will', 'patrick', 'lexi', 'steven'];
