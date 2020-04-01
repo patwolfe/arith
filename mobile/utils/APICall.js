@@ -39,7 +39,6 @@ export default {
       if (response.status === 204) {
         return {error: false, ok: response.ok};
       }
-     
       let res = await response.json();
       return {error: false, ok: response.ok, res: res};
     }

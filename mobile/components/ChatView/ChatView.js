@@ -41,16 +41,16 @@ export default function ChatView(props) {
       renderItem={({item}) => {
         const message = item;
         const [rowstyle, messagestyle, textstyle] = 
-          message.author == 'me' 
+          message.sender === props.my_id 
             ? [styles.chatMessageSent, 
               styles.chatMessageSentContainer, 
               styles.chatMessageSentText] 
             : [styles.chatMessageReceived, 
               styles.chatMessageReceivedContainer, 
               styles.chatMessageReceivedText];
-        const spacing_wrapper = (lastMessage && (lastMessage.author == message.author) 
-          ? styles.chatSpacingWrapperSame 
-          : styles.chatSpacingWrapperDiff);
+        const spacing_wrapper = lastMessage && lastMessage.sender != message.sender
+          ? styles.chatSpacingWrapperDiff
+          : styles.chatSpacingWrapperSame;
         lastMessage = message;
         return (
           <View>
@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#147efb',
     maxWidth: '60%',
     padding: '2%',
+    borderRadius: 15,
   },
   chatMessageReceived: {
     flexDirection: 'row',
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
     maxWidth: '60%',
     backgroundColor: '#d3d3d3',
     padding: '2%',
+    borderRadius: 15,
   },
   chatMessageReceivedText: {
     fontSize: 18,
@@ -108,6 +110,6 @@ const styles = StyleSheet.create({
     maxHeight: '0%',
   },
   chatSpacingWrapperDiff: {
-    minHeight: '2%',
+    marginTop: '2%',
   },
 });

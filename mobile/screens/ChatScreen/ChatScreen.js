@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,18 +15,30 @@ import ChatScreenHeader from 'jumbosmash/components/ChatScreenHeader/ChatScreenH
 import BlobBackground from 'jumbosmash/components/BlobBackground/BlobBackground';
 import colors from 'jumbosmash/constants/Colors';
 import blobs from 'jumbosmash/constants/Blobs';
+import urls from 'jumbosmash/constants/Urls';
+import APICall from 'jumbosmash/utils/APICall';
+
+// TODO: figure out a way to get our own id
+const initialState = {
+  my_id: 2,
+  keyboardavoidingviewkey: false,
+  textInput: '',
+  messages: [],
+};
+
+// Props = {
+//   match_id,
+//   match_name
+// }
 
 export default function ChatScreen(props) {
-  const initialState = {
-    keyboardavoidingviewkey: false,
-    textInput: '',
-    // TODO: Get actual messages from backend
-    messages: [{content: 'Hi how\'re you doing?', author: 'me'}, 
-      {content: 'Good good, you?', author: 'them'},
-    ],
-  };
-  
-  const [state, setState] = React.useState(initialState);
+  const match_id = props.navigation.getParam('match_id', 'Undefined');
+  const [state, setState] = useState(initialState);
+
+  // TODO dont know if [match_id] is required, test with and without pls
+  useEffect(() => {
+    getConversation(match_id, setState);
+  }, [match_id]);
   
   useEffect(() => {
     function updateKey() {
@@ -40,6 +52,7 @@ export default function ChatScreen(props) {
       listener.remove();
     };
   });
+
   return (
     <View style={styles.container}>
       <BlobBackground style={styles.container}
@@ -61,15 +74,25 @@ export default function ChatScreen(props) {
                 <TouchableOpacity 
                   style={styles.sendButton}
                   disabled={state.textInput === ''}
-                  onPress={() => setState(() => ({
-                    ...state,
-                    textInput: '', 
-                    messages: state.messages.concat({content: state.textInput, author: 'me'})}))}>
+                  onPress={() => {
+                    sendMessage(state.textInput, match_id);
+                    // TODO: see if there is a better way to do this.  Could pull all messages again but idk if that's right...
+                    setState(old_state => ({...old_state, 
+                      textInput: '', 
+                      messages: old_state.messages.concat({
+                        content: old_state.textInput, 
+                        delivered: null, 
+                        id: null,
+                        match: match_id, 
+                        read: null, 
+                        sender: old_state.my_id,
+                        sent: ''})}));
+                  }}>
                   <Text style={styles.sendButtonText}>^</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.chatContainer}>
-                <ChatView messages={state.messages} />
+                <ChatView messages={state.messages} my_id={state.my_id}/> 
               </View>
             </View>
           </KeyboardAvoidingView>
@@ -77,6 +100,33 @@ export default function ChatScreen(props) {
       </BlobBackground>
     </View>
   );
+}
+
+async function getConversation(match_id, setState) {
+  const url = `${urls.backendURL}chat/convo?match=${match_id}`;
+  const headers = {'Content-Type': 'application/json'};
+  const response = await APICall.GetAuth(url, headers);
+  if (response.error || !response.ok) {
+    console.log(`Bad request to ${url}`);
+    console.log('Result was: ');
+    console.log(response);
+  } else {
+    setState((old_state) => ({...old_state, messages: response.res}));
+  }
+}
+
+async function sendMessage(message, match_id) {
+  const uri = `${urls.backendURL}chat/send`;
+  const headers = {'Content-Type': 'application/json'};
+  const body = {match: match_id, content: message};
+  const response = await APICall.PostAuth(uri, headers, JSON.stringify(body));
+
+  if (response.error || !response.ok) {
+    console.log('Bad send message request:');
+    console.log(body);
+    console.log('Response: ');
+    console.log(response);
+  }
 }
 
 ChatScreen.navigationOptions = {
@@ -94,11 +144,12 @@ const styles = StyleSheet.create({
   textInput: {
     height: 40, 
     width: '90%',
-    borderColor: 'gray', 
+    borderColor: 'lightgray', 
     borderWidth: 1,
     alignSelf: 'center',
     marginBottom: '1%',
     marginTop: '1%',
+    borderRadius: 10,
   },
   chat: {
     flex: 1,
@@ -114,13 +165,14 @@ const styles = StyleSheet.create({
   },
   sendButtonText: {
     fontSize: 32,
-    color: 'steelblue',
+    color: 'lightgray',
   },
   textBar: {
     flexDirection: 'row',
     justifyContent: 'center',
     borderStyle: 'solid',
-    borderTopColor: 'gray',
+    borderTopColor: 'black',
     borderTopWidth: .25,
+    backgroundColor: '#525252',
   },
 });

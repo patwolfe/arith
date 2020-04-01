@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 export default function ChatScreenHeader(props) {
-  const matchName = props.navigation.getParam('matchName', 'Undefined');
+  const matchName = props.navigation.getParam('match_name', 'Undefined');
   
   return (
     <View style={styles.headerContainer}>
