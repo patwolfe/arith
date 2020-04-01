@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Autocomplete from 'jumbosmash/components/Autocomplete/Autocomplete';
 import {
   View,
-  Text,
   StyleSheet
 } from 'react-native';
 import urls from 'jumbosmash/constants/Urls';
@@ -29,13 +28,10 @@ export default function TopFiveScreen() {
         return false;
       }
 
-      // console.log(result);
-
       setNamesList(result.res.map((x) => {
         x.displayName = (x.preferredName ? x.preferredName : x.firstName) + ' ' + x.lastName; 
         return x;
       }));
-      // setNamesList(result.res);
       setLoading(false);
       return true;
     };
@@ -45,8 +41,6 @@ export default function TopFiveScreen() {
   }, []);
 
   let fields = [];
-  // console.log('NAMESLIST \n\n');
-  // console.log(namesList);
 
   Array.from(Array(5).keys()).map(x => {
     const z = 5 - x;
@@ -56,7 +50,6 @@ export default function TopFiveScreen() {
           // id={x}
           list={namesList}
           onChangeText={(text) => {
-            console.log(text);
             setNames((names) => {
               let n = names;
               n[x] = text;
@@ -110,9 +103,7 @@ async function onSubmit(allNames, topFive) {
     for (const id of ids) {
       body.push({"user": id});
     }
-    console.log(body);
     let result = await APICall.PostAuth(url, {'Content-Type': 'application/json'}, JSON.stringify(body));
-    console.log(result); 
   }
 } 
 
