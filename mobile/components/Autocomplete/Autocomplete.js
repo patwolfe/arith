@@ -28,13 +28,13 @@ class Autocomplete extends Component {
 
     const { items } = this.state;
     const regex = new RegExp(`${query.trim()}`, 'i');
-    return items.filter(item => item.name.search(regex) >= 0);
+    return items.filter(item => item.displayName.search(regex) >= 0);
   }
 
   render() {
     const { query } = this.state;
     const items = this.findItem(query);
-    const comp = (a, b) => a.toLowerCase().trim() === b.name.toLowerCase().trim();
+    const comp = (a, b) => a.toLowerCase().trim() === b.displayName.toLowerCase().trim();
 
     return (
       <View containerStyle={styles.container}>
@@ -43,29 +43,28 @@ class Autocomplete extends Component {
           autoCorrect={false}
           listStyle={this.props.listStyle}
           containerStyle={this.props.containerStyle}
-          // containerStyle={styles.autocompleteContainer}
           data={items.length === 1 && comp(query, items[0]) ? [] : items}
           defaultValue={query}
           onChangeText={text => {
-            console.log('test');
             this.setState({ query: text });
-            this.props.onChangeText(query);
+            this.props.onChangeText(text);
           }}
+          keyExtractor = { (item, index) => index.toString() }
           onFocus={() => this.setState({focused: true})}
           onBlur={() => this.setState({focused: false})}
           placeholder="First Name"
-          renderItem={(n, index) => (
+          renderItem={(n) => (
             this.state.focused ? 
               <View>
                 <TouchableOpacity 
-                  id={index} 
+                  id={n.id} 
                   style={styles.dropdown}
                   onPress={() => {
-                    this.setState({ query: n.item.name });
-                    this.props.onChangeText(n.item.name);
+                    this.setState({ query: n.item.displayName });
+                    this.props.onChangeText(n.item.displayName);
                   }}>
                   <Text style={styles.itemText}>
-                    {n.item.name}
+                    {n.item.displayName}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -83,16 +82,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 25
   },
-  autocompleteContainer: {
-    marginLeft: 10,
-    marginRight: 10
-  },
   dropdown: {
     zIndex: 500,
   },
   itemText: {
     fontSize: 15,
-    padding: 10,
+    padding: 15,
     borderWidth: 1,
     borderColor: 'gray',
   },

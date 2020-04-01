@@ -3,15 +3,13 @@ import Autocomplete from 'jumbosmash/components/Autocomplete/Autocomplete';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet
 } from 'react-native';
+import urls from 'jumbosmash/constants/Urls';
 
 import APICall from 'jumbosmash/utils/APICall';
 import Button from 'jumbosmash/components/Button/Button';
 import LoadingModal from 'jumbosmash/components/LoadingModal/LoadingModal';
-import namesList from '../test_data/SeniorNames';
 
 export default function TopFiveScreen() {
   const [names, setNames] = useState(['', '', '', '', '']);
@@ -21,19 +19,23 @@ export default function TopFiveScreen() {
 
   useEffect(() => {
     const getNames = async () => {
-      // let url = `${urls.backendURL}auth/token/`;
-      // let result = await APICall.PostNoAuth(url, 
-      //   {'Content-Type': 'application/x-www-form-urlencoded'},
-      //   `email=${props.email}&token=${state.otp}`
-      // );
+      let url = `${urls.backendURL}user/list/`;
+      let result = await APICall.GetAuth(url);
 
+      // TODO: Handle rejection
       if (result.error || !result.ok) {
         setLoading(false);
         setRejected(true);
         return false;
       }
 
-      setNamesList(result.res._____);
+      // console.log(result);
+
+      setNamesList(result.res.map((x) => {
+        x.displayName = (x.preferredName ? x.preferredName : x.firstName) + ' ' + x.lastName; 
+        return x;
+      }));
+      // setNamesList(result.res);
       setLoading(false);
       return true;
     };
@@ -41,21 +43,25 @@ export default function TopFiveScreen() {
     // Don't send OTP when component is first rendered
     getNames();
   }, []);
-  // puts namesList into [{name: 'Patrick'}, {name: 'Caroline'}] format
-  // is this going to be super slow and horrible? I don't know
-  const namesFormattedList = namesList;
+
   let fields = [];
+  // console.log('NAMESLIST \n\n');
+  // console.log(namesList);
 
   Array.from(Array(5).keys()).map(x => {
     const z = 5 - x;
     fields.push(
-      <View style={{ zIndex: z }}>
+      <View key={String(x)} style={{ zIndex: z }}>
         <Autocomplete
-          list={namesFormattedList}
+          // id={x}
+          list={namesList}
           onChangeText={(text) => {
-            let n = names;
-            n[x] = text;
-            setNames(n);
+            console.log(text);
+            setNames((names) => {
+              let n = names;
+              n[x] = text;
+              return n;
+            });
           }}
         />
         <View style={styles.autocomplete}/>
@@ -64,14 +70,51 @@ export default function TopFiveScreen() {
     );
   });
 
+
+  // TODO: add rejected logic
   return(
     <View >
-      <Text style={styles.text}> 1: </Text>
-      {fields}
-      <Button title={'Submit'} />
+      {loading && <LoadingModal />}
+      {!loading && fields}
+      <Button title={'Submit'} 
+        onClick={() => onSubmit(namesList, names)}
+      />
     </View>
   );
 }
+
+async function onSubmit(allNames, topFive) {
+  let errorNames = [];
+  let ids = [];
+  topFive = topFive.filter(x => x != '');
+  for(const name of topFive) {
+    const match = allNames.filter((n) =>  n.displayName === name );
+    if(match.length > 0) {
+      ids.push(match[0].id);
+    } else {
+      errorNames.push(name);
+    }
+  }
+  if (errorNames.length != 0) {
+    alert('The following names are not valid: ' 
+    + errorNames.join(', ')
+    + '. Please ensure that the names you entered match the formatting in our list.');
+  } else {
+    // send request
+    topFive = topFive.filter((value, index) => topFive.indexOf(value) === index)
+    alert('Submitting the following names: '
+    + topFive.join(', '));
+    const url = `${urls.backendURL}swipe/top5/`;
+    ids = ids.filter((value, index) => ids.indexOf(value) === index)
+    const body = [];
+    for (const id of ids) {
+      body.push({"user": id});
+    }
+    console.log(body);
+    let result = await APICall.PostAuth(url, {'Content-Type': 'application/json'}, JSON.stringify(body));
+    console.log(result); 
+  }
+} 
 
 const styles = StyleSheet.create({
   text: {
@@ -80,8 +123,4 @@ const styles = StyleSheet.create({
   autocomplete: {
     height: 20,
   },
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-  }
 });

@@ -52,6 +52,7 @@ export default {
 
   async GetAuth(url, headers) {
     let token = await AsyncStorage.getItem('token');
+    console.log(token);
     if (token === null) {
       console.log('token is null in async storage');
       return {error: true, message: 'No auth token'};
@@ -62,6 +63,7 @@ export default {
         method: 'GET',
         headers: {...headers, Authorization: `Bearer ${token}`},
       });
+      console.log(response.status);
       let res = await response.json();
       return {error: false, ok: response.ok, res: res};
     }
