@@ -164,7 +164,6 @@ const tabNavigator = createBottomTabNavigator({
   EntryStack,
   ProfileStack,
   MatchStack,
-  // SettingsStack,
   TopFiveStack,
   ChatStack,
 });
