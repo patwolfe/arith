@@ -71,19 +71,6 @@ MatchStack.navigationOptions = {
   ),
 };
 
-// const SettingsStack = createStackNavigator(
-//   {
-//     Settings: SettingsScreen,
-//   },
-//   config
-// );
-
-// SettingsStack.navigationOptions = {
-//   tabBarLabel: 'Settings',
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
-//   ),
-// };
 
 const TopFiveStack = createStackNavigator(
   {
