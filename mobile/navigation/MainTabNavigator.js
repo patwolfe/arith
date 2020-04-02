@@ -16,7 +16,8 @@ import MatchFeedScreen from 'jumbosmash/screens/MatchFeedScreen/MatchFeedScreen'
 import OTPScreen from 'jumbosmash/screens/OTPScreen/OTPScreen';
 import ProfileScreen from 'jumbosmash/screens/ProfileScreen';
 import RegisterScreen from 'jumbosmash/screens/RegisterScreen/RegisterScreen';
-import SettingsScreen from 'jumbosmash/screens/SettingsScreen';
+import TopFiveScreen from 'jumbosmash/screens/TopFiveScreen';
+// import SettingsScreen from 'jumbosmash/screens/SettingsScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -69,15 +70,16 @@ MatchStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator(
+
+const TopFiveStack = createStackNavigator(
   {
-    Settings: SettingsScreen,
+    TopFive: TopFiveScreen,
   },
   config
 );
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+TopFiveStack.navigationOptions = {
+  tabBarLabel: 'Top Five',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
   ),
@@ -148,7 +150,7 @@ const tabNavigator = createBottomTabNavigator({
   EntryStack,
   ProfileStack,
   MatchStack,
-  SettingsStack,
+  TopFiveStack,
   ChatStack,
 });
 
