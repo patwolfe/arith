@@ -136,7 +136,6 @@ const EntryStack = createStackNavigator(
     Login: LoginScreen,
     OTP: OTPScreen,
     Register: RegisterScreen,
-    // IDUpload: IDUploadScreen,
     CreateProfile: CreateProfileScreen
   },
   {
