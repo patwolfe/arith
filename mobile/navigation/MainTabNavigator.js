@@ -10,14 +10,14 @@ import ChatListScreen from 'jumbosmash/screens/ChatListScreen/ChatListScreen';
 import ChatScreen from 'jumbosmash/screens/ChatScreen/ChatScreen';
 import CreateProfileScreen from 'jumbosmash/screens/CreateProfileScreen/CreateProfileScreen';
 import EditProfileScreen from 'jumbosmash/screens/EditProfileScreen';
-import IDUploadScreen from 'jumbosmash/screens/IDUploadScreen/IDUploadScreen';
 import EntryScreen from 'jumbosmash/screens/EntryScreen/EntryScreen';
 import LoginScreen from 'jumbosmash/screens/LoginScreen/LoginScreen';
 import MatchFeedScreen from 'jumbosmash/screens/MatchFeedScreen/MatchFeedScreen';
 import OTPScreen from 'jumbosmash/screens/OTPScreen/OTPScreen';
 import ProfileScreen from 'jumbosmash/screens/ProfileScreen';
 import RegisterScreen from 'jumbosmash/screens/RegisterScreen/RegisterScreen';
-import SettingsScreen from 'jumbosmash/screens/SettingsScreen';
+import TopFiveScreen from 'jumbosmash/screens/TopFiveScreen';
+// import SettingsScreen from 'jumbosmash/screens/SettingsScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -70,15 +70,16 @@ MatchStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator(
+
+const TopFiveStack = createStackNavigator(
   {
-    Settings: SettingsScreen,
+    TopFive: TopFiveScreen,
   },
   config
 );
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+TopFiveStack.navigationOptions = {
+  tabBarLabel: 'Top Five',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
   ),
@@ -121,7 +122,6 @@ const EntryStack = createStackNavigator(
     Login: LoginScreen,
     OTP: OTPScreen,
     Register: RegisterScreen,
-    IDUpload: IDUploadScreen,
     CreateProfile: CreateProfileScreen
   },
   {
@@ -150,7 +150,7 @@ const tabNavigator = createBottomTabNavigator({
   EntryStack,
   ProfileStack,
   MatchStack,
-  SettingsStack,
+  TopFiveStack,
   ChatStack,
 });
 

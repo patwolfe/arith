@@ -150,11 +150,13 @@ class GetConversationViewsTest(TestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data["client"], 1)
 
-        self.assertEqual(response.data[0]["match"], 1)
-        self.assertEqual(response.data[1]["match"], 1)
-        self.assertNotIn(2, [m["match"] for m in response.data])
+        self.assertEqual(len(response.data["convo"]), 2)
+        self.assertEqual(response.data["convo"][0]["match"], 1)
+        self.assertEqual(response.data["convo"][1]["match"], 1)
+        self.assertNotIn(2, [m["match"] for m in response.data["convo"]])
+        self.assertEqual(["u up?", ":)"], [m["content"] for m in response.data["convo"]])
 
     def test_get_conversation_user_not_in_match(self):
         user = User.objects.get(pk=3)
