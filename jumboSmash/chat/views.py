@@ -50,7 +50,8 @@ class GetConversation(APIView):
                 ):
                     conversation = Message.objects.list_messages(match)
                     serialized = MessageSerializer(conversation, many=True)
-                    return Response(serialized.data, status=status.HTTP_200_OK)
+                    all_data = {"client": request.user.id, "convo": serialized.data}
+                    return Response(all_data, status=status.HTTP_200_OK)
                 else:
                     return Response(
                         "User does not have access to this conversation.",
