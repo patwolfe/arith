@@ -28,7 +28,7 @@ export default function TopFiveScreen() {
         return false;
       }
 
-      setNamesList(result.res.map(x => {....x, displayName: (x.preferredName ? x.preferredName : x.firstName) + ' ' + x.lastName)}
+      setNamesList(result.res.map((x) => {
         x.displayName = (x.preferredName ? x.preferredName : x.firstName) + ' ' + x.lastName; 
         return x;
       }));
