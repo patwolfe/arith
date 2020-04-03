@@ -55,6 +55,7 @@ class User(AbstractUser):
     discoverable = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
     id_photo = models.URLField(blank=True, null=True)
+    push_token = models.CharField(max_length=100)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
@@ -72,6 +73,11 @@ class User(AbstractUser):
             self.save()
         else:
             logging.warning("User {} is not inactive, cannot activate".format(self.id))
+
+    def update_push_token(self, token):
+        """Updates user's push notification token."""
+        self.push_token = token
+        self.save()
 
     def id_upload_url(self):
         return create_presigned_post("{}/id.jpg".format(self.id))
