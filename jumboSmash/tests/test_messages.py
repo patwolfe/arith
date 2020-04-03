@@ -54,11 +54,12 @@ class MessageTaskTest(TestCase):
 
     def test_message_task(self):
         message = Message.objects.get(pk=1)
+        user = User.objects.get(pk=1)
         self.assertIsNone(message.delivered)
         m_serializer = MessageSerializer(message)
 
-        updated_m = message_task(m_serializer.data)
-        self.assertIsNotNone(updated_m.delivered)
+        response = message_task(m_serializer.data, user)
+        self.assertEqual(response, "message delivered")
 
 
 class SendMessageViewsTest(TestCase):
@@ -84,7 +85,7 @@ class SendMessageViewsTest(TestCase):
         self.assertEqual(response.data["match"], 1)
         self.assertEqual(response.data["sender"], 1)
         self.assertIsNotNone(response.data["sent"])
-        message_task.assert_called_once_with(response.data)
+        message_task.assert_called_once_with(response.data, match.user_2)
         self.assertFalse(match.user_2_viewed)
 
     def test_send_message_user_not_in_match(self):

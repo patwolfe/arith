@@ -1,6 +1,5 @@
 from django.urls import include, path
-from users.views import ListUsers, GetProfile, EditProfile, CheckUserExists, UpdateToken
-from users.views import ListUsers, GetProfile, EditProfile, CheckUserExists, SetupUser
+from users.views import ListUsers, GetProfile, EditProfile, CheckUserExists, UpdateToken, SetupUser
 
 urlpatterns = [
     path("list/", ListUsers.as_view()),
