@@ -142,7 +142,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_user_in_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.get("chat/convo/", {"match": 1}, format="json")
+        request = factory.get("chat/convo?match=1")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -157,7 +157,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_user_not_in_match(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.get("chat/convo/", {"match": 1}, format="json")
+        request = factory.get("chat/convo?match=1")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -167,7 +167,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_unmatched(self):
         user = User.objects.get(pk=3)
         factory = APIRequestFactory()
-        request = factory.get("chat/convo/", {"match": 2}, format="json")
+        request = factory.get("chat/convo?match=2")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -177,7 +177,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_nonexistent_match(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.get("chat/convo/", {"match": 6}, format="json")
+        request = factory.get("chat/convo?match=6")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
@@ -187,7 +187,7 @@ class GetConversationViewsTest(TestCase):
     def test_get_conversation_keyword_missing(self):
         user = User.objects.get(pk=1)
         factory = APIRequestFactory()
-        request = factory.get("chat/convo/", {}, format="json")
+        request = factory.get("chat/convo/")
         force_authenticate(request, user)
         view = GetConversation.as_view()
         response = view(request)
