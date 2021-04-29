@@ -55,6 +55,7 @@ class User(AbstractUser):
     discoverable = models.BooleanField(default=False)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=INACTIVE)
     id_photo = models.URLField(blank=True, null=True)
+    push_token = models.CharField(max_length=100)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
@@ -72,6 +73,11 @@ class User(AbstractUser):
             self.save()
         else:
             logging.warning("User {} is not inactive, cannot activate".format(self.id))
+
+    def update_push_token(self, token):
+        """Updates user's push notification token."""
+        self.push_token = token
+        self.save()
 
     def id_upload_url(self):
         return create_presigned_post("{}/id.jpg".format(self.id))
@@ -143,6 +149,13 @@ class Profile(models.Model):
                     Profile.objects.to_aws_key(self.user.id, photo)
                 )
         return urls
+
+    def get_first_photo_url(self):
+        """ Returns a presigned url for photo0 of the profile"""
+        if self.photo0:
+            return create_presigned_url(Profile.objects.to_aws_key(self.user.id, self.photo0))
+        else:
+            return None
 
     def is_photo_reorder(self, profile2):
         """ Returns true if the profile2 is the same as the current profile just with photos rearranged """

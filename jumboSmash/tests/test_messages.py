@@ -1,9 +1,9 @@
 from mock import patch
 from django.test import TestCase
-from users.models import User
+from users.models import User, Profile
 from rest_framework.test import force_authenticate, APIRequestFactory
 from chat.models import Message, Match
-from chat.views import SendMessage, GetConversation
+from chat.views import SendMessage, GetConversation, GetAll, ViewConversation
 from chat.tasks import message_task
 from chat.serializers import MessageSerializer
 
@@ -79,11 +79,13 @@ class SendMessageViewsTest(TestCase):
         view = SendMessage.as_view()
         response = view(request)
 
+        match = Match.objects.get(pk=1)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["match"], 1)
         self.assertEqual(response.data["sender"], 1)
         self.assertIsNotNone(response.data["sent"])
         message_task.assert_called_once_with(response.data)
+        self.assertFalse(match.user_2_viewed)
 
     def test_send_message_user_not_in_match(self):
         user = User.objects.get(pk=3)
@@ -119,7 +121,7 @@ class SendMessageViewsTest(TestCase):
         view = SendMessage.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_send_message_match_key_missing(self):
         user = User.objects.get(pk=1)
@@ -129,7 +131,7 @@ class SendMessageViewsTest(TestCase):
         view = SendMessage.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
 
 class GetConversationViewsTest(TestCase):
@@ -148,11 +150,13 @@ class GetConversationViewsTest(TestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data["client"], 1)
 
-        self.assertEqual(response.data[0]["match"], 1)
-        self.assertEqual(response.data[1]["match"], 1)
-        self.assertNotIn(2, [m["match"] for m in response.data])
+        self.assertEqual(len(response.data["convo"]), 2)
+        self.assertEqual(response.data["convo"][0]["match"], 1)
+        self.assertEqual(response.data["convo"][1]["match"], 1)
+        self.assertNotIn(2, [m["match"] for m in response.data["convo"]])
+        self.assertEqual(["u up?", ":)"], [m["content"] for m in response.data["convo"]])
 
     def test_get_conversation_user_not_in_match(self):
         user = User.objects.get(pk=3)
@@ -193,3 +197,83 @@ class GetConversationViewsTest(TestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 404)
+
+
+class ViewConversationViewsTest(TestCase):
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+    ]
+
+    def test_view_conversation_user_in_match(self):
+        user = User.objects.get(pk=1)
+        factory = APIRequestFactory()
+        request = factory.post("chat/view/", {"match": 1}, format="json")
+        force_authenticate(request, user)
+        view = ViewConversation.as_view()
+        response = view(request)
+
+        match = Match.objects.get(pk=1)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(match.user_1_viewed)
+
+    def test_view_conversation_user_not_in_match(self):
+        user = User.objects.get(pk=3)
+        factory = APIRequestFactory()
+        request = factory.post("chat/view/", {"match": 1}, format="json")
+        force_authenticate(request, user)
+        view = ViewConversation.as_view()
+        response = view(request)
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_view_conversation_invalid_data(self):
+        user = User.objects.get(pk=1)
+        factory = APIRequestFactory()
+        request = factory.post("chat/view/", {}, format="json")
+        force_authenticate(request, user)
+        view = ViewConversation.as_view()
+        response = view(request)
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_view_conversation_unmatched(self):
+        user = User.objects.get(pk=2)
+        factory = APIRequestFactory()
+        request = factory.post("chat/view/", {"match": 2}, format="json")
+        force_authenticate(request, user)
+        view = ViewConversation.as_view()
+        response = view(request)
+
+        self.assertEqual(response.status_code, 400)
+
+
+class GetAllViewsTests(TestCase):
+    fixtures = [
+        "tests/dummy_users.json",
+        "tests/dummy_matches.json",
+        "tests/dummy_messages.json",
+        "tests/dummy_profiles.json",
+    ]
+
+    @patch("chat.views.Profile.get_first_photo_url")
+    def test_get_all(self, create_url):
+        user = User.objects.get(pk=1)
+        factory = APIRequestFactory()
+        request = factory.get("chat/all/")
+        force_authenticate(request, user)
+        view = GetAll.as_view()
+        response = view(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["match"], 1)
+        self.assertEqual(response.data[1]["match"], 3)
+        self.assertEqual(response.data[0]["user_name"], "Jumbo")
+        self.assertEqual(response.data[1]["user_name"], "Anime")
+        self.assertEqual(response.data[0]["content"], ":)")
+        self.assertEqual(response.data[1]["content"], None)
+        self.assertFalse(response.data[0]["viewed"])
+        self.assertFalse(response.data[1]["viewed"])
+        self.assertEqual(create_url.call_count, 2)
