@@ -13,18 +13,22 @@ class InteractionManager(models.Manager):
             # not sure what the error handling here should be
             interaction.skip_count += 1
             interaction.smash = False
+            interaction.reacted_to = None
+            interaction.reaction = None
             interaction.save()
         else:
             assert 0, "Interaction already marked 'smash', cannot 'skip'"
         return interaction
 
-    def smash(self, swiper, swiped_on):
+    def smash(self, swiper, swiped_on, react_num, profile_element):
         """ Records a right (positive) swipe on a profile """
         interaction, _ = self.get_or_create(swiper=swiper, swiped_on=swiped_on)
         if not interaction.smash:
             # We shouldn't research for a match if the type is already swipe
             # again, this shouldn't be happening so not sure what the best behavior is
             interaction.smash = True
+            interaction.reaction = react_num
+            interaction.reacted_to = profile_element
             interaction.save()
             try:
                 complement = self.get(swiper=swiped_on, swiped_on=swiper)
@@ -70,7 +74,6 @@ class InteractionManager(models.Manager):
         already_smashed = self.filter(swiper=active_user, smash=True).values(
             "swiped_on"
         )
-
         deck = all_users.difference(already_smashed)
         for other in deck:
             interaction, _ = self.get_or_create(
@@ -93,7 +96,6 @@ class InteractionManager(models.Manager):
             )
             interaction.smash = None
             interaction.save()
-        # return True if there were new users added to the Deck
         return new_users.exists()
 
     def get_next(self, active_user):
@@ -124,6 +126,22 @@ class Interaction(models.Model):
     smash = models.BooleanField(null=True)
     top5 = models.BooleanField(default=False)
     skip_count = models.PositiveIntegerField(default=0)
+
+    REACTIONS = ((1, "wow"), (2, "butt"), (3, "fire"), (4, "heart_eyes"), (5, "laugh"))
+    reaction = models.PositiveIntegerField(choices=REACTIONS, null=True)
+    PROFILE_ELEMENTS = (
+        (1, "photo1"),
+        (2, "photo2"),
+        (3, "photo3"),
+        (4, "photo4"),
+        (5, "photo5"),
+        (6, "photo6"),
+        (7, "bio"),
+        (8, "question1"),
+        (9, "question2"),
+        (10, "question3"),
+    )
+    reacted_to = models.PositiveIntegerField(choices=PROFILE_ELEMENTS, null=True)
 
     objects = InteractionManager()
 
